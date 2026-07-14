@@ -324,7 +324,7 @@ export default function SubmitPage() {
 
               <div className="form-group" style={{ display: 'flex', alignItems: 'center', marginTop: '1.5rem' }}>
                 <label className="checkbox-label-custom" style={{ margin: 0 }}>
-                  <input type="checkbox" name="agencyFeeCharged" /> 承租需收取仲介費
+                  <input type="checkbox" name="agencyFeeCharged" /> 承租需中介費
                 </label>
               </div>
 
