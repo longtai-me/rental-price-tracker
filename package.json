@@ -16,7 +16,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "pages:build": "npx @cloudflare/next-on-pages && node fix-async-hooks.mjs"
+    "pages:build": "npx @cloudflare/next-on-pages"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",
@@ -37,6 +37,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.5",
+    "patch-package": "^8.0.1",
     "typescript": "^5",
     "wrangler": "^4.110.0"
   }
