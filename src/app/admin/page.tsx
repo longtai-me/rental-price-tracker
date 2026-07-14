@@ -17,14 +17,15 @@ export default function AdminPage() {
           'Authorization': `Bearer ${password}`
         }
       });
+      const data = await res.json() as any;
       if (res.ok) {
-        const data = await res.json() as any;
         setRentals(data.data || []);
       } else {
-        alert('Authentication failed or error fetching rentals');
+        alert(`錯誤: ${data.error || 'Authentication failed or error fetching rentals'}`);
         setIsAuthenticated(false);
       }
-    } catch (e) {
+    } catch (e: any) {
+      alert(`連線錯誤: ${e.message}`);
       console.error(e);
     }
     setLoading(false);
