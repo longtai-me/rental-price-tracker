@@ -34,6 +34,8 @@ export default function SubmitPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [selectedCity, setSelectedCity] = useState('');
+  const [electricityBillingType, setElectricityBillingType] = useState('taipower');
+  const [waterBillingType, setWaterBillingType] = useState('taiwater');
 
   // Coordinate state
   const [lat, setLat] = useState(25.0330);
@@ -306,12 +308,108 @@ export default function SubmitPage() {
             </div>
           </div>
 
+          {/* 水電收費標準 */}
+          <div className="form-section">
+            <h3>水電收費標準</h3>
+            <div className="utility-grid">
+              <fieldset className="utility-card">
+                <legend>電費</legend>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="electricityBillingType"
+                    value="included"
+                    checked={electricityBillingType === 'included'}
+                    onChange={(e) => setElectricityBillingType(e.target.value)}
+                  />
+                  包含在房租中
+                </label>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="electricityBillingType"
+                    value="taipower"
+                    checked={electricityBillingType === 'taipower'}
+                    onChange={(e) => setElectricityBillingType(e.target.value)}
+                  />
+                  依照台電價格
+                </label>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="electricityBillingType"
+                    value="custom"
+                    checked={electricityBillingType === 'custom'}
+                    onChange={(e) => setElectricityBillingType(e.target.value)}
+                  />
+                  其他標準
+                </label>
+                {electricityBillingType === 'custom' && (
+                  <div className="utility-custom-fields animate-fade-in">
+                    <div className="form-group">
+                      <label>一般收費標準 (元/度)</label>
+                      <input type="number" step="0.1" min="0" name="electricityPricePerKwh" placeholder="例如：5" className="input-field" />
+                    </div>
+                    <div className="form-group">
+                      <label>夏季收費標準 (元/度)</label>
+                      <input type="number" step="0.1" min="0" name="electricitySummerPricePerKwh" placeholder="例如：6.5" className="input-field" />
+                    </div>
+                  </div>
+                )}
+              </fieldset>
+
+              <fieldset className="utility-card">
+                <legend>水費</legend>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="waterBillingType"
+                    value="included"
+                    checked={waterBillingType === 'included'}
+                    onChange={(e) => setWaterBillingType(e.target.value)}
+                  />
+                  包含在房租中
+                </label>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="waterBillingType"
+                    value="taiwater"
+                    checked={waterBillingType === 'taiwater'}
+                    onChange={(e) => setWaterBillingType(e.target.value)}
+                  />
+                  依照台水價格
+                </label>
+                <label className="checkbox-label-custom">
+                  <input
+                    type="radio"
+                    name="waterBillingType"
+                    value="custom"
+                    checked={waterBillingType === 'custom'}
+                    onChange={(e) => setWaterBillingType(e.target.value)}
+                  />
+                  其他標準
+                </label>
+                {waterBillingType === 'custom' && (
+                  <div className="utility-custom-fields animate-fade-in">
+                    <div className="form-group">
+                      <label>一般收費標準 (元/度)</label>
+                      <input type="number" step="0.1" min="0" name="waterPricePerUnit" placeholder="例如：15" className="input-field" />
+                    </div>
+                    <div className="form-group">
+                      <label>夏季收費標準 (元/度)</label>
+                      <input type="number" step="0.1" min="0" name="waterSummerPricePerUnit" placeholder="例如：18" className="input-field" />
+                    </div>
+                  </div>
+                )}
+              </fieldset>
+            </div>
+          </div>
+
           {/* 房屋特色與條件 */}
           <div className="form-section">
             <h3>房屋特色與條件</h3>
             <div className="checkbox-grid">
-              <label className="checkbox-label-custom"><input type="checkbox" name="includesWater" /> 含水費</label>
-              <label className="checkbox-label-custom"><input type="checkbox" name="includesElectricity" /> 含電費</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" /> 有電梯</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" /> 有車位</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="canPet" /> 可養寵物</label>

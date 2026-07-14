@@ -1,4 +1,5 @@
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { recordAdminRequest } from '@/lib/adminAccessLog';
 
 export const runtime = 'edge';
 
@@ -8,6 +9,8 @@ export interface Env {
   REMOVE_PASSWORD?: string;
   SUPER_ADMIN_PASSWORD?: string;
   EDIT_PASSWORD?: string;
+  DEVELOPER_WEBHOOK_URL?: string;
+  ADMIN_REQUEST_ALERT_THRESHOLD?: string;
 }
 
 type Role = 'admin' | 'remove' | 'super' | 'edit' | null;
@@ -26,6 +29,7 @@ function getAuthRole(request: Request, env: Env | null): Role {
 
 export async function GET(request: Request) {
   const env = getRequestContext().env as unknown as Env;
+  await recordAdminRequest(request, env, '/api/admin/rentals');
   const role = getAuthRole(request, env);
 
   if (!role) {
@@ -52,6 +56,12 @@ export async function GET(request: Request) {
       trashService: Boolean(row.trashService),
       canSubsidize: Boolean(row.canSubsidize),
       agencyFeeCharged: Boolean(row.agencyFeeCharged),
+      electricityBillingType: row.electricityBillingType || (row.includesElectricity ? 'included' : 'taipower'),
+      electricityPricePerKwh: row.electricityPricePerKwh,
+      electricitySummerPricePerKwh: row.electricitySummerPricePerKwh,
+      waterBillingType: row.waterBillingType || (row.includesWater ? 'included' : 'taiwater'),
+      waterPricePerUnit: row.waterPricePerUnit,
+      waterSummerPricePerUnit: row.waterSummerPricePerUnit,
       genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
     }));
     return Response.json({ success: true, data: formattedResults });
@@ -62,6 +72,7 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   const env = getRequestContext().env as unknown as Env;
+  await recordAdminRequest(request, env, '/api/admin/rentals');
   const role = getAuthRole(request, env);
 
   if (!role) {
@@ -111,6 +122,7 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   const env = getRequestContext().env as unknown as Env;
+  await recordAdminRequest(request, env, '/api/admin/rentals');
   const role = getAuthRole(request, env);
 
   if (!role) {
@@ -138,6 +150,7 @@ export async function DELETE(request: Request) {
 
 export async function PUT(request: Request) {
   const env = getRequestContext().env as unknown as Env;
+  await recordAdminRequest(request, env, '/api/admin/rentals');
   const role = getAuthRole(request, env);
 
   if (!role) {
@@ -164,6 +177,8 @@ export async function PUT(request: Request) {
     const allowedKeys = [
       'city', 'district', 'address', 'type', 'layout', 'area', 'floor', 'buildingAge', 'price', 
       'pricePerPyeong', 'includesWater', 'includesElectricity', 'hasParking', 'genderRestriction',
+      'electricityBillingType', 'electricityPricePerKwh', 'electricitySummerPricePerKwh',
+      'waterBillingType', 'waterPricePerUnit', 'waterSummerPricePerUnit',
       'equipments', 'features', 'transports', 'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
       'canPet', 'trashService', 'canSubsidize', 'posterRole', 'agencyFeeCharged',
       'latitude', 'longitude'
@@ -184,6 +199,16 @@ export async function PUT(request: Request) {
     if (updateFields.genderRestriction === '限女') updateFields.genderRestriction = 'female';
     else if (updateFields.genderRestriction === '限男') updateFields.genderRestriction = 'male';
     else if (updateFields.genderRestriction === '不限') updateFields.genderRestriction = 'none';
+
+    const optionalNumberKeys = [
+      'electricityPricePerKwh',
+      'electricitySummerPricePerKwh',
+      'waterPricePerUnit',
+      'waterSummerPricePerUnit',
+    ];
+    for (const key of optionalNumberKeys) {
+      if (updateFields[key] === '') updateFields[key] = null;
+    }
 
     for (const key of allowedKeys) {
       if (updateFields[key] !== undefined) {

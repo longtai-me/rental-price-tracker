@@ -11,6 +11,16 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'pending' | 'published' | 'archived'>('pending');
   const [editingRental, setEditingRental] = useState<any | null>(null);
 
+  useEffect(() => {
+    fetch('/api/admin/access-log', {
+      method: 'POST',
+      cache: 'no-store',
+      keepalive: true,
+    }).catch((error) => {
+      console.error('Failed to record admin access', error);
+    });
+  }, []);
+
   const fetchRentals = async (token = password) => {
     setLoading(true);
     try {
@@ -81,13 +91,15 @@ export default function AdminPage() {
     
     // Explicitly handle booleans since unchecked boxes are omitted from FormData
     const booleanFields = [
-      'includesWater', 'includesElectricity', 'hasElevator', 'hasParking', 
+      'hasElevator', 'hasParking', 
       'canPet', 'canCook', 'trashService', 'hasBalcony', 'canMoveHuji', 
       'canSubsidize', 'agencyFeeCharged'
     ];
     for (const field of booleanFields) {
       data[field] = formData.has(field);
     }
+    data.includesWater = data.waterBillingType === 'included';
+    data.includesElectricity = data.electricityBillingType === 'included';
 
     // Handle array fields
     data.equipment = formData.getAll('equipments');
@@ -319,6 +331,38 @@ export default function AdminPage() {
                 <input type="number" name="price" defaultValue={editingRental.price} className="input-field" />
               </div>
               <div className="form-group">
+                <label>電費收費標準</label>
+                <select name="electricityBillingType" defaultValue={editingRental.electricityBillingType || (editingRental.includesElectricity ? 'included' : 'taipower')} className="input-field">
+                  <option value="included">包含在房租中</option>
+                  <option value="taipower">依照台電價格</option>
+                  <option value="custom">其他標準</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>電費一般標準 (元/度)</label>
+                <input type="number" step="0.1" min="0" name="electricityPricePerKwh" defaultValue={editingRental.electricityPricePerKwh || ''} className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>電費夏季標準 (元/度)</label>
+                <input type="number" step="0.1" min="0" name="electricitySummerPricePerKwh" defaultValue={editingRental.electricitySummerPricePerKwh || ''} className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>水費收費標準</label>
+                <select name="waterBillingType" defaultValue={editingRental.waterBillingType || (editingRental.includesWater ? 'included' : 'taiwater')} className="input-field">
+                  <option value="included">包含在房租中</option>
+                  <option value="taiwater">依照台水價格</option>
+                  <option value="custom">其他標準</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>水費一般標準 (元/度)</label>
+                <input type="number" step="0.1" min="0" name="waterPricePerUnit" defaultValue={editingRental.waterPricePerUnit || ''} className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>水費夏季標準 (元/度)</label>
+                <input type="number" step="0.1" min="0" name="waterSummerPricePerUnit" defaultValue={editingRental.waterSummerPricePerUnit || ''} className="input-field" />
+              </div>
+              <div className="form-group">
                 <label>緯度 (Latitude)</label>
                 <input type="number" step="any" name="latitude" defaultValue={editingRental.latitude} className="input-field" placeholder="例如: 24.1477" />
               </div>
@@ -341,8 +385,6 @@ export default function AdminPage() {
               <div className="form-group" style={{gridColumn: '1 / -1'}}>
                 <label style={{marginBottom: '0.5rem', display: 'block'}}>房屋特色與條件</label>
                 <div className="checkbox-grid">
-                  <label className="checkbox-label-custom"><input type="checkbox" name="includesWater" defaultChecked={editingRental.includesWater} /> 含水費</label>
-                  <label className="checkbox-label-custom"><input type="checkbox" name="includesElectricity" defaultChecked={editingRental.includesElectricity} /> 含電費</label>
                   <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" defaultChecked={editingRental.hasElevator} /> 有電梯</label>
                   <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" defaultChecked={editingRental.hasParking} /> 有車位</label>
                   <label className="checkbox-label-custom"><input type="checkbox" name="canPet" defaultChecked={editingRental.canPet} /> 可養寵物</label>

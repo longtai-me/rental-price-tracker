@@ -21,7 +21,7 @@ export default function Navbar() {
           <Link href="/">首頁</Link>
           <Link href="/submit">我要刊登</Link>
           <Link href="/admin">管理員</Link>
-          <a href="#" className="disabled-link">關於系統</a>
+          <a href="https://github.com/longtai-me/rental-price-tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
 
         {/* Hamburger button */}
@@ -40,7 +40,7 @@ export default function Navbar() {
           <Link href="/" onClick={() => setMenuOpen(false)}>首頁</Link>
           <Link href="/submit" onClick={() => setMenuOpen(false)}>我要刊登</Link>
           <Link href="/admin" onClick={() => setMenuOpen(false)}>管理員</Link>
-          <a href="#" className="disabled-link" onClick={() => setMenuOpen(false)}>關於系統</a>
+          <a href="https://github.com/longtai-me/rental-price-tracker" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>GitHub</a>
         </div>
       )}
     </nav>

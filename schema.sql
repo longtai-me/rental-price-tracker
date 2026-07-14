@@ -16,6 +16,12 @@ CREATE TABLE rentals (
   longitude REAL NOT NULL,
   includesWater BOOLEAN NOT NULL,
   includesElectricity BOOLEAN NOT NULL,
+  electricityBillingType TEXT DEFAULT 'taipower',
+  electricityPricePerKwh REAL,
+  electricitySummerPricePerKwh REAL,
+  waterBillingType TEXT DEFAULT 'taiwater',
+  waterPricePerUnit REAL,
+  waterSummerPricePerUnit REAL,
   hasParking BOOLEAN NOT NULL,
   genderRestriction TEXT NOT NULL,
   equipments TEXT NOT NULL,
@@ -32,6 +38,17 @@ CREATE TABLE rentals (
   contractFile TEXT,
   posterRole TEXT DEFAULT 'landlord',
   agencyFeeCharged BOOLEAN DEFAULT 0,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS admin_access_logs (
+  id TEXT PRIMARY KEY,
+  ip TEXT NOT NULL,
+  path TEXT NOT NULL,
+  method TEXT NOT NULL,
+  userAgent TEXT,
+  requestCount INTEGER DEFAULT 1,
+  notified BOOLEAN DEFAULT 0,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
