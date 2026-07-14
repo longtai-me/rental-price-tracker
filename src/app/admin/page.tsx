@@ -184,7 +184,7 @@ export default function AdminPage() {
                 <p><span>樓層:</span> {rental.floor}</p>
                 {rental.contractFile && (
                   <p>
-                    <a href={`/api/contracts/${rental.contractFile}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
+                    <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
                       查看契約書附件
                     </a>
                   </p>

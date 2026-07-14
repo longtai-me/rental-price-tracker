@@ -1,6 +1,18 @@
 export interface AdminLogEnv {
   DB?: any;
-  DEVELOPER_WEBHOOK_URL?: string;
+  EMAIL?: {
+    send: (message: {
+      to: string | string[];
+      from: string | { email: string; name?: string };
+      subject: string;
+      html: string;
+      text: string;
+      replyTo?: string | string[];
+    }) => Promise<{ messageId?: string }>;
+  };
+  ADMIN_ALERT_TO_EMAIL?: string;
+  ADMIN_ALERT_FROM_EMAIL?: string;
+  ADMIN_ALERT_FROM_NAME?: string;
   ADMIN_REQUEST_ALERT_THRESHOLD?: string;
 }
 
@@ -35,6 +47,28 @@ async function ensureAdminAccessLogTable(env: AdminLogEnv) {
   `).run();
 }
 
+function buildAdminAlertMessage(ip: string, path: string, count: number, threshold: number) {
+  const subject = `[Rental Tracker] Admin request alert from ${ip}`;
+  const text = [
+    'Admin request threshold reached.',
+    `IP: ${ip}`,
+    `Path: ${path}`,
+    `Requests in ${ALERT_WINDOW_HOURS} hour: ${count}`,
+    `Configured threshold: ${threshold}`,
+    `Triggered at: ${new Date().toISOString()}`,
+  ].join('\n');
+  const html = `
+    <h1>Admin request threshold reached</h1>
+    <p><strong>IP:</strong> ${ip}</p>
+    <p><strong>Path:</strong> ${path}</p>
+    <p><strong>Requests in ${ALERT_WINDOW_HOURS} hour:</strong> ${count}</p>
+    <p><strong>Configured threshold:</strong> ${threshold}</p>
+    <p><strong>Triggered at:</strong> ${new Date().toISOString()}</p>
+  `;
+
+  return { subject, text, html };
+}
+
 async function maybeNotifyDeveloper(env: AdminLogEnv, ip: string, path: string, count: number, logId: string) {
   const threshold = Number.parseInt(env.ADMIN_REQUEST_ALERT_THRESHOLD || '', 10) || DEFAULT_ALERT_THRESHOLD;
   if (count < threshold) return;
@@ -49,29 +83,26 @@ async function maybeNotifyDeveloper(env: AdminLogEnv, ip: string, path: string, 
   `).bind(ip, `-${ALERT_WINDOW_HOURS} hour`).all();
 
   if (results.length > 0) return;
+  if (!env.EMAIL || !env.ADMIN_ALERT_TO_EMAIL || !env.ADMIN_ALERT_FROM_EMAIL) return;
 
-  if (env.DEVELOPER_WEBHOOK_URL) {
-    try {
-      await fetch(env.DEVELOPER_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'admin_request_threshold',
-          message: `Admin request threshold reached: ${count} requests from ${ip} within ${ALERT_WINDOW_HOURS} hour.`,
-          ip,
-          path,
-          count,
-          windowHours: ALERT_WINDOW_HOURS,
-          threshold,
-          createdAt: new Date().toISOString(),
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to notify developer', error);
-    }
+  const { subject, text, html } = buildAdminAlertMessage(ip, path, count, threshold);
+
+  try {
+    await env.EMAIL.send({
+      to: env.ADMIN_ALERT_TO_EMAIL,
+      from: {
+        email: env.ADMIN_ALERT_FROM_EMAIL,
+        name: env.ADMIN_ALERT_FROM_NAME || 'Rental Tracker Alert',
+      },
+      subject,
+      html,
+      text,
+    });
+
+    await env.DB.prepare(`UPDATE admin_access_logs SET notified = 1 WHERE id = ?`).bind(logId).run();
+  } catch (error) {
+    console.error('Failed to send admin alert email', error);
   }
-
-  await env.DB.prepare(`UPDATE admin_access_logs SET notified = 1 WHERE id = ?`).bind(logId).run();
 }
 
 export async function recordAdminRequest(request: Request, env: AdminLogEnv | null, path: string) {

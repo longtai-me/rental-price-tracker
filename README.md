@@ -11,7 +11,7 @@ GitHub: [longtai-me/rental-price-tracker](https://github.com/longtai-me/rental-p
 - 水電收費標準紀錄：含房租、台水台電、其他一般/夏季收費
 - 租賃契約附件上傳至 Cloudflare R2
 - Cloudflare D1 儲存租屋資料與隱藏的後台 access log
-- `/admin` 開啟與後台 API 請求會記錄 IP，達門檻時可透過 webhook 通知開發者
+- `/admin` 開啟與後台 API 請求會記錄 IP，達門檻時可透過 Cloudflare Email Service 通知開發者
 
 ## Tech Stack
 
@@ -38,6 +38,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - D1 binding: `DB`
 - R2 binding: `R2_CONTRACTS`
+- Email binding: `EMAIL`
 
 For a new database:
 
@@ -61,12 +62,25 @@ Set secrets in Cloudflare Pages, not in committed files.
 | `REMOVE_PASSWORD` | Remove published listings |
 | `EDIT_PASSWORD` | Edit listing data |
 | `SUPER_ADMIN_PASSWORD` | Full admin permissions, including hard delete |
-| `DEVELOPER_WEBHOOK_URL` | Optional webhook for admin request threshold alerts |
+| `ADMIN_ALERT_TO_EMAIL` | Developer notification recipient |
+| `ADMIN_ALERT_FROM_EMAIL` | Verified Cloudflare Email sender |
+| `ADMIN_ALERT_FROM_NAME` | Optional sender display name |
 | `ADMIN_REQUEST_ALERT_THRESHOLD` | Optional threshold, defaults to `10` requests per IP per hour |
 
 ## Admin Access Logs
 
-Opening `/admin` records a hidden D1 row in `admin_access_logs`. Admin API calls are recorded too. These logs are not exposed in the UI or public API. When the same IP reaches the configured request threshold within one hour, the app sends a JSON alert to `DEVELOPER_WEBHOOK_URL` if configured.
+Opening `/admin` records a hidden D1 row in `admin_access_logs`. Admin API calls are recorded too. These logs are not exposed in the UI or public API. When the same IP reaches the configured request threshold within one hour, the app sends a notification through Cloudflare Email Service if `EMAIL`, `ADMIN_ALERT_TO_EMAIL`, and `ADMIN_ALERT_FROM_EMAIL` are configured.
+
+## Cloudflare Email Setup
+
+Onboard a sending domain first, then configure the sender address:
+
+```bash
+wrangler email sending enable yourdomain.com
+wrangler email sending dns get yourdomain.com
+```
+
+Use a verified sender such as `alerts@yourdomain.com` for `ADMIN_ALERT_FROM_EMAIL`.
 
 ## Sensitive Information Check
 

@@ -9,7 +9,10 @@ export interface Env {
   REMOVE_PASSWORD?: string;
   SUPER_ADMIN_PASSWORD?: string;
   EDIT_PASSWORD?: string;
-  DEVELOPER_WEBHOOK_URL?: string;
+  EMAIL?: any;
+  ADMIN_ALERT_TO_EMAIL?: string;
+  ADMIN_ALERT_FROM_EMAIL?: string;
+  ADMIN_ALERT_FROM_NAME?: string;
   ADMIN_REQUEST_ALERT_THRESHOLD?: string;
 }
 

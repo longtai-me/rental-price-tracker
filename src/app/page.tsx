@@ -69,6 +69,22 @@ export default function HomePage() {
   // Interaction
   const [selectedItem, setSelectedItem] = useState<Rental | null>(null);
 
+  const parseJsonSafely = async <T,>(res: Response): Promise<T | null> => {
+    const text = await res.text();
+    if (!text) return null;
+
+    try {
+      return JSON.parse(text) as T;
+    } catch (error) {
+      console.error('API returned non-JSON response', {
+        status: res.status,
+        url: res.url,
+        body: text.slice(0, 200),
+      });
+      return null;
+    }
+  };
+
   const getRoleLabel = (role?: string) => {
     switch (role) {
       case 'renter': return '租客登錄';
@@ -120,10 +136,21 @@ export default function HomePage() {
       if (genderRestriction && genderRestriction !== '不限') params.append('genderRestriction', genderRestriction);
 
       const res = await fetch(`/api/rentals?${params.toString()}`);
-      const result = await res.json() as any;
-      setData(result.data);
+      const result = await parseJsonSafely<{ success?: boolean; data?: Rental[]; error?: string }>(res);
+
+      if (!res.ok || !result?.success) {
+        console.error('Failed to fetch rentals', {
+          status: res.status,
+          error: result?.error,
+        });
+        setData([]);
+        return;
+      }
+
+      setData(result.data || []);
     } catch (err) {
       console.error(err);
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -133,12 +160,21 @@ export default function HomePage() {
     const fetchCities = async () => {
       try {
         const res = await fetch('/api/cities');
-        const json = await res.json() as any;
-        if (json.success) {
-          setAvailableCities(json.cities || []);
+        const json = await parseJsonSafely<{ success?: boolean; cities?: string[]; error?: string }>(res);
+
+        if (!res.ok || !json?.success) {
+          console.error("Failed to fetch cities", {
+            status: res.status,
+            error: json?.error,
+          });
+          setAvailableCities([]);
+          return;
         }
+
+        setAvailableCities(json.cities || []);
       } catch (err) {
         console.error("Failed to fetch cities", err);
+        setAvailableCities([]);
       }
     };
     fetchCities();

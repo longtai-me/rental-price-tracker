@@ -11,3 +11,6 @@ database_id = "8e38a8cf-4df9-4d62-8910-fa4efd768d95"
 [[r2_buckets]]
 binding = "R2_CONTRACTS"
 bucket_name = "rental-contracts"
+
+[[send_email]]
+name = "EMAIL"
