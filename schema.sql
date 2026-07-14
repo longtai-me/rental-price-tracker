@@ -39,6 +39,7 @@ CREATE TABLE rentals (
   posterRole TEXT DEFAULT 'landlord',
   agencyFeeCharged BOOLEAN DEFAULT 0,
   verificationStatus TEXT DEFAULT 'unverified',
+  contactEmail TEXT,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -99,6 +100,7 @@ CREATE TABLE IF NOT EXISTS deleted_rentals (
   posterRole TEXT DEFAULT 'landlord',
   agencyFeeCharged BOOLEAN DEFAULT 0,
   verificationStatus TEXT DEFAULT 'unverified',
+  contactEmail TEXT,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   deletedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );

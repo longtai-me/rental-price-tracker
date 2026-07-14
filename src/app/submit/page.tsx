@@ -291,6 +291,10 @@ export default function SubmitPage() {
                   <option value="agent">房仲</option>
                 </select>
               </div>
+              <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                <label>聯絡信箱 (選填)</label>
+                <input type="email" name="contactEmail" placeholder="讓有興趣的人可以聯絡您" className="input-field" />
+              </div>
             </div>
           </div>
 

@@ -2,12 +2,13 @@
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
   img-src 'self' blob: data: https://*.basemaps.cartocdn.com https://unpkg.com;
   connect-src 'self' https://nominatim.openstreetmap.org;
   frame-ancestors 'none';
+  frame-src 'self' https://challenges.cloudflare.com;
   require-trusted-types-for 'script';
 `.replace(/\s{2,}/g, ' ').trim();
 
