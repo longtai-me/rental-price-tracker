@@ -1,0 +1,141 @@
+.admin-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.login-container h2 {
+  font-size: 1.8rem;
+  color: var(--primary);
+  margin-bottom: 2rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 1.8rem;
+  color: var(--foreground);
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+.rental-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.rental-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.rental-card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.rental-card-content h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.rental-card-content .address {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.rental-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--foreground);
+}
+
+.rental-details span {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.rental-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+.rental-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: #f9fafb;
+  border-top: 1px solid var(--card-border);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.btn-approve {
+  flex: 1;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-approve:hover {
+  background: #059669;
+}
+
+.btn-reject {
+  flex: 1;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-reject:hover {
+  background: #dc2626;
+}
