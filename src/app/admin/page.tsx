@@ -121,7 +121,7 @@ export default function AdminPage() {
     const booleanFields = [
       'hasElevator', 'hasParking', 
       'canPet', 'canCook', 'trashService', 'hasBalcony', 'canMoveHuji', 
-      'canSubsidize', 'agencyFeeCharged'
+      'canSubsidize', 'agencyFeeCharged', 'badLandlord'
     ];
     for (const field of booleanFields) {
       data[field] = formData.has(field);
@@ -213,6 +213,8 @@ export default function AdminPage() {
                 <p><span>樓層:</span> {rental.floor}</p>
                 <p><span>租期:</span> {rental.startDate ? `${rental.startDate} 起租` : ''} {rental.leaseTerm ? `${rental.leaseTerm} 年` : ''}</p>
                 {rental.ghostStory && <p style={{color: '#ef4444', fontStyle: 'italic', marginTop: '0.5rem'}}>👻 鬼故事: {rental.ghostStory}</p>}
+                {rental.badLandlord && <p style={{color: '#ef4444', fontWeight: 'bold', marginTop: '0.5rem'}}>⚠️ 惡房東標記</p>}
+                {rental.evidenceLink && <p style={{marginTop: '0.5rem'}}><a href={rental.evidenceLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>🔗 查看證據連結</a></p>}
                 {rental.contractFile && (
                   <p>
                     <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
@@ -383,6 +385,15 @@ export default function AdminPage() {
                   className="input-field" 
                   rows={3} 
                 />
+              </div>
+              <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                <label className="checkbox-label-custom" style={{ color: '#ef4444', fontWeight: 'bold' }}>
+                  <input type="checkbox" name="badLandlord" defaultChecked={editingRental.badLandlord} /> 標記為惡房東物件
+                </label>
+              </div>
+              <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                <label>證據連結 (判決書、政府公文、新聞等)</label>
+                <input type="url" name="evidenceLink" defaultValue={editingRental.evidenceLink} className="input-field" />
               </div>
               <div className="form-group">
                 <label>電費收費標準</label>
