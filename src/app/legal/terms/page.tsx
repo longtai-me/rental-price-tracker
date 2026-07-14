@@ -4,13 +4,12 @@ export default function TermsOfServicePage() {
   return (
     <div className="legal-container">
       <h1>服務條款與免責聲明</h1>
-      <p className="last-updated">最後更新日期：202X年</p>
+      <p className="last-updated">最後更新日期：2026年7月</p>
 
       <div className="legal-content">
         <section>
           <h2>1. 認知與接受條款</h2>
-          <p>
-            當您使用本網站（以下簡稱「本平台」）時，即表示您已閱讀、瞭解並同意接受本服務條款之所有內容。如果您不同意本服務條款的內容，或者您所屬的國家或地域排除本服務條款內容之全部或一部時，您應立即停止使用本平台。
+            當您使用本網站（以下簡稱「本平台」，本平台為一公開原始碼之開源專案）時，即表示您已閱讀、瞭解並同意接受本服務條款之所有內容。如果您不同意本服務條款的內容，或者您所屬的國家或地域排除本服務條款內容之全部或一部時，您應立即停止使用本平台。
           </p>
         </section>
 
@@ -25,8 +24,7 @@ export default function TermsOfServicePage() {
 
         <section>
           <h2>3. 免責聲明 (Disclaimer)</h2>
-          <p>
-            本平台旨在提供一個群眾外包 (Crowdsourcing) 的租屋實價資訊共享空間，以促進市場資訊透明化。請您特別留意以下免責事項：
+            本平台旨在提供一個群眾外包 (Crowdsourcing) 的租屋實價資訊共享空間，同時作為一個開源專案 (Open Source Project)，所有的程式碼皆公開透明，以促進市場資訊透明化。請您特別留意以下免責事項：
           </p>
           <ul>
             <li><strong>資訊正確性與完整性</strong>：本平台上大部分的資訊皆由一般使用者主動提供。儘管平台管理員會盡可能進行審核，但<strong>本平台無法保證所有刊登資訊的絕對真實性、正確性或即時性</strong>。</li>
