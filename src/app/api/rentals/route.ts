@@ -7,6 +7,7 @@ export const runtime = 'edge';
 export interface Env {
   DB: any;
   R2_CONTRACTS?: any;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 function parseOptionalNumber(value: unknown): number | null {
@@ -209,7 +210,7 @@ export async function GET(request: Request) {
         hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
       }
       const seed = axis === 'lat' ? hash : (hash >> 16) ^ hash;
-      const maxDeg = axis === 'lat' ? 0.0006 : 0.0008;
+      const maxDeg = axis === 'lat' ? 0.00076 : 0.00085;
       const offset = ((seed & 0xffff) / 0xffff - 0.5) * 2 * maxDeg;
       return base + offset;
     }
@@ -263,6 +264,29 @@ export async function POST(request: Request) {
   const env = getRequestContext().env as Env;
   try {
     const formData = await request.formData();
+    
+    // Validate Turnstile
+    const turnstileResponse = formData.get('cf-turnstile-response');
+    if (env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileResponse) {
+        return NextResponse.json({ success: false, error: '缺少機器人驗證 (Missing CAPTCHA)' }, { status: 403 });
+      }
+      const ip = getClientIp(request);
+      const verifyData = new URLSearchParams();
+      verifyData.append('secret', env.TURNSTILE_SECRET_KEY);
+      verifyData.append('response', turnstileResponse as string);
+      if (ip) verifyData.append('remoteip', ip);
+
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: verifyData,
+      });
+      const verifyJson = await verifyRes.json() as any;
+      if (!verifyJson.success) {
+        return NextResponse.json({ success: false, error: '機器人驗證失敗 (CAPTCHA failed)' }, { status: 403 });
+      }
+    }
+
     const newId = crypto.randomUUID();
     
     const body = Object.fromEntries(formData.entries()) as any;

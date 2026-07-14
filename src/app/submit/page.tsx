@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
+import { Turnstile } from '@marsidev/react-turnstile';
 import './submit.css';
 
 const taiwanCities: Record<string, string[]> = {
@@ -44,6 +45,9 @@ export default function SubmitPage() {
   const [showMapPicker, setShowMapPicker] = useState(false);
   const geocodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Turnstile state
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+
   // Address fields for geocoding
   const [district, setDistrict] = useState('');
   const [address, setAddress] = useState('');
@@ -80,6 +84,12 @@ export default function SubmitPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!turnstileToken) {
+      alert('請先完成機器人驗證。');
+      return;
+    }
+    
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
@@ -96,9 +106,10 @@ export default function SubmitPage() {
     formData.delete('layout_baths');
     formData.delete('layout_kitchens');
 
-    // Inject coordinates
+    // Inject coordinates and turnstile
     formData.set('latitude', String(lat));
     formData.set('longitude', String(lng));
+    formData.set('cf-turnstile-response', turnstileToken);
 
     try {
       const res = await fetch('/api/rentals', {
@@ -453,6 +464,20 @@ export default function SubmitPage() {
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                 為保護您的隱私，上傳前請自行遮蔽身分證字號等敏感個資。此欄位為非必填。
               </p>
+            </div>
+          </div>
+
+          <div className="form-section">
+            <div className="form-group" style={{ display: 'flex', justifyContent: 'center' }}>
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={(token) => setTurnstileToken(token)}
+                onError={() => {
+                  setTurnstileToken('');
+                  alert('機器人驗證失敗，請重新整理頁面。');
+                }}
+                onExpire={() => setTurnstileToken('')}
+              />
             </div>
           </div>
 

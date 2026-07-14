@@ -181,7 +181,10 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 300);
+    return () => clearTimeout(timer);
   }, [city, type, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction]);
 
   const avgPrice = data.length > 0 ? Math.round(data.reduce((acc, curr) => acc + curr.price, 0) / data.length) : 0;
