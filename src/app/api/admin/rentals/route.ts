@@ -9,13 +9,7 @@ export interface Env {
 
 function verifyAuth(request: Request, env: Env | null) {
   const authHeader = request.headers.get('Authorization');
-  let expectedPassword = env?.ADMIN_PASSWORD;
-  
-  if (!expectedPassword) {
-    if (process.env.NODE_ENV === 'development') {
-      expectedPassword = process.env.ADMIN_PASSWORD;
-    }
-  }
+  const expectedPassword = env?.ADMIN_PASSWORD;
   
   if (!expectedPassword || authHeader !== `Bearer ${expectedPassword}`) {
     return false;
@@ -24,9 +18,7 @@ function verifyAuth(request: Request, env: Env | null) {
 }
 
 export async function GET(request: Request) {
-  const env = process.env.NODE_ENV === 'development' 
-    ? null 
-    : getRequestContext().env as unknown as Env;
+  const env = getRequestContext().env as unknown as Env;
 
   if (!verifyAuth(request, env)) {
     return Response.json({ success: false, error: 'Unauthorized (Invalid Password)' }, { status: 401 });
@@ -45,9 +37,7 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const env = process.env.NODE_ENV === 'development' 
-    ? null 
-    : getRequestContext().env as unknown as Env;
+  const env = getRequestContext().env as unknown as Env;
 
   if (!verifyAuth(request, env)) {
     return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -69,9 +59,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const env = process.env.NODE_ENV === 'development' 
-    ? null 
-    : getRequestContext().env as unknown as Env;
+  const env = getRequestContext().env as unknown as Env;
 
   if (!verifyAuth(request, env)) {
     return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });

@@ -24,15 +24,13 @@ export async function GET(request: Request) {
     'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
   };
 
-  const env = process.env.NODE_ENV === 'development' 
-    ? null 
-    : getRequestContext().env as unknown as Env;
+  const env = getRequestContext().env as unknown as Env;
 
   if (!env || !env.DB) {
     return NextResponse.json({ 
       total: 0, 
       data: [],
-      message: "D1 Database not bound. Run with wrangler pages dev."
+      message: "D1 Database not bound. Make sure DB is bound in Cloudflare Pages."
     });
   }
 
