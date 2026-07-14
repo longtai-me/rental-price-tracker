@@ -8,8 +8,8 @@ export interface Env {
   DB: any;
   ADMIN_PASSWORD?: string;
   REMOVE_PASSWORD?: string;
-  SUPER_ADMIN_PASSWORD?: string;
   EDIT_PASSWORD?: string;
+  DELETE_PASSWORD?: string;
   EMAIL?: any;
   ADMIN_ALERT_TO_EMAIL?: string;
   ADMIN_ALERT_FROM_EMAIL?: string;
@@ -17,14 +17,14 @@ export interface Env {
   ADMIN_REQUEST_ALERT_THRESHOLD?: string;
 }
 
-type Role = 'admin' | 'remove' | 'super' | 'edit' | null;
+type Role = 'admin' | 'remove' | 'edit' | 'delete' | null;
 
 function getAuthRole(request: Request, env: Env | null): Role {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
   const token = authHeader.substring(7);
 
-  if (env?.SUPER_ADMIN_PASSWORD && token === env.SUPER_ADMIN_PASSWORD) return 'super';
+  if (env?.DELETE_PASSWORD && token === env.DELETE_PASSWORD) return 'delete';
   if (env?.REMOVE_PASSWORD && token === env.REMOVE_PASSWORD) return 'remove';
   if (env?.EDIT_PASSWORD && token === env.EDIT_PASSWORD) return 'edit';
   if (env?.ADMIN_PASSWORD && token === env.ADMIN_PASSWORD) return 'admin';
@@ -94,22 +94,22 @@ export async function PATCH(request: Request) {
     let targetApprovedState = 0;
 
     if (action === 'approve') {
-      if (role !== 'admin' && role !== 'super') {
+      if (role !== 'admin') {
          return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to approve' }, { status: 403 });
       }
       targetApprovedState = 1;
     } else if (action === 'reject') {
-      if (role !== 'admin' && role !== 'super') {
+      if (role !== 'admin') {
          return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to reject' }, { status: 403 });
       }
       targetApprovedState = -1;
     } else if (action === 'remove') {
-      if (role !== 'remove' && role !== 'super') {
+      if (role !== 'remove') {
          return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to remove' }, { status: 403 });
       }
       targetApprovedState = -1;
     } else if (action === 'unarchive') {
-      if (role !== 'admin' && role !== 'super') {
+      if (role !== 'admin') {
          return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to unarchive' }, { status: 403 });
       }
       targetApprovedState = 0;
@@ -139,7 +139,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (role !== 'super') {
+  if (role !== 'delete') {
     return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions for hard delete' }, { status: 403 });
   }
 
@@ -187,7 +187,7 @@ export async function PUT(request: Request) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (role !== 'edit' && role !== 'super') {
+  if (role !== 'edit') {
     return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to edit' }, { status: 403 });
   }
 
