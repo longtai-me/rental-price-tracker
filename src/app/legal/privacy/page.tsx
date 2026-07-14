@@ -9,6 +9,7 @@ export default function PrivacyPolicyPage() {
       <div className="legal-content">
         <section>
           <h2>1. 隱私權保護政策的適用範圍</h2>
+          <p>
             隱私權保護政策內容，包括本網站（以下簡稱「本平台」，為一開源專案 Open Source Project）如何處理在您使用網站服務時收集到的個人識別資料。隱私權保護政策不適用於本平台以外的相關連結網站，也不適用於非本平台所委託或參與管理的人員。
           </p>
         </section>

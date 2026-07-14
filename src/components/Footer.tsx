@@ -13,6 +13,8 @@ export default function Footer() {
           <Link href="/legal/privacy" className="footer-link">隱私權政策</Link>
           <span className="separator">|</span>
           <Link href="/legal/terms" className="footer-link">服務條款與免責聲明</Link>
+          <span className="separator">|</span>
+          <a href="https://github.com/longtaijiang/rental-price-tracker" target="_blank" rel="noopener noreferrer" className="footer-link">開源專案 (GitHub)</a>
         </div>
       </div>
     </footer>
