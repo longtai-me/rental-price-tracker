@@ -67,7 +67,10 @@ export default function AdminPage() {
       setHoneypotClicks(prev => {
         const newCount = prev + 1;
         if (newCount === 3) {
-          alert('你知道什麼是蜜罐嗎？');
+          alert(`你知道什麼是蜜罐嗎？
+你真不覺得這裡很空虛嗎？
+我不是說過密碼不在前端嗎？
+但你說實話，密碼復不復雜，我真的記不起來`);
         }
         return newCount;
       });
