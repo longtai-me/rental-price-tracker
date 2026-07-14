@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { MapPin, Home, DollarSign, Loader2, X, Car, Building, Ruler, CheckCircle2, XCircle, Zap } from 'lucide-react';
+import { MapPin, Home, DollarSign, Loader2, X, Car, Building, Ruler, CheckCircle2, XCircle, Zap, AlertTriangle } from 'lucide-react';
 import MapWrapper from '@/components/MapWrapper';
 import { PriceTrendChart, TypePieChart } from '@/components/Charts';
 import './page.css';
@@ -44,6 +44,7 @@ interface Rental {
   ghostStory?: string;
   badLandlord?: boolean;
   evidenceLink?: string;
+  verificationStatus: string;
 }
 
 export default function HomePage() {
@@ -589,9 +590,14 @@ export default function HomePage() {
                           需中介費
                         </span>
                       )}
-                      {!!selectedItem.contractFile && (
+                      {selectedItem.verificationStatus === 'verified' && (
                         <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <CheckCircle2 size={14} /> 已審核
+                        </span>
+                      )}
+                      {selectedItem.verificationStatus === 'doubtful' && (
+                        <span style={{ background: 'rgba(220, 38, 38, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <AlertTriangle size={14} /> 資訊存疑
                         </span>
                       )}
                     </p>

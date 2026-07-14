@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, Edit, Trash2, Archive, ArchiveRestore, Search, MapPin, Home, DollarSign, CheckCircle2, XCircle } from 'lucide-react';
+import { Check, X, Edit, Trash2, Archive, ArchiveRestore, Search, MapPin, Home, DollarSign, CheckCircle2, XCircle, FileText } from 'lucide-react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
 import './admin.css';
 
@@ -93,13 +93,18 @@ export default function AdminPage() {
   };
 
   const executeAction = async (method: string, body: any, token: string) => {
+    const isFormData = body instanceof FormData;
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${token}`
+    };
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+    
     return fetch('/api/admin/rentals', {
       method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
+      headers,
+      body: isFormData ? body : JSON.stringify(body)
     });
   };
 
@@ -191,15 +196,23 @@ export default function AdminPage() {
     data.latitude = editLat;
     data.longitude = editLng;
     
-    const payload = { action: 'edit', id: editingRental.id, ...data };
+    
+    formData.set('id', editingRental.id);
+    formData.set('action', 'edit');
+    formData.set('latitude', String(editLat));
+    formData.set('longitude', String(editLng));
+    // Re-append parsed features to override original input values
+    formData.delete('features');
+    featuresArr.forEach(f => formData.append('features', f));
+    
     let currentToken = password;
-    let res = await executeAction('PUT', payload, currentToken);
+    let res = await executeAction('PUT', formData, currentToken);
 
     if (res.status === 403) {
       const newToken = prompt('此操作需要編輯密碼，請輸入：');
       if (!newToken) return;
       currentToken = newToken;
-      res = await executeAction('PUT', payload, currentToken);
+      res = await executeAction('PUT', formData, currentToken);
     }
 
     if (res.ok) {
@@ -287,7 +300,11 @@ export default function AdminPage() {
                   <td>NT$ {rental.price}<br/><span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{rental.area} 坪</span></td>
                   <td>
                     <div className="badge-group">
-                      {rental.ghostStory && <span className="badge badge-ghost">👻 鬼故事</span>}
+                      {rental.verificationStatus === 'verified' && <span className="badge" style={{background: '#d1fae5', color: '#059669'}}>✅ 已審核</span>}
+                      {rental.verificationStatus === 'doubtful' && <span className="badge" style={{background: '#fee2e2', color: '#b91c1c'}}>❓ 存疑</span>}
+                      {rental.verificationStatus === 'verified' && <span className="badge" style={{background: '#d1fae5', color: '#059669'}}>✅ 已審核</span>}
+                  {rental.verificationStatus === 'doubtful' && <span className="badge" style={{background: '#fee2e2', color: '#b91c1c'}}>❓ 存疑</span>}
+                  {rental.ghostStory && <span className="badge badge-ghost">👻 鬼故事</span>}
                       {rental.badLandlord && <span className="badge badge-bad-landlord">⚠️ 惡房東</span>}
                       {rental.evidenceLink && <a href={rental.evidenceLink} target="_blank" rel="noreferrer" className="badge badge-evidence">🔗 證據</a>}
                       {rental.contractFile && <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noreferrer" className="badge badge-contract">📄 契約</a>}
