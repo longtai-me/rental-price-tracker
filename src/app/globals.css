@@ -65,6 +65,8 @@ a {
   border-radius: 8px;
   outline: none;
   transition: all 0.2s ease;
+  width: 100%;
+  min-width: 0;
 }
 
 .input-field:focus {

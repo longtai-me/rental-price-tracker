@@ -199,7 +199,7 @@
   max-width: 600px;
   position: relative;
   padding: 2rem;
-  max-height: 90vh;
+  max-height: 100%;
   overflow-y: auto;
 }
 
