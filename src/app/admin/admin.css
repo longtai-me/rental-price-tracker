@@ -126,7 +126,7 @@
 
 .btn-reject {
   flex: 1;
-  background: #ef4444;
+  background: #f59e0b;
   color: white;
   border: none;
   padding: 0.6rem;
@@ -137,5 +137,76 @@
 }
 
 .btn-reject:hover {
+  background: #d97706;
+}
+
+.btn-remove {
+  flex: 1;
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-remove:hover {
+  background: #ea580c;
+}
+
+.btn-hard-delete {
+  flex: 1;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-hard-delete:hover {
   background: #dc2626;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--card-border);
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--foreground);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.65rem;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--primary);
+  border-radius: 3px;
 }
