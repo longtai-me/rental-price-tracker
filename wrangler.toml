@@ -5,4 +5,4 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB"
 database_name = "rental_db"
-database_id = "00000000-0000-0000-0000-000000000000" # Replace with actual ID after creation
+database_id = "8e38a8cf-4df9-4d62-8910-fa4efd768d95"
