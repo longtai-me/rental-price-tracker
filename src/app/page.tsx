@@ -26,6 +26,11 @@ interface Rental {
   lng: number;
   canMoveHuji: boolean;
   canSubsidize: boolean;
+  hasBalcony?: boolean;
+  hasParking?: boolean;
+  canCook?: boolean;
+  canPet?: boolean;
+  trashService?: boolean;
   utilityBilling: string;
   transportation?: string[];
   equipment?: string[];
@@ -647,6 +652,14 @@ export default function HomePage() {
                       <p style={{ color: 'var(--foreground)' }}>
                         {[
                           ...(selectedItem.features || []),
+                          selectedItem.hasElevator ? '有電梯' : null,
+                          selectedItem.hasBalcony ? '有陽台' : null,
+                          selectedItem.hasParking ? '有車位' : null,
+                          selectedItem.canCook ? '可開伙' : null,
+                          selectedItem.canPet ? '可養寵物' : null,
+                          selectedItem.trashService ? '代收垃圾' : null,
+                          selectedItem.canMoveHuji ? '可入戶籍' : null,
+                          selectedItem.canSubsidize ? '可租補' : null,
                           selectedItem.genderRestriction !== '不限' ? selectedItem.genderRestriction : null
                         ].filter(Boolean).join('、') || '無特別標註'}
                       </p>

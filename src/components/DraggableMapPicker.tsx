@@ -33,7 +33,10 @@ function RecenterMap({ lat, lng }: { lat: number; lng: number }) {
   const map = useMapEvents({});
   useEffect(() => {
     map.setView([lat, lng], map.getZoom());
-  }, [lat, lng]);
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, [lat, lng, map]);
   return null;
 }
 

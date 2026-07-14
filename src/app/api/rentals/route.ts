@@ -329,7 +329,14 @@ export async function POST(request: Request) {
     const hasParking = (body.hasParking === 'on' || body.hasParking === 'true') ? 1 : 0;
     const genderRestriction = body.genderRestriction || 'none';
     const equipments = formData.getAll('equipments').join(',') || '';
-    const features = formData.getAll('features').join(',') || '';
+    const featuresArr = formData.getAll('features').map(f => String(f));
+    if (body.hasManager === 'on' || body.hasManager === 'true') {
+      featuresArr.push('有管理員');
+    }
+    if (body.managementFee && body.managementFee.trim() !== '') {
+      featuresArr.push(`管理費:${body.managementFee}`);
+    }
+    const features = featuresArr.join(',') || '';
     const transports = formData.getAll('transports').join(',') || '';
     const hasElevator = (body.hasElevator === 'on' || body.hasElevator === 'true') ? 1 : 0;
     const canCook = (body.canCook === 'on' || body.canCook === 'true') ? 1 : 0;

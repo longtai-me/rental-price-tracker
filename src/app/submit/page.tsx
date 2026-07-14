@@ -60,12 +60,29 @@ export default function SubmitPage() {
       const query = `${selectedCity}${district}${address}`.trim();
       if (!query) return;
       setGeocodeStatus('loading');
-      try {
+
+      const fetchGeocode = async (q: string) => {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=tw`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw`,
           { headers: { 'User-Agent': 'rental-price-tracker/1.0' } }
         );
-        const data = await res.json() as any[];
+        return await res.json() as any[];
+      };
+
+      try {
+        let data = await fetchGeocode(query);
+        
+        // Fallback: If exact address fails, try stripping details like 巷,弄,號,樓 and just search the road.
+        if (!data || data.length === 0) {
+          const roadMatch = address.match(/(.+?[路街大道段])/);
+          if (roadMatch) {
+            const fallbackQuery = `${selectedCity}${district}${roadMatch[1]}`;
+            if (fallbackQuery !== query) {
+              data = await fetchGeocode(fallbackQuery);
+            }
+          }
+        }
+
         if (data && data.length > 0) {
           const newLat = parseFloat(data[0].lat);
           const newLng = parseFloat(data[0].lon);
@@ -420,14 +437,21 @@ export default function SubmitPage() {
           {/* 房屋特色與條件 */}
           <div className="form-section">
             <h3>房屋特色與條件</h3>
-            <div className="checkbox-grid">
+            <div className="checkbox-grid" style={{ marginBottom: '1rem' }}>
               <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" /> 有電梯</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" /> 有車位</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="hasManager" /> 有管理員</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="canPet" /> 可養寵物</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="canCook" /> 可開伙</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="trashService" /> 代收垃圾</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="hasBalcony" /> 有陽台</label>
               <label className="checkbox-label-custom"><input type="checkbox" name="canMoveHuji" /> 可入戶籍</label>
+            </div>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>管理費 (元/月，若無則留空)</label>
+                <input type="number" min="0" name="managementFee" placeholder="例如：500 或留空表示無/內含" className="input-field" />
+              </div>
             </div>
           </div>
 
