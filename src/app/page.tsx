@@ -37,6 +37,8 @@ interface Rental {
   startDate?: string;
   leaseTerm?: number;
   ghostStory?: string;
+  badLandlord?: boolean;
+  evidenceLink?: string;
 }
 
 export default function HomePage() {
@@ -502,6 +504,11 @@ export default function HomePage() {
                         <CheckCircle2 size={12} /> 已認證契約
                       </span>
                     )}
+                    {!!item.badLandlord && (
+                      <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                        <XCircle size={12} /> 惡房東避雷
+                      </span>
+                    )}
                     {!!item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
                     {!!item.canMoveHuji && <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>可入戶籍</span>}
                     <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#d97706', padding: '2px 8px', borderRadius: '4px' }}>
@@ -645,6 +652,27 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
+                  {selectedItem.badLandlord && (
+                    <div className="info-item" style={{ gridColumn: '1 / -1' }}>
+                      <XCircle className="info-icon" style={{ color: '#dc2626' }} />
+                      <div>
+                        <label style={{ color: '#dc2626' }}>🚨 惡房東避雷警告</label>
+                        <p style={{ color: 'var(--foreground)', marginTop: '0.25rem', fontWeight: 600 }}>
+                          此物件被標記為惡房東！
+                        </p>
+                        {selectedItem.evidenceLink && (
+                          <a 
+                            href={selectedItem.evidenceLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ display: 'inline-block', marginTop: '0.5rem', color: 'var(--primary)', textDecoration: 'underline' }}
+                          >
+                            🔗 點此查看客觀證據 (判決書/公文/新聞)
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   {selectedItem.ghostStory && (
                     <div className="info-item" style={{ gridColumn: '1 / -1' }}>
                       <Zap className="info-icon" style={{ color: '#ef4444' }} />

@@ -233,6 +233,7 @@ export async function GET(request: Request) {
       trashService: Boolean(row.trashService),
       canSubsidize: Boolean(row.canSubsidize),
       agencyFeeCharged: Boolean(row.agencyFeeCharged),
+      badLandlord: Boolean(row.badLandlord),
       electricityBillingType: row.electricityBillingType || (row.includesElectricity ? 'included' : 'taipower'),
       electricityPricePerKwh: row.electricityPricePerKwh,
       electricitySummerPricePerKwh: row.electricitySummerPricePerKwh,
@@ -344,6 +345,8 @@ export async function POST(request: Request) {
     const startDate = body.startDate || null;
     const leaseTerm = parseOptionalNumber(body.leaseTerm);
     const ghostStory = body.ghostStory || null;
+    const badLandlord = (body.badLandlord === 'on' || body.badLandlord === 'true') ? 1 : 0;
+    const evidenceLink = body.evidenceLink || null;
 
     await env.DB.batch([
       env.DB.prepare(
@@ -353,15 +356,15 @@ export async function POST(request: Request) {
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
           hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged,
-          startDate, leaseTerm, ghostStory
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?)`
+          startDate, leaseTerm, ghostStory, badLandlord, evidenceLink
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
         waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
         hasParking, genderRestriction, equipments, features, transports,
         hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged,
-        startDate, leaseTerm, ghostStory
+        startDate, leaseTerm, ghostStory, badLandlord, evidenceLink
       ),
       env.DB.prepare(
         `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`

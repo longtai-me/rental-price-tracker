@@ -484,6 +484,28 @@ export default function SubmitPage() {
             </div>
           </div>
 
+          {/* 惡房東避雷 */}
+          <div className="form-section">
+            <h3>避雷專區 (非必填)</h3>
+            <div className="form-grid">
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="checkbox-label-custom">
+                  <input type="checkbox" name="badLandlord" /> <strong>標記為惡房東</strong>
+                </label>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                  如果您確定這是惡房東，可以打勾標記，提醒其他租客避雷。
+                </p>
+              </div>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label>證據連結 (如判決書、政府公文、新聞報導)</label>
+                <input type="url" name="evidenceLink" className="input-field" placeholder="https://..." />
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                  附上客觀證據連結能大幅增加可信度，保護自己也保護他人。
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* 附件上傳 */}
           <div className="form-section">
             <h3>附件上傳 (非必填)</h3>
