@@ -360,6 +360,7 @@ export default function AdminPage() {
   };
 
   return (
+    <>
     <div className="admin-container animate-fade-in" onClickCapture={handleHoneypotInteraction}>
       <div className="admin-header">
         <h1>後台管理系統</h1>
@@ -394,6 +395,7 @@ export default function AdminPage() {
       {activeTab === 'pending' && renderRentals(pendingRentals, 'pending')}
       {activeTab === 'published' && renderRentals(publishedRentals, 'published')}
       {activeTab === 'archived' && renderRentals(archivedRentals, 'archived')}
+    </div>
 
       {editingRental && (
         <div className="modal-overlay">
@@ -455,55 +457,48 @@ export default function AdminPage() {
 
                 {/* 區塊 2: 房屋規格 */}
                 <div className="modal-section">
-                  <h3>房屋規格</h3>
+                  <h3><Home size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>房屋規格</h3>
                   <div className="form-grid">
-                    <div className="form-group"><label>型態</label><input type="text" name="type" defaultValue={editingRental.type} className="input-field" /></div>
-                    <div className="form-group"><label>格局</label><input type="text" name="layout" defaultValue={editingRental.layout} className="input-field" /></div>
-                    <div className="form-group"><label>坪數</label><input type="number" step="0.1" name="area" defaultValue={editingRental.area} className="input-field" /></div>
-                    <div className="form-group"><label>樓層</label><input type="text" name="floor" defaultValue={editingRental.floor} className="input-field" /></div>
-                    <div className="form-group"><label>屋齡</label><input type="number" name="buildingAge" defaultValue={editingRental.buildingAge} className="input-field" /></div>
+                    <div className="form-group">
+                      <label>房屋類型</label>
+                      <select name="type" defaultValue={editingRental.type} className="input-field">
+                        <option value="獨立套房">獨立套房</option>
+                        <option value="分租套房">分租套房</option>
+                        <option value="雅房">雅房</option>
+                        <option value="整層住家">整層住家</option>
+                        <option value="車位">車位</option>
+                        <option value="其他">其他</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>格局</label>
+                      <input type="text" name="layout" defaultValue={editingRental.layout} className="input-field" placeholder="例: 1房1廳1衛" />
+                    </div>
+                    <div className="form-group">
+                      <label>坪數</label>
+                      <input type="number" step="0.1" name="area" defaultValue={editingRental.area} className="input-field" />
+                    </div>
+                    <div className="form-group">
+                      <label>樓層</label>
+                      <input type="text" name="floor" defaultValue={editingRental.floor} className="input-field" placeholder="例: 4F/5F" />
+                    </div>
+                    <div className="form-group">
+                      <label>屋齡 (年)</label>
+                      <input type="number" name="buildingAge" defaultValue={editingRental.buildingAge} className="input-field" />
+                    </div>
                   </div>
                 </div>
 
                 {/* 區塊 3: 租金與水電 */}
                 <div className="modal-section">
-                  <h3>租金與水電</h3>
+                  <h3><DollarSign size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>租金與水電</h3>
                   <div className="form-grid">
-                    <div className="form-group"><label>租金/月</label><input type="number" name="price" defaultValue={editingRental.price} className="input-field" /></div>
+                    <div className="form-group">
+                      <label>月租金</label>
+                      <input type="number" name="price" defaultValue={editingRental.price} className="input-field" />
+                    </div>
                     <div className="form-group">
                       <label>管理費</label>
-                      <input type="number" name="managementFee" defaultValue={editingRental.features?.find((f: string) => f.startsWith('管理費:'))?.replace('管理費:', '') || ''} className="input-field" placeholder="留空表示無" />
-                    </div>
-                    <div className="form-group"><label>起租日</label><input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" /></div>
-                    
-                    <div className="form-group">
-                      <label>電費收費標準</label>
-                      <select name="electricityBillingType" defaultValue={editingRental.electricityBillingType || (editingRental.includesElectricity ? 'included' : 'taipower')} className="input-field">
-                        <option value="included">包含在房租中</option><option value="taipower">依照台電價格</option><option value="custom">其他標準</option>
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label>水費收費標準</label>
-                      <select name="waterBillingType" defaultValue={editingRental.waterBillingType || (editingRental.includesWater ? 'included' : 'taiwater')} className="input-field">
-                        <option value="included">包含在房租中</option><option value="taiwater">依照台水價格</option><option value="custom">其他標準</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 區塊 4: 房屋條件與設備 */}
-                <div className="modal-section">
-                  <h3>條件與設備</h3>
-                  <div className="checkbox-grid" style={{marginBottom: '1rem'}}>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" defaultChecked={editingRental.hasElevator} /> 有電梯</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" defaultChecked={editingRental.hasParking} /> 有車位</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="hasManager" defaultChecked={editingRental.features?.includes('有管理員')} /> 有管理員</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="canPet" defaultChecked={editingRental.canPet} /> 可養寵物</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="canCook" defaultChecked={editingRental.canCook} /> 可開伙</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="trashService" defaultChecked={editingRental.trashService} /> 代收垃圾</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="hasBalcony" defaultChecked={editingRental.hasBalcony} /> 有陽台</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="canMoveHuji" defaultChecked={editingRental.canMoveHuji} /> 可入戶籍</label>
-                    <label className="checkbox-label-custom"><input type="checkbox" name="canSubsidize" defaultChecked={editingRental.canSubsidize} /> 可申請租補</label>
                     <label className="checkbox-label-custom"><input type="checkbox" name="agencyFeeCharged" defaultChecked={editingRental.agencyFeeCharged} /> 需仲介費</label>
                   </div>
                   <label style={{marginBottom: '0.5rem', display: 'block', fontSize: '0.9rem'}}>設備</label>
