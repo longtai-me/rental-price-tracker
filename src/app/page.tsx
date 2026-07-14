@@ -564,7 +564,18 @@ export default function HomePage() {
                   <Car className="info-icon" />
                   <div>
                     <label>車位/管理/電梯</label>
-                    <p>{selectedItem.parking} | {selectedItem.hasManagement ? '有管理' : '無管理'} | {selectedItem.hasElevator ? '有電梯' : '無電梯'}</p>
+                    <p>
+                      {selectedItem.parking || '無車位'} |{' '}
+                      {(() => {
+                        const hasManager = selectedItem.features?.includes('有管理員') || selectedItem.hasManagement;
+                        const mgmtFee = selectedItem.features?.find(f => f.startsWith('管理費:'));
+                        if (hasManager && mgmtFee) return `有管理 (${mgmtFee.replace('管理費:', 'NT$')})`;
+                        if (hasManager) return '有管理';
+                        if (mgmtFee) return mgmtFee.replace('管理費:', '管理費 NT$');
+                        return '無管理';
+                      })()} |{' '}
+                      {selectedItem.hasElevator ? '有電梯' : '無電梯'}
+                    </p>
                   </div>
                 </div>
                 <div className="info-item" style={{ gridColumn: '1 / -1' }}>
@@ -651,7 +662,7 @@ export default function HomePage() {
                       <label>房屋特色與規定</label>
                       <p style={{ color: 'var(--foreground)' }}>
                         {[
-                          ...(selectedItem.features || []),
+                          ...(selectedItem.features?.filter(f => f !== '有管理員' && !f.startsWith('管理費:')) || []),
                           selectedItem.hasElevator ? '有電梯' : null,
                           selectedItem.hasBalcony ? '有陽台' : null,
                           selectedItem.hasParking ? '有車位' : null,

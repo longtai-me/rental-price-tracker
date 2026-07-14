@@ -496,15 +496,18 @@ export default function SubmitPage() {
                   <option value="3">3年以上</option>
                 </select>
               </div>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label>租屋鬼故事 (非必填)</label>
-                <textarea 
-                  name="ghostStory" 
-                  className="input-field" 
-                  placeholder="遇到什麼不合理的事情或是恐怖經歷嗎？分享一下吧！" 
-                  rows={4}
-                />
-              </div>
+            </div>
+          </div>
+
+          {/* 附件上傳 */}
+          <div className="form-section">
+            <h3>附件上傳 (非必填)</h3>
+            <div className="form-group">
+              <label>租賃契約書</label>
+              <input type="file" name="contractFile" accept=".pdf,image/*" className="input-field" style={{ padding: '0.5rem' }} />
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                為保護您的隱私，上傳前請自行遮蔽身分證字號等敏感個資。此欄位為非必填。
+              </p>
             </div>
           </div>
 
@@ -512,6 +515,15 @@ export default function SubmitPage() {
           <div className="form-section">
             <h3>避雷專區 (非必填)</h3>
             <div className="form-grid">
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label>租屋鬼故事</label>
+                <textarea 
+                  name="ghostStory" 
+                  className="input-field" 
+                  placeholder="遇到什麼不合理的事情或是恐怖經歷嗎？分享一下吧！" 
+                  rows={4}
+                />
+              </div>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="checkbox-label-custom">
                   <input type="checkbox" name="badLandlord" /> <strong>標記為惡房東</strong>
@@ -527,18 +539,6 @@ export default function SubmitPage() {
                   附上客觀證據連結能大幅增加可信度，保護自己也保護他人。
                 </p>
               </div>
-            </div>
-          </div>
-
-          {/* 附件上傳 */}
-          <div className="form-section">
-            <h3>附件上傳 (非必填)</h3>
-            <div className="form-group">
-              <label>租賃契約書</label>
-              <input type="file" name="contractFile" accept=".pdf,image/*" className="input-field" style={{ padding: '0.5rem' }} />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                為保護您的隱私，上傳前請自行遮蔽身分證字號等敏感個資。此欄位為非必填。
-              </p>
             </div>
           </div>
 
