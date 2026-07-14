@@ -492,7 +492,7 @@ export default function HomePage() {
                       <span className="price">NT$ {item.price.toLocaleString()}</span>
                       {!!item.agencyFeeCharged && (
                         <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
-                          需收仲介費
+                          需中介費
                         </span>
                       )}
                     </div>
@@ -586,12 +586,12 @@ export default function HomePage() {
                       <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{getRoleLabel(selectedItem.posterRole)}</span>
                       {!!selectedItem.agencyFeeCharged && (
                         <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>
-                          需收取仲介費
+                          需中介費
                         </span>
                       )}
                       {!!selectedItem.contractFile && (
                         <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <CheckCircle2 size={14} /> 經過房屋租賃契約書審核
+                          <CheckCircle2 size={14} /> 已審核
                         </span>
                       )}
                     </p>
