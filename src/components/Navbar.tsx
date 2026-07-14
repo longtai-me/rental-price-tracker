@@ -12,6 +12,8 @@ export default function Navbar() {
         </Link>
         <div className="nav-links">
           <Link href="/">首頁</Link>
+          <Link href="/submit">我要刊登</Link>
+          <Link href="/admin">管理員</Link>
           <a href="#" className="disabled-link">關於系統</a>
         </div>
       </div>
