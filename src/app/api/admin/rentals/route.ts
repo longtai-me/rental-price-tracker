@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
-import { recordAdminRequest } from '@/lib/adminAccessLog';
+import { recordAdminRequest, getClientIp } from '@/lib/adminAccessLog';
 
 export const runtime = 'edge';
 
@@ -118,6 +118,12 @@ export async function PATCH(request: Request) {
     }
 
     await env.DB.prepare(`UPDATE rentals SET approved = ? WHERE id = ?`).bind(targetApprovedState, id).run();
+
+    const ip = getClientIp(request);
+    await env.DB.prepare(
+      `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`
+    ).bind(crypto.randomUUID(), id, action, role, ip).run();
+
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
@@ -145,7 +151,27 @@ export async function DELETE(request: Request) {
     const { id } = await request.json() as any;
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
 
-    await env.DB.prepare(`DELETE FROM rentals WHERE id = ?`).bind(id).run();
+    await env.DB.batch([
+      env.DB.prepare(`
+        INSERT INTO deleted_rentals (
+          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
+          waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
+          hasParking, genderRestriction, equipments, features, transports,
+          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged, createdAt
+        )
+        SELECT 
+          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
+          waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
+          hasParking, genderRestriction, equipments, features, transports,
+          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged, createdAt
+        FROM rentals WHERE id = ?
+      `).bind(id),
+      env.DB.prepare(`DELETE FROM rentals WHERE id = ?`).bind(id),
+      env.DB.prepare(`INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`).bind(crypto.randomUUID(), id, 'delete', role, getClientIp(request))
+    ]);
+
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
@@ -228,9 +254,15 @@ export async function PUT(request: Request) {
 
     valuesToBind.push(id);
 
-    await env.DB.prepare(
-      `UPDATE rentals SET ${fieldsToUpdate.join(', ')} WHERE id = ?`
-    ).bind(...valuesToBind).run();
+    const ip = getClientIp(request);
+    await env.DB.batch([
+      env.DB.prepare(
+        `UPDATE rentals SET ${fieldsToUpdate.join(', ')} WHERE id = ?`
+      ).bind(...valuesToBind),
+      env.DB.prepare(
+        `INSERT INTO audit_logs (id, rentalId, action, role, ip, details) VALUES (?, ?, ?, ?, ?, ?)`
+      ).bind(crypto.randomUUID(), id, 'edit', role, ip, JSON.stringify(updateFields))
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

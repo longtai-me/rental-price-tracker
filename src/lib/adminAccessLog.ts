@@ -19,15 +19,21 @@ export interface AdminLogEnv {
 const ALERT_WINDOW_HOURS = 1;
 const DEFAULT_ALERT_THRESHOLD = 10;
 
-function getClientIp(request: Request): string {
+export function getClientIp(request: Request): string {
   const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) return forwardedFor.split(',')[0].trim();
-
-  return (
+  let ip = forwardedFor ? forwardedFor.split(',')[0].trim() : (
     request.headers.get('cf-connecting-ip') ||
     request.headers.get('x-real-ip') ||
     'unknown'
   );
+
+  // 若使用者是透過 IPv6 連線，且 Cloudflare 有開啟 Pseudo IPv4 功能，這裡就能抓到 IPv4
+  const pseudoIpv4 = request.headers.get('cf-pseudo-ipv4');
+  if (pseudoIpv4 && pseudoIpv4 !== ip) {
+    ip = `${ip} (IPv4: ${pseudoIpv4})`;
+  }
+
+  return ip;
 }
 
 async function ensureAdminAccessLogTable(env: AdminLogEnv) {

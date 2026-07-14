@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { getClientIp } from '@/lib/adminAccessLog';
 
 export const runtime = 'edge';
 
@@ -315,21 +316,26 @@ export async function POST(request: Request) {
     const posterRole = body.posterRole || 'landlord';
     const agencyFeeCharged = (body.agencyFeeCharged === 'on' || body.agencyFeeCharged === 'true') ? 1 : 0;
 
-    await env.DB.prepare(
-      `INSERT INTO rentals (
-        id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+    await env.DB.batch([
+      env.DB.prepare(
+        `INSERT INTO rentals (
+          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
+          waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
+          hasParking, genderRestriction, equipments, features, transports,
+          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
+      ).bind(
+        newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
         waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
         hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
-    ).bind(
-      newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
-      includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
-      waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
-      hasParking, genderRestriction, equipments, features, transports,
-      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged
-    ).run();
+        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged
+      ),
+      env.DB.prepare(
+        `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`
+      ).bind(crypto.randomUUID(), newId, 'create', 'user', getClientIp(request))
+    ]);
 
     return NextResponse.json({ success: true, message: '提交成功，請等候管理員審核。' });
   } catch (err: any) {
