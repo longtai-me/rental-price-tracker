@@ -114,9 +114,24 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const env = getRequestContext().env as Env;
   try {
-    const body = await request.json() as any;
+    const formData = await request.formData();
     const newId = crypto.randomUUID();
     
+    const body = Object.fromEntries(formData.entries()) as any;
+    
+    // File upload
+    let contractFilename = null;
+    const contractFile = formData.get('contractFile') as File | null;
+    if (contractFile && contractFile.size > 0) {
+      const ext = contractFile.name.split('.').pop();
+      contractFilename = `${newId}.${ext}`;
+      const arrayBuffer = await contractFile.arrayBuffer();
+      // @ts-ignore
+      await env.R2_CONTRACTS.put(contractFilename, arrayBuffer, {
+        httpMetadata: { contentType: contractFile.type }
+      });
+    }
+
     // Fallbacks and safe parsing
     const city = body.city || '';
     const district = body.district || '';
@@ -130,31 +145,30 @@ export async function POST(request: Request) {
     const pricePerPyeong = area > 0 ? Math.round(price / area) : 0;
     const latitude = parseFloat(body.latitude) || 25.033;
     const longitude = parseFloat(body.longitude) || 121.564;
-    const includesWater = body.includesWater ? 1 : 0;
-    const includesElectricity = body.includesElectricity ? 1 : 0;
-    const hasParking = body.hasParking ? 1 : 0;
+    const includesWater = (body.includesWater === 'on' || body.includesWater === 'true') ? 1 : 0;
+    const includesElectricity = (body.includesElectricity === 'on' || body.includesElectricity === 'true') ? 1 : 0;
+    const hasParking = (body.hasParking === 'on' || body.hasParking === 'true') ? 1 : 0;
     const genderRestriction = body.genderRestriction || 'none';
-    const equipments = Array.isArray(body.equipments) ? body.equipments.join(',') : '';
-    const features = Array.isArray(body.features) ? body.features.join(',') : '';
-    const transports = Array.isArray(body.transports) ? body.transports.join(',') : '';
-    const hasElevator = body.hasElevator ? 1 : 0;
-    const canCook = body.canCook ? 1 : 0;
-    const hasBalcony = body.hasBalcony ? 1 : 0;
-    const canMoveHuji = body.canMoveHuji ? 1 : 0;
-    const canPet = body.canPet ? 1 : 0;
-    const trashService = body.trashService ? 1 : 0;
-    // approved defaults to 0
+    const equipments = body.equipments || '';
+    const features = body.features || '';
+    const transports = body.transports || '';
+    const hasElevator = (body.hasElevator === 'on' || body.hasElevator === 'true') ? 1 : 0;
+    const canCook = (body.canCook === 'on' || body.canCook === 'true') ? 1 : 0;
+    const hasBalcony = (body.hasBalcony === 'on' || body.hasBalcony === 'true') ? 1 : 0;
+    const canMoveHuji = (body.canMoveHuji === 'on' || body.canMoveHuji === 'true') ? 1 : 0;
+    const canPet = (body.canPet === 'on' || body.canPet === 'true') ? 1 : 0;
+    const trashService = (body.trashService === 'on' || body.trashService === 'true') ? 1 : 0;
 
     await env.DB.prepare(
       `INSERT INTO rentals (
         id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, approved
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`
+        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, approved, contractFile
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`
     ).bind(
       newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
       includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService
+      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, contractFilename
     ).run();
 
     return Response.json({ success: true, message: '提交成功，請等候管理員審核。' });

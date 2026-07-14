@@ -28,6 +28,7 @@ CREATE TABLE rentals (
   canPet BOOLEAN NOT NULL,
   trashService BOOLEAN NOT NULL,
   approved BOOLEAN DEFAULT 0,
+  contractFile TEXT,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

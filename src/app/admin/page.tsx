@@ -122,6 +122,13 @@ export default function AdminPage() {
                 <p><span>格局:</span> {rental.layout}</p>
                 <p><span>坪數:</span> {rental.area} 坪</p>
                 <p><span>樓層:</span> {rental.floor}</p>
+                {rental.contractFile && (
+                  <p>
+                    <a href={`/api/contracts/${rental.contractFile}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
+                      🔗 查看契約書附件
+                    </a>
+                  </p>
+                )}
               </div>
               <div className="rental-date">
                 提交時間: {new Date(rental.createdAt).toLocaleString()}

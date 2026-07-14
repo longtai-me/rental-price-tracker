@@ -12,30 +12,11 @@ export default function SubmitPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Process booleans and numbers
-    const processedData = {
-      ...data,
-      area: parseFloat(data.area as string),
-      price: parseInt(data.price as string),
-      buildingAge: parseInt(data.buildingAge as string),
-      includesWater: data.includesWater === 'on',
-      includesElectricity: data.includesElectricity === 'on',
-      hasParking: data.hasParking === 'on',
-      hasElevator: data.hasElevator === 'on',
-      canCook: data.canCook === 'on',
-      hasBalcony: data.hasBalcony === 'on',
-      canMoveHuji: data.canMoveHuji === 'on',
-      canPet: data.canPet === 'on',
-      trashService: data.trashService === 'on',
-    };
 
     try {
       const res = await fetch('/api/rentals', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(processedData)
+        body: formData
       });
       
       if (res.ok) {
@@ -171,6 +152,18 @@ export default function SubmitPage() {
               <label className="checkbox-label-custom">
                 <input type="checkbox" name="trashService" /> 代收垃圾
               </label>
+            </div>
+          </div>
+
+          {/* 附件上傳 */}
+          <div className="form-section">
+            <h3>附件上傳 (非必填)</h3>
+            <div className="form-group">
+              <label>租賃契約書</label>
+              <input type="file" name="contractFile" accept=".pdf,image/*" className="input-field" style={{ padding: '0.5rem' }} />
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                為保護您的隱私，上傳前請自行遮蔽身分證字號等敏感個資。此欄位為非必填。
+              </p>
             </div>
           </div>
 
