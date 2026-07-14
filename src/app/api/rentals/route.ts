@@ -354,6 +354,7 @@ export async function POST(request: Request) {
     const ghostStory = body.ghostStory || null;
     const badLandlord = (body.badLandlord === 'on' || body.badLandlord === 'true') ? 1 : 0;
     const evidenceLink = body.evidenceLink || null;
+    const contactEmail = body.contactEmail || null;
 
     await env.DB.batch([
       env.DB.prepare(
@@ -363,15 +364,15 @@ export async function POST(request: Request) {
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
           hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged,
-          startDate, leaseTerm, ghostStory, badLandlord, evidenceLink
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)`
+          startDate, leaseTerm, ghostStory, badLandlord, evidenceLink, contactEmail
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
         waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
         hasParking, genderRestriction, equipments, features, transports,
         hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged,
-        startDate, leaseTerm, ghostStory, badLandlord, evidenceLink
+        startDate, leaseTerm, ghostStory, badLandlord, evidenceLink, contactEmail
       ),
       env.DB.prepare(
         `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`
