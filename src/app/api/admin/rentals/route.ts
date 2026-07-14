@@ -9,8 +9,13 @@ export interface Env {
 
 function verifyAuth(request: Request, env: Env | null) {
   const authHeader = request.headers.get('Authorization');
-  // Use env.ADMIN_PASSWORD from Cloudflare bindings, fallback to process.env for local dev
-  const expectedPassword = env?.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
+  let expectedPassword = env?.ADMIN_PASSWORD;
+  
+  if (!expectedPassword) {
+    if (process.env.NODE_ENV === 'development') {
+      expectedPassword = process.env.ADMIN_PASSWORD;
+    }
+  }
   
   if (!expectedPassword || authHeader !== `Bearer ${expectedPassword}`) {
     return false;
