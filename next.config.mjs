@@ -5,7 +5,7 @@ const cspHeader = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' blob: data: https://*.basemaps.cartocdn.com;
+  img-src 'self' blob: data: https://*.basemaps.cartocdn.com https://unpkg.com;
   connect-src 'self' https://nominatim.openstreetmap.org;
   frame-ancestors 'none';
   require-trusted-types-for 'script';

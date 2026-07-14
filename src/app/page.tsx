@@ -515,6 +515,11 @@ export default function HomePage() {
                         <XCircle size={12} /> 惡房東避雷
                       </span>
                     )}
+                    {!!item.ghostStory && (
+                      <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                        <Zap size={12} /> 靈異事件
+                      </span>
+                    )}
                     {!!item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
                     {!!item.canMoveHuji && <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>可入戶籍</span>}
                     <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#d97706', padding: '2px 8px', borderRadius: '4px' }}>

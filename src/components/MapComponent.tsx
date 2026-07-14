@@ -26,6 +26,22 @@ interface MapProps {
   onMarkerClick: (item: any) => void;
 }
 
+const maskAddress = (address: string) => {
+  if (!address) return '';
+  const lastIndex = Math.max(
+    address.lastIndexOf('路'),
+    address.lastIndexOf('街'),
+    address.lastIndexOf('道'),
+    address.lastIndexOf('段'),
+    address.lastIndexOf('巷'),
+    address.lastIndexOf('弄')
+  );
+  if (lastIndex !== -1) {
+    return address.substring(0, lastIndex + 1);
+  }
+  return address.replace(/\d+號.*/, '');
+};
+
 export default function MapComponent({ data, onMarkerClick }: MapProps) {
   // Center on Taipei by default
   const defaultCenter: [number, number] = [25.0330, 121.5654];
@@ -50,7 +66,7 @@ export default function MapComponent({ data, onMarkerClick }: MapProps) {
           >
             <Popup>
               <div style={{ fontSize: '0.9rem', color: '#1e293b' }}>
-                <strong style={{ fontSize: '1rem' }}>{item.address}</strong><br/>
+                <strong style={{ fontSize: '1rem' }}>{maskAddress(item.address)}</strong><br/>
                 租金: <strong>NT$ {item.price.toLocaleString()}</strong><br/>
                 {item.type} | {item.layout} | {item.area} 坪
               </div>
