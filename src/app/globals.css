@@ -13,10 +13,57 @@
   --warning: #f59e0b;
 }
 
-* {
+@import "normalize.css";
+
+/* Modern CSS Reset for Safari & Cross-Browser Consistency */
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+* {
   margin: 0;
   padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix iOS Safari zoom issue on input focus */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Fix iOS Safari default input shadow and styles */
+input[type="text"], input[type="email"], input[type="number"], input[type="url"], input[type="tel"], input[type="password"], textarea, select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Ensure checkboxes have primary accent color on Safari/Modern Browsers */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: var(--primary);
+  transform: translateY(1px); /* slight alignment fix */
+}
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
 }
 
 body {

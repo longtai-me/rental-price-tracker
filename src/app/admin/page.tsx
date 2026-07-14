@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, Edit, Trash2, Archive, ArchiveRestore, Search, MapPin } from 'lucide-react';
+import { Check, X, Edit, Trash2, Archive, ArchiveRestore, Search, MapPin, Home, DollarSign, CheckCircle2, XCircle } from 'lucide-react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
 import './admin.css';
 
@@ -499,6 +499,38 @@ export default function AdminPage() {
                     </div>
                     <div className="form-group">
                       <label>管理費</label>
+                      <input type="number" name="managementFee" defaultValue={editingRental.features?.find((f: string) => f.startsWith('管理費:'))?.replace('管理費:', '') || ''} className="input-field" placeholder="留空表示無" />
+                    </div>
+                    <div className="form-group"><label>起租日</label><input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" /></div>
+                    
+                    <div className="form-group">
+                      <label>電費收費標準</label>
+                      <select name="electricityBillingType" defaultValue={editingRental.electricityBillingType || (editingRental.includesElectricity ? 'included' : 'taipower')} className="input-field">
+                        <option value="included">包含在房租中</option><option value="taipower">依照台電價格</option><option value="custom">其他標準</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>水費收費標準</label>
+                      <select name="waterBillingType" defaultValue={editingRental.waterBillingType || (editingRental.includesWater ? 'included' : 'taiwater')} className="input-field">
+                        <option value="included">包含在房租中</option><option value="taiwater">依照台水價格</option><option value="custom">其他標準</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 區塊 4: 房屋條件與設備 */}
+                <div className="modal-section">
+                  <h3><CheckCircle2 size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>條件與設備</h3>
+                  <div className="checkbox-grid" style={{marginBottom: '1rem'}}>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" defaultChecked={editingRental.hasElevator} /> 有電梯</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" defaultChecked={editingRental.hasParking} /> 有車位</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="hasManager" defaultChecked={editingRental.features?.includes('有管理員')} /> 有管理員</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="canPet" defaultChecked={editingRental.canPet} /> 可養寵物</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="canCook" defaultChecked={editingRental.canCook} /> 可開伙</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="trashService" defaultChecked={editingRental.trashService} /> 代收垃圾</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="hasBalcony" defaultChecked={editingRental.hasBalcony} /> 有陽台</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="canMoveHuji" defaultChecked={editingRental.canMoveHuji} /> 可入戶籍</label>
+                    <label className="checkbox-label-custom"><input type="checkbox" name="canSubsidize" defaultChecked={editingRental.canSubsidize} /> 可申請租補</label>
                     <label className="checkbox-label-custom"><input type="checkbox" name="agencyFeeCharged" defaultChecked={editingRental.agencyFeeCharged} /> 需仲介費</label>
                   </div>
                   <label style={{marginBottom: '0.5rem', display: 'block', fontSize: '0.9rem'}}>設備</label>
@@ -519,9 +551,9 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* 區塊 5: 管理員註記 (鬼故事/惡房東) */}
-                <div className="modal-section" style={{ borderLeft: '4px solid #ef4444' }}>
-                  <h3 style={{ color: '#ef4444' }}>管理員註記 / 特殊事件</h3>
+                {/* 區塊 5: 避雷與特殊 */}
+                <div className="modal-section" style={{ borderLeft: '4px solid #ef4444', marginBottom: 0 }}>
+                  <h3 style={{ color: '#ef4444' }}><XCircle size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>避雷專區 (非必填)</h3>
                   <div className="form-grid">
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
                       <label className="checkbox-label-custom" style={{ color: '#ef4444', fontWeight: 'bold' }}>
@@ -529,12 +561,12 @@ export default function AdminPage() {
                       </label>
                     </div>
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
-                      <label>租屋鬼故事</label>
-                      <textarea name="ghostStory" defaultValue={editingRental.ghostStory} className="input-field" rows={3} />
+                      <label>附件上傳 (判決書、政府公文、新聞等)</label>
+                      <input type="url" name="evidenceLink" defaultValue={editingRental.evidenceLink} className="input-field" placeholder="請貼上網址連結" />
                     </div>
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
-                      <label>證據連結 (判決書、政府公文、新聞等)</label>
-                      <input type="url" name="evidenceLink" defaultValue={editingRental.evidenceLink} className="input-field" />
+                      <label>租屋鬼故事</label>
+                      <textarea name="ghostStory" defaultValue={editingRental.ghostStory} className="input-field" rows={3} />
                     </div>
                   </div>
                 </div>
@@ -549,7 +581,6 @@ export default function AdminPage() {
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }
