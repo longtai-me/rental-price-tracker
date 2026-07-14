@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 租屋實價登錄 Tracker
+
+透明化的台灣租屋實價登錄查詢與刊登系統。使用者可以提交實際租屋資訊，管理員審核後公開於地圖、列表與行情分析介面。
+
+GitHub: [longtai-me/rental-price-tracker](https://github.com/longtai-me/rental-price-tracker)
+
+## Features
+
+- 租屋地圖查詢、價格篩選、坪數/房數/設備/交通條件篩選
+- 租屋資訊提交與管理員審核流程
+- 水電收費標準紀錄：含房租、台水台電、其他一般/夏季收費
+- 租賃契約附件上傳至 Cloudflare R2
+- Cloudflare D1 儲存租屋資料與隱藏的後台 access log
+- `/admin` 開啟與後台 API 請求會記錄 IP，達門檻時可透過 webhook 通知開發者
+
+## Tech Stack
+
+- Next.js 14 App Router
+- React 18
+- Cloudflare Pages / `@cloudflare/next-on-pages`
+- Cloudflare D1
+- Cloudflare R2
+- Leaflet / React Leaflet
+- Recharts
 
 ## Getting Started
 
-First, run the development server:
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Cloudflare Setup
+
+`wrangler.toml` expects:
+
+- D1 binding: `DB`
+- R2 binding: `R2_CONTRACTS`
+
+For a new database:
+
+```bash
+wrangler d1 execute rental_db --file=schema.sql
+```
+
+For an existing database, apply the migration:
+
+```bash
+wrangler d1 execute rental_db --file=migrations/0001_utilities_and_admin_access_logs.sql
+```
+
+## Environment Variables
+
+Set secrets in Cloudflare Pages, not in committed files.
+
+| Variable | Purpose |
+| --- | --- |
+| `ADMIN_PASSWORD` | Approve/reject/unarchive listings |
+| `REMOVE_PASSWORD` | Remove published listings |
+| `EDIT_PASSWORD` | Edit listing data |
+| `SUPER_ADMIN_PASSWORD` | Full admin permissions, including hard delete |
+| `DEVELOPER_WEBHOOK_URL` | Optional webhook for admin request threshold alerts |
+| `ADMIN_REQUEST_ALERT_THRESHOLD` | Optional threshold, defaults to `10` requests per IP per hour |
+
+## Admin Access Logs
+
+Opening `/admin` records a hidden D1 row in `admin_access_logs`. Admin API calls are recorded too. These logs are not exposed in the UI or public API. When the same IP reaches the configured request threshold within one hour, the app sends a JSON alert to `DEVELOPER_WEBHOOK_URL` if configured.
+
+## Sensitive Information Check
+
+The repository was scanned for common secret markers (`PASSWORD`, `TOKEN`, `KEY`, `SECRET`, private key headers, mail/API strings). No hard-coded credentials were found.
+
+Notes:
+
+- `.env*` and `*.pem` are ignored by `.gitignore`.
+- `wrangler.toml` contains Cloudflare binding names, a D1 database id, and an R2 bucket name. These are infrastructure identifiers, not secret credentials.
+- Uploaded contracts are stored in R2 and served only through the contract route.
+
+Before publishing changes, run another scan:
+
+```bash
+rg -n "SECRET|PASSWORD|TOKEN|KEY|BEGIN|PRIVATE" -g '!node_modules' -g '!package-lock.json'
+```
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run lint
+npm run pages:build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Security
 
-## Learn More
+Please report vulnerabilities using the process in [SECURITY.md](SECURITY.md). Do not open public issues for sensitive reports.
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT. See [LICENSE](LICENSE).
