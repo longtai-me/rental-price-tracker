@@ -455,6 +455,35 @@ export default function SubmitPage() {
             </div>
           </div>
 
+          {/* 租期與故事 */}
+          <div className="form-section">
+            <h3>租期與故事</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>起租日 <span style={{color: '#ef4444'}}>*</span></label>
+                <input required type="date" name="startDate" className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>租屋期限 <span style={{color: '#ef4444'}}>*</span></label>
+                <select required name="leaseTerm" className="input-field" defaultValue="1">
+                  <option value="0.5">半年 (0.5年)</option>
+                  <option value="1">1年</option>
+                  <option value="2">2年</option>
+                  <option value="3">3年以上</option>
+                </select>
+              </div>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label>租屋鬼故事 (非必填)</label>
+                <textarea 
+                  name="ghostStory" 
+                  className="input-field" 
+                  placeholder="遇到什麼不合理的事情或是恐怖經歷嗎？分享一下吧！" 
+                  rows={4}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* 附件上傳 */}
           <div className="form-section">
             <h3>附件上傳 (非必填)</h3>

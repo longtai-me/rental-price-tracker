@@ -211,7 +211,7 @@ export async function PUT(request: Request) {
       'waterBillingType', 'waterPricePerUnit', 'waterSummerPricePerUnit',
       'equipments', 'features', 'transports', 'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
       'canPet', 'trashService', 'canSubsidize', 'posterRole', 'agencyFeeCharged',
-      'latitude', 'longitude'
+      'latitude', 'longitude', 'startDate', 'leaseTerm', 'ghostStory'
     ];
 
     if (updateFields.pricePerPing !== undefined) {

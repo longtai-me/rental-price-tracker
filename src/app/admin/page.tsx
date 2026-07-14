@@ -10,6 +10,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'pending' | 'published' | 'archived'>('pending');
   const [editingRental, setEditingRental] = useState<any | null>(null);
+  const [isHoneypot, setIsHoneypot] = useState(false);
+  const [honeypotClicks, setHoneypotClicks] = useState(0);
 
   useEffect(() => {
     fetch('/api/admin/access-log', {
@@ -45,8 +47,31 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (password === 'admin') {
+      fetch('/api/admin/access-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ honeypot: true })
+      }).catch(() => {});
+      setIsAuthenticated(true);
+      setIsHoneypot(true);
+      setRentals([]); // Show empty list to confuse the attacker
+      return;
+    }
     setIsAuthenticated(true);
     fetchRentals(password);
+  };
+
+  const handleHoneypotInteraction = () => {
+    if (isHoneypot) {
+      setHoneypotClicks(prev => {
+        const newCount = prev + 1;
+        if (newCount === 3) {
+          alert('你知道什麼是蜜罐嗎？');
+        }
+        return newCount;
+      });
+    }
   };
 
   const executeAction = async (method: string, body: any, token: string) => {
@@ -182,6 +207,8 @@ export default function AdminPage() {
                 <p><span>格局:</span> {rental.layout}</p>
                 <p><span>坪數:</span> {rental.area} 坪</p>
                 <p><span>樓層:</span> {rental.floor}</p>
+                <p><span>租期:</span> {rental.startDate ? `${rental.startDate} 起租` : ''} {rental.leaseTerm ? `${rental.leaseTerm} 年` : ''}</p>
+                {rental.ghostStory && <p style={{color: '#ef4444', fontStyle: 'italic', marginTop: '0.5rem'}}>👻 鬼故事: {rental.ghostStory}</p>}
                 {rental.contractFile && (
                   <p>
                     <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
@@ -234,7 +261,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="admin-container animate-fade-in">
+    <div className="admin-container animate-fade-in" onClickCapture={handleHoneypotInteraction}>
       <div className="admin-header">
         <h1>後台管理系統</h1>
         <button 
@@ -329,6 +356,29 @@ export default function AdminPage() {
               <div className="form-group">
                 <label>租金</label>
                 <input type="number" name="price" defaultValue={editingRental.price} className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>起租日</label>
+                <input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" />
+              </div>
+              <div className="form-group">
+                <label>租屋期限 (年)</label>
+                <select name="leaseTerm" defaultValue={editingRental.leaseTerm} className="input-field">
+                  <option value="">(未設定)</option>
+                  <option value="0.5">半年 (0.5年)</option>
+                  <option value="1">1年</option>
+                  <option value="2">2年</option>
+                  <option value="3">3年以上</option>
+                </select>
+              </div>
+              <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                <label>租屋鬼故事</label>
+                <textarea 
+                  name="ghostStory" 
+                  defaultValue={editingRental.ghostStory} 
+                  className="input-field" 
+                  rows={3} 
+                />
               </div>
               <div className="form-group">
                 <label>電費收費標準</label>

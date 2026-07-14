@@ -339,6 +339,11 @@ export async function POST(request: Request) {
     const canSubsidize = (body.canSubsidize === 'on' || body.canSubsidize === 'true') ? 1 : 0;
     const posterRole = body.posterRole || 'landlord';
     const agencyFeeCharged = (body.agencyFeeCharged === 'on' || body.agencyFeeCharged === 'true') ? 1 : 0;
+    
+    // New fields
+    const startDate = body.startDate || null;
+    const leaseTerm = parseOptionalNumber(body.leaseTerm);
+    const ghostStory = body.ghostStory || null;
 
     await env.DB.batch([
       env.DB.prepare(
@@ -347,14 +352,16 @@ export async function POST(request: Request) {
           includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
-          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
+          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged,
+          startDate, leaseTerm, ghostStory
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?)`
       ).bind(
         newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
         waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
         hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged
+        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged,
+        startDate, leaseTerm, ghostStory
       ),
       env.DB.prepare(
         `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`

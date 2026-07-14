@@ -34,6 +34,9 @@ interface Rental {
   posterRole?: string;
   agencyFeeCharged?: boolean;
   contractFile?: string;
+  startDate?: string;
+  leaseTerm?: number;
+  ghostStory?: string;
 }
 
 export default function HomePage() {
@@ -578,6 +581,16 @@ export default function HomePage() {
                 <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--primary)' }}>合約與費用資訊</h3>
                 <div className="info-grid">
                   <div className="info-item">
+                    <CheckCircle2 className="info-icon" style={{ color: 'var(--primary)' }} />
+                    <div>
+                      <label>租期資訊</label>
+                      <p style={{ color: 'var(--foreground)' }}>
+                        {selectedItem.startDate ? `${selectedItem.startDate} 起租` : '未提供'}
+                        {selectedItem.leaseTerm ? ` (期限 ${selectedItem.leaseTerm} 年)` : ''}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="info-item">
                     <CheckCircle2 className="info-icon" style={{ color: selectedItem.canSubsidize ? 'var(--primary)' : 'var(--text-muted)' }} />
                     <div>
                       <label>租屋補助</label>
@@ -632,6 +645,17 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
+                  {selectedItem.ghostStory && (
+                    <div className="info-item" style={{ gridColumn: '1 / -1' }}>
+                      <Zap className="info-icon" style={{ color: '#ef4444' }} />
+                      <div>
+                        <label style={{ color: '#ef4444' }}>👻 租屋鬼故事 / 恐怖經歷</label>
+                        <p style={{ color: 'var(--foreground)', marginTop: '0.25rem', whiteSpace: 'pre-wrap', fontStyle: 'italic', lineHeight: '1.6' }}>
+                          {selectedItem.ghostStory}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
