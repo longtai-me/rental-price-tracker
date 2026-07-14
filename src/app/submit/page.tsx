@@ -348,11 +348,11 @@ export default function SubmitPage() {
                   <div className="utility-custom-fields animate-fade-in">
                     <div className="form-group">
                       <label>一般收費標準 (元/度)</label>
-                      <input type="number" step="0.1" min="0" name="electricityPricePerKwh" placeholder="例如：5" className="input-field" />
+                      <input required type="number" step="0.1" min="0" name="electricityPricePerKwh" placeholder="例如：5" className="input-field" />
                     </div>
                     <div className="form-group">
                       <label>夏季收費標準 (元/度)</label>
-                      <input type="number" step="0.1" min="0" name="electricitySummerPricePerKwh" placeholder="例如：6.5" className="input-field" />
+                      <input required type="number" step="0.1" min="0" name="electricitySummerPricePerKwh" placeholder="例如：6.5" className="input-field" />
                     </div>
                   </div>
                 )}
@@ -394,11 +394,11 @@ export default function SubmitPage() {
                   <div className="utility-custom-fields animate-fade-in">
                     <div className="form-group">
                       <label>一般收費標準 (元/度)</label>
-                      <input type="number" step="0.1" min="0" name="waterPricePerUnit" placeholder="例如：15" className="input-field" />
+                      <input required type="number" step="0.1" min="0" name="waterPricePerUnit" placeholder="例如：15" className="input-field" />
                     </div>
                     <div className="form-group">
                       <label>夏季收費標準 (元/度)</label>
-                      <input type="number" step="0.1" min="0" name="waterSummerPricePerUnit" placeholder="例如：18" className="input-field" />
+                      <input required type="number" step="0.1" min="0" name="waterSummerPricePerUnit" placeholder="例如：18" className="input-field" />
                     </div>
                   </div>
                 )}
