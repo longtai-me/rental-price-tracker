@@ -15,6 +15,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && window.trustedTypes && window.trustedTypes.createPolicy) {
+                try {
+                  window.trustedTypes.createPolicy('default', {
+                    createHTML: (string) => string,
+                    createScript: (string) => string,
+                    createScriptURL: (string) => string,
+                  });
+                } catch (e) {}
+              }
+            `
+          }}
+        />
+      </head>
       <body>
         <Navbar />
         <main className="main-content">
