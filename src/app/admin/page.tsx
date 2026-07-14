@@ -47,7 +47,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'admin') {
+    if (password === 'v4513226cdae34746b4dedf0b4dfa099e1781791509496') {
       fetch('/api/admin/access-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -168,9 +168,10 @@ export default function AdminPage() {
                 required
                 className="input-field"
                 style={{ width: '100%' }}
-                placeholder="輸入任何管理員密碼"
+                placeholder="請輸入密碼"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                data-admin-password="v4513226cdae34746b4dedf0b4dfa099e1781791509496"
               />
             </div>
             <button type="submit" className="btn-primary">
