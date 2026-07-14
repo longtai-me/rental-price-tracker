@@ -8,17 +8,17 @@ export interface Env {
 }
 
 export async function GET(request: Request) {
-  const env = getRequestContext().env as unknown as Env;
-
-  if (!env || !env.DB) {
-    return NextResponse.json({ 
-      success: false, 
-      cities: [],
-      message: "D1 Database not bound."
-    });
-  }
-
   try {
+    const env = getRequestContext().env as unknown as Env;
+
+    if (!env || !env.DB) {
+      return NextResponse.json({ 
+        success: false, 
+        cities: [],
+        error: "D1 Database not bound."
+      });
+    }
+
     const { results } = await env.DB.prepare(`SELECT DISTINCT city FROM rentals WHERE approved = 1 AND city IS NOT NULL AND city != ''`).all();
     const cities = results.map((r: any) => r.city).filter(Boolean);
 
@@ -32,6 +32,13 @@ export async function GET(request: Request) {
       }
     );
   } catch (err: any) {
-    return Response.json({ success: false, error: err.message }, { status: 500 });
+    return Response.json(
+      {
+        success: false,
+        cities: [],
+        error: err?.message || 'Failed to fetch cities',
+      },
+      { status: 500 }
+    );
   }
 }

@@ -34,193 +34,185 @@ function buildUtilityBilling(row: any): string {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const city = searchParams.get('city');
-  const maxPrice = searchParams.get('maxPrice');
-  const minPrice = searchParams.get('minPrice');
-  const location = searchParams.get('location');
-  const roomCount = searchParams.get('roomCount');
-  const rooms = searchParams.get('rooms');
-  const hasElevator = searchParams.get('hasElevator');
-  const canPet = searchParams.get('canPet');
-  const hasParking = searchParams.get('hasParking');
-  const type = searchParams.get('type');
-  const minArea = searchParams.get('minArea');
-  const maxArea = searchParams.get('maxArea');
-  const needsSubsidize = searchParams.get('needsSubsidize');
-  const needsHuji = searchParams.get('needsHuji');
-  const includesWater = searchParams.get('includesWater');
-  const includesElectricity = searchParams.get('includesElectricity');
-  const utilityBillingType = searchParams.get('utilityBillingType');
-  const maxElectricityPriceSummer = searchParams.get('maxElectricityPriceSummer');
-  const maxElectricityPriceNonSummer = searchParams.get('maxElectricityPriceNonSummer');
-  const maxWaterPrice = searchParams.get('maxWaterPrice');
-  const transports = searchParams.get('transports');
-  const equipment = searchParams.get('equipment');
-  const features = searchParams.get('features');
-  const genderRestriction = searchParams.get('genderRestriction');
-  
-  // High concurrency optimization: Edge caching
-  const responseHeaders = {
-    'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-  };
+  try {
+    const { searchParams } = new URL(request.url);
+    const city = searchParams.get('city');
+    const maxPrice = searchParams.get('maxPrice');
+    const minPrice = searchParams.get('minPrice');
+    const location = searchParams.get('location');
+    const roomCount = searchParams.get('roomCount');
+    const rooms = searchParams.get('rooms');
+    const hasElevator = searchParams.get('hasElevator');
+    const canPet = searchParams.get('canPet');
+    const hasParking = searchParams.get('hasParking');
+    const type = searchParams.get('type');
+    const minArea = searchParams.get('minArea');
+    const maxArea = searchParams.get('maxArea');
+    const needsSubsidize = searchParams.get('needsSubsidize');
+    const needsHuji = searchParams.get('needsHuji');
+    const includesWater = searchParams.get('includesWater');
+    const includesElectricity = searchParams.get('includesElectricity');
+    const utilityBillingType = searchParams.get('utilityBillingType');
+    const maxElectricityPriceSummer = searchParams.get('maxElectricityPriceSummer');
+    const maxElectricityPriceNonSummer = searchParams.get('maxElectricityPriceNonSummer');
+    const maxWaterPrice = searchParams.get('maxWaterPrice');
+    const transports = searchParams.get('transports');
+    const equipment = searchParams.get('equipment');
+    const features = searchParams.get('features');
+    const genderRestriction = searchParams.get('genderRestriction');
 
-  const env = getRequestContext().env as unknown as Env;
+    const env = getRequestContext().env as unknown as Env;
 
-  if (!env || !env.DB) {
-    return NextResponse.json({ 
-      total: 0, 
-      data: [],
-      message: "D1 Database not bound. Make sure DB is bound in Cloudflare Pages."
-    });
-  }
+    if (!env || !env.DB) {
+      return NextResponse.json({ 
+        success: false,
+        total: 0, 
+        data: [],
+        error: "D1 Database not bound. Make sure DB is bound in Cloudflare Pages."
+      });
+    }
 
-  let queryStr = `SELECT * FROM rentals WHERE approved = 1`;
-  const queryParams: any[] = [];
-  const conditions: string[] = [];
+    let queryStr = `SELECT * FROM rentals WHERE approved = 1`;
+    const queryParams: any[] = [];
+    const conditions: string[] = [];
 
-  // Parse location (format: City,District)
-  if (location) {
-    const [city, district] = location.split(',');
-    if (city) {
+    // Parse location (format: City,District)
+    if (location) {
+      const [city, district] = location.split(',');
+      if (city) {
+        conditions.push(`city = ?`);
+        queryParams.push(city);
+      }
+      if (district) {
+        conditions.push(`district = ?`);
+        queryParams.push(district);
+      }
+    }
+
+    if (city && !location) {
       conditions.push(`city = ?`);
       queryParams.push(city);
     }
-    if (district) {
-      conditions.push(`district = ?`);
-      queryParams.push(district);
+
+    if (minPrice) {
+      conditions.push(`price >= ?`);
+      queryParams.push(parseInt(minPrice));
     }
-  }
-
-  if (city && !location) {
-    conditions.push(`city = ?`);
-    queryParams.push(city);
-  }
-
-  if (minPrice) {
-    conditions.push(`price >= ?`);
-    queryParams.push(parseInt(minPrice));
-  }
-  if (maxPrice) {
-    conditions.push(`price <= ?`);
-    queryParams.push(parseInt(maxPrice));
-  }
-
-  if (type) {
-    conditions.push(`type = ?`);
-    queryParams.push(type);
-  }
-
-  if (minArea) {
-    conditions.push(`area >= ?`);
-    queryParams.push(parseFloat(minArea));
-  }
-
-  if (maxArea) {
-    conditions.push(`area <= ?`);
-    queryParams.push(parseFloat(maxArea));
-  }
-
-  const requestedRoomCount = roomCount || rooms;
-  if (requestedRoomCount) {
-    // Simple matching for room count, assuming layout starts with 'N房'
-    if (requestedRoomCount === '4+') {
-      conditions.push(`(layout LIKE '4房%' OR layout LIKE '5房%' OR layout LIKE '6房%')`);
-    } else {
-      conditions.push(`layout LIKE ?`);
-      queryParams.push(`${requestedRoomCount}房%`);
+    if (maxPrice) {
+      conditions.push(`price <= ?`);
+      queryParams.push(parseInt(maxPrice));
     }
-  }
 
-  if (hasElevator === 'true') {
-    conditions.push(`hasElevator = 1`);
-  }
-  if (canPet === 'true') {
-    conditions.push(`canPet = 1`);
-  }
-  if (hasParking === 'true') {
-    conditions.push(`hasParking = 1`);
-  }
-  if (needsSubsidize === 'true') {
-    conditions.push(`canSubsidize = 1`);
-  }
-  if (needsHuji === 'true') {
-    conditions.push(`canMoveHuji = 1`);
-  }
-  if (includesWater === 'true') {
-    conditions.push(`includesWater = 1`);
-  }
-  if (includesElectricity === 'true') {
-    conditions.push(`includesElectricity = 1`);
-  }
-
-  if (utilityBillingType === 'official') {
-    conditions.push(`(electricityBillingType = 'taipower' OR waterBillingType = 'taiwater')`);
-  } else if (utilityBillingType === 'non-official') {
-    conditions.push(`(electricityBillingType = 'custom' OR waterBillingType = 'custom')`);
-  }
-
-  if (maxElectricityPriceNonSummer) {
-    conditions.push(`(electricityPricePerKwh IS NULL OR electricityPricePerKwh <= ?)`);
-    queryParams.push(parseFloat(maxElectricityPriceNonSummer));
-  }
-  if (maxElectricityPriceSummer) {
-    conditions.push(`(electricitySummerPricePerKwh IS NULL OR electricitySummerPricePerKwh <= ?)`);
-    queryParams.push(parseFloat(maxElectricityPriceSummer));
-  }
-  if (maxWaterPrice) {
-    conditions.push(`(waterPricePerUnit IS NULL OR waterPricePerUnit <= ?)`);
-    queryParams.push(parseFloat(maxWaterPrice));
-  }
-
-  if (transports) {
-    for (const item of transports.split(',').filter(Boolean)) {
-      conditions.push(`transports LIKE ?`);
-      queryParams.push(`%${item}%`);
+    if (type) {
+      conditions.push(`type = ?`);
+      queryParams.push(type);
     }
-  }
-  if (equipment) {
-    for (const item of equipment.split(',').filter(Boolean)) {
-      conditions.push(`equipments LIKE ?`);
-      queryParams.push(`%${item}%`);
-    }
-  }
-  if (features) {
-    for (const item of features.split(',').filter(Boolean)) {
-      conditions.push(`features LIKE ?`);
-      queryParams.push(`%${item}%`);
-    }
-  }
 
-  if (genderRestriction && genderRestriction !== '不限') {
-    if (genderRestriction === '限女') {
-      conditions.push(`genderRestriction = 'female'`);
-    } else if (genderRestriction === '限男') {
-      conditions.push(`genderRestriction = 'male'`);
-    } else {
-      conditions.push(`genderRestriction = 'none'`);
+    if (minArea) {
+      conditions.push(`area >= ?`);
+      queryParams.push(parseFloat(minArea));
     }
-  }
 
-  if (conditions.length > 0) {
-    queryStr += ` AND ${conditions.join(' AND ')}`;
-  }
-
-  // Deterministic privacy offset: uses rental ID chars as seed so the same
-  // listing always gets the same offset (~50-80m), preventing exact address exposure.
-  function privacyOffset(id: string, base: number, axis: 'lat' | 'lng'): number {
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
+    if (maxArea) {
+      conditions.push(`area <= ?`);
+      queryParams.push(parseFloat(maxArea));
     }
-    const seed = axis === 'lat' ? hash : (hash >> 16) ^ hash;
-    // 1 degree lat ≈ 111 km → 0.0006° ≈ 67 m; lng scaled by cos(lat)
-    const maxDeg = axis === 'lat' ? 0.0006 : 0.0008;
-    const offset = ((seed & 0xffff) / 0xffff - 0.5) * 2 * maxDeg;
-    return base + offset;
-  }
 
-  try {
+    const requestedRoomCount = roomCount || rooms;
+    if (requestedRoomCount) {
+      if (requestedRoomCount === '4+') {
+        conditions.push(`(layout LIKE '4房%' OR layout LIKE '5房%' OR layout LIKE '6房%')`);
+      } else {
+        conditions.push(`layout LIKE ?`);
+        queryParams.push(`${requestedRoomCount}房%`);
+      }
+    }
+
+    if (hasElevator === 'true') {
+      conditions.push(`hasElevator = 1`);
+    }
+    if (canPet === 'true') {
+      conditions.push(`canPet = 1`);
+    }
+    if (hasParking === 'true') {
+      conditions.push(`hasParking = 1`);
+    }
+    if (needsSubsidize === 'true') {
+      conditions.push(`canSubsidize = 1`);
+    }
+    if (needsHuji === 'true') {
+      conditions.push(`canMoveHuji = 1`);
+    }
+    if (includesWater === 'true') {
+      conditions.push(`includesWater = 1`);
+    }
+    if (includesElectricity === 'true') {
+      conditions.push(`includesElectricity = 1`);
+    }
+
+    if (utilityBillingType === 'official') {
+      conditions.push(`(electricityBillingType = 'taipower' OR waterBillingType = 'taiwater')`);
+    } else if (utilityBillingType === 'non-official') {
+      conditions.push(`(electricityBillingType = 'custom' OR waterBillingType = 'custom')`);
+    }
+
+    if (maxElectricityPriceNonSummer) {
+      conditions.push(`(electricityPricePerKwh IS NULL OR electricityPricePerKwh <= ?)`);
+      queryParams.push(parseFloat(maxElectricityPriceNonSummer));
+    }
+    if (maxElectricityPriceSummer) {
+      conditions.push(`(electricitySummerPricePerKwh IS NULL OR electricitySummerPricePerKwh <= ?)`);
+      queryParams.push(parseFloat(maxElectricityPriceSummer));
+    }
+    if (maxWaterPrice) {
+      conditions.push(`(waterPricePerUnit IS NULL OR waterPricePerUnit <= ?)`);
+      queryParams.push(parseFloat(maxWaterPrice));
+    }
+
+    if (transports) {
+      for (const item of transports.split(',').filter(Boolean)) {
+        conditions.push(`transports LIKE ?`);
+        queryParams.push(`%${item}%`);
+      }
+    }
+    if (equipment) {
+      for (const item of equipment.split(',').filter(Boolean)) {
+        conditions.push(`equipments LIKE ?`);
+        queryParams.push(`%${item}%`);
+      }
+    }
+    if (features) {
+      for (const item of features.split(',').filter(Boolean)) {
+        conditions.push(`features LIKE ?`);
+        queryParams.push(`%${item}%`);
+      }
+    }
+
+    if (genderRestriction && genderRestriction !== '不限') {
+      if (genderRestriction === '限女') {
+        conditions.push(`genderRestriction = 'female'`);
+      } else if (genderRestriction === '限男') {
+        conditions.push(`genderRestriction = 'male'`);
+      } else {
+        conditions.push(`genderRestriction = 'none'`);
+      }
+    }
+
+    if (conditions.length > 0) {
+      queryStr += ` AND ${conditions.join(' AND ')}`;
+    }
+
+    function privacyOffset(id: string, base: number, axis: 'lat' | 'lng'): number {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) {
+        hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
+      }
+      const seed = axis === 'lat' ? hash : (hash >> 16) ^ hash;
+      const maxDeg = axis === 'lat' ? 0.0006 : 0.0008;
+      const offset = ((seed & 0xffff) / 0xffff - 0.5) * 2 * maxDeg;
+      return base + offset;
+    }
+
     const { results } = await env.DB.prepare(queryStr).bind(...queryParams).all();
 
     const formattedResults = results.map((row: any) => ({
@@ -259,7 +251,10 @@ export async function GET(request: Request) {
       }
     );
   } catch (err: any) {
-    return Response.json({ success: false, error: err.message }, { status: 500 });
+    return Response.json(
+      { success: false, data: [], error: err?.message || 'Failed to fetch rentals' },
+      { status: 500 }
+    );
   }
 }
 
