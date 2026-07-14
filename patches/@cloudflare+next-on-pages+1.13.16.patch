@@ -1,0 +1,35 @@
+diff --git a/node_modules/@cloudflare/next-on-pages/bin/index.js b/node_modules/@cloudflare/next-on-pages/bin/index.js
+index d862cf8..bcb7634 100755
+--- a/node_modules/@cloudflare/next-on-pages/bin/index.js
++++ b/node_modules/@cloudflare/next-on-pages/bin/index.js
+@@ -1,15 +1,24 @@
+ #!/usr/bin/env node
+-const { spawn } = require('child_process');
+-const { join } = require('path');
++const { spawnSync } = require('child_process');
++const { join, resolve } = require('path');
++const fs = require('fs');
+ 
+-spawn(
++const result = spawnSync(
+ 	process.execPath,
+ 	[
+ 		...process.execArgv,
+ 		join(__dirname, '..', 'dist', 'index.js'),
+ 		...process.argv.slice(2),
+ 	],
+-	{ stdio: 'inherit' },
+-).on('exit', code =>
+-	process.exit(code === undefined || code === null ? 0 : code),
++	{ stdio: 'inherit' }
+ );
++
++if (result.status === 0) {
++	console.log('--- WRAPPER: Running fix-async-hooks.mjs ---');
++	const fixScript = resolve(process.cwd(), 'fix-async-hooks.mjs');
++	if (fs.existsSync(fixScript)) {
++		spawnSync(process.execPath, [fixScript], { stdio: 'inherit' });
++	}
++}
++
++process.exit(result.status === null || result.status === undefined ? 0 : result.status);

@@ -12,6 +12,7 @@
   },
   "homepage": "https://github.com/longtai-me/rental-price-tracker#readme",
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
