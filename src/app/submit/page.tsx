@@ -97,6 +97,26 @@ export default function SubmitPage() {
             </div>
           </div>
 
+          {/* 刊登者資訊 */}
+          <div className="form-section">
+            <h3>刊登者資訊</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>刊登者身分</label>
+                <select name="posterRole" className="input-field">
+                  <option value="landlord">房東</option>
+                  <option value="renter">租客 (轉租/找室友)</option>
+                  <option value="agent">房仲</option>
+                </select>
+              </div>
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', marginTop: '1.5rem' }}>
+                <label className="checkbox-label-custom" style={{ margin: 0 }}>
+                  <input type="checkbox" name="agencyFeeCharged" /> 承租需收取仲介費
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* 租金與規格 */}
           <div className="form-section">
             <h3>租金與規格</h3>
@@ -127,31 +147,43 @@ export default function SubmitPage() {
             </div>
           </div>
 
-          {/* 設備與條件 checkboxes */}
+          {/* 房屋特色與條件 */}
           <div className="form-section">
-            <h3>設備與條件</h3>
+            <h3>房屋特色與條件</h3>
             <div className="checkbox-grid">
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="includesWater" /> 含水費
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="includesElectricity" /> 含電費
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="hasElevator" /> 有電梯
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="hasParking" /> 有車位
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="canPet" /> 可養寵物
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="canCook" /> 可開伙
-              </label>
-              <label className="checkbox-label-custom">
-                <input type="checkbox" name="trashService" /> 代收垃圾
-              </label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="includesWater" /> 含水費</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="includesElectricity" /> 含電費</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" /> 有電梯</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" /> 有車位</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="canPet" /> 可養寵物</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="canCook" /> 可開伙</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="trashService" /> 代收垃圾</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="hasBalcony" /> 有陽台</label>
+              <label className="checkbox-label-custom"><input type="checkbox" name="canMoveHuji" /> 可入戶籍</label>
+            </div>
+          </div>
+
+          {/* 提供設備與家具 */}
+          <div className="form-section">
+            <h3>提供設備與家具</h3>
+            <div className="checkbox-grid">
+              {['冷氣', '洗衣機', '冰箱', '熱水器', '天然瓦斯', '網路', '第四台', '雙人床', '單人床', '衣櫃', '沙發', '桌椅'].map(eq => (
+                <label key={eq} className="checkbox-label-custom">
+                  <input type="checkbox" name="equipments" value={eq} /> {eq}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* 交通條件 */}
+          <div className="form-section">
+            <h3>周邊交通</h3>
+            <div className="checkbox-grid">
+              {['捷運', '公車', '火車', '高鐵', '鄰近停車場'].map(tr => (
+                <label key={tr} className="checkbox-label-custom">
+                  <input type="checkbox" name="transports" value={tr} /> {tr}
+                </label>
+              ))}
             </div>
           </div>
 

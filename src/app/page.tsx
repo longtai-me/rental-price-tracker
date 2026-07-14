@@ -31,6 +31,9 @@ interface Rental {
   equipment?: string[];
   features?: string[];
   genderRestriction?: string;
+  posterRole?: string;
+  agencyFeeCharged?: boolean;
+  contractFile?: string;
 }
 
 export default function HomePage() {
@@ -64,6 +67,15 @@ export default function HomePage() {
   
   // Interaction
   const [selectedItem, setSelectedItem] = useState<Rental | null>(null);
+
+  const getRoleLabel = (role?: string) => {
+    switch (role) {
+      case 'renter': return '租客轉租';
+      case 'agent': return '房仲刊登';
+      case 'landlord':
+      default: return '屋主自租';
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -275,11 +287,27 @@ export default function HomePage() {
           {/* Advanced Filters Toggle */}
           <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
             <button 
-              className="btn" 
-              style={{ padding: '0.5rem 2rem', fontSize: '0.9rem', backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--foreground)' }}
+              style={{ 
+                padding: '0.75rem 2.5rem', 
+                fontSize: '1rem', 
+                fontWeight: 600,
+                backgroundColor: showAdvancedFilters ? 'var(--surface-color)' : 'var(--primary)', 
+                color: showAdvancedFilters ? 'var(--foreground)' : 'white', 
+                border: showAdvancedFilters ? '1px solid var(--border-color)' : 'none',
+                borderRadius: '8px',
+                boxShadow: showAdvancedFilters ? 'none' : '0 4px 14px rgba(59, 130, 246, 0.3)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              onMouseEnter={(e) => {
+                if(!showAdvancedFilters) e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                if(!showAdvancedFilters) e.currentTarget.style.transform = 'translateY(0)';
+              }}
             >
-              {showAdvancedFilters ? '收合進階條件' : '展開進階條件 (坪數、設備、特色規定)'}
+              {showAdvancedFilters ? '收合進階條件' : '🔍 展開進階條件 (坪數、設備、特色規定)'}
             </button>
           </div>
           
@@ -385,7 +413,20 @@ export default function HomePage() {
                     <span>{item.area} 坪</span>
                     <span>{item.floor} 樓</span>
                   </div>
-                  <div className="card-tags" style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', fontSize: '0.8rem' }}>
+                  <div className="card-tags" style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
+                    <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#d97706', padding: '2px 8px', borderRadius: '4px' }}>
+                      {getRoleLabel(item.posterRole)}
+                    </span>
+                    {item.agencyFeeCharged && (
+                      <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px' }}>
+                        需收仲介費
+                      </span>
+                    )}
+                    {item.contractFile && (
+                      <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CheckCircle2 size={12} /> 已認證契約
+                      </span>
+                    )}
                     {item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
                     {item.canMoveHuji && <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>可入戶籍</span>}
                   </div>
@@ -434,6 +475,25 @@ export default function HomePage() {
                   <div>
                     <label>車位/管理/電梯</label>
                     <p>{selectedItem.parking} | {selectedItem.hasManagement ? '有管理' : '無管理'} | {selectedItem.hasElevator ? '有電梯' : '無電梯'}</p>
+                  </div>
+                </div>
+                <div className="info-item" style={{ gridColumn: '1 / -1' }}>
+                  <Building className="info-icon" style={{ color: 'var(--primary)' }} />
+                  <div>
+                    <label>刊登者身分</label>
+                    <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{getRoleLabel(selectedItem.posterRole)}</span>
+                      {selectedItem.agencyFeeCharged && (
+                        <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>
+                          需收取仲介費
+                        </span>
+                      )}
+                      {selectedItem.contractFile && (
+                        <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle2 size={14} /> 經過房屋租賃契約書審核
+                        </span>
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>

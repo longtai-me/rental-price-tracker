@@ -29,6 +29,8 @@ CREATE TABLE rentals (
   trashService BOOLEAN NOT NULL,
   approved BOOLEAN DEFAULT 0,
   contractFile TEXT,
+  posterRole TEXT DEFAULT 'landlord',
+  agencyFeeCharged BOOLEAN DEFAULT 0,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

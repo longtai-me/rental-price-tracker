@@ -149,26 +149,28 @@ export async function POST(request: Request) {
     const includesElectricity = (body.includesElectricity === 'on' || body.includesElectricity === 'true') ? 1 : 0;
     const hasParking = (body.hasParking === 'on' || body.hasParking === 'true') ? 1 : 0;
     const genderRestriction = body.genderRestriction || 'none';
-    const equipments = body.equipments || '';
-    const features = body.features || '';
-    const transports = body.transports || '';
+    const equipments = formData.getAll('equipments').join(',') || '';
+    const features = formData.getAll('features').join(',') || '';
+    const transports = formData.getAll('transports').join(',') || '';
     const hasElevator = (body.hasElevator === 'on' || body.hasElevator === 'true') ? 1 : 0;
     const canCook = (body.canCook === 'on' || body.canCook === 'true') ? 1 : 0;
     const hasBalcony = (body.hasBalcony === 'on' || body.hasBalcony === 'true') ? 1 : 0;
     const canMoveHuji = (body.canMoveHuji === 'on' || body.canMoveHuji === 'true') ? 1 : 0;
     const canPet = (body.canPet === 'on' || body.canPet === 'true') ? 1 : 0;
     const trashService = (body.trashService === 'on' || body.trashService === 'true') ? 1 : 0;
+    const posterRole = body.posterRole || 'landlord';
+    const agencyFeeCharged = (body.agencyFeeCharged === 'on' || body.agencyFeeCharged === 'true') ? 1 : 0;
 
     await env.DB.prepare(
       `INSERT INTO rentals (
         id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, approved, contractFile
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`
+        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, approved, contractFile, posterRole, agencyFeeCharged
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
     ).bind(
       newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
       includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, contractFilename
+      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, contractFilename, posterRole, agencyFeeCharged
     ).run();
 
     return Response.json({ success: true, message: '提交成功，請等候管理員審核。' });
