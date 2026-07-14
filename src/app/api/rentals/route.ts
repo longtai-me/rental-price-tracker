@@ -94,11 +94,44 @@ export async function GET(request: Request) {
     queryStr += ` AND ${conditions.join(' AND ')}`;
   }
 
+  // Deterministic privacy offset: uses rental ID chars as seed so the same
+  // listing always gets the same offset (~50-80m), preventing exact address exposure.
+  function privacyOffset(id: string, base: number, axis: 'lat' | 'lng'): number {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
+    }
+    const seed = axis === 'lat' ? hash : (hash >> 16) ^ hash;
+    // 1 degree lat ≈ 111 km → 0.0006° ≈ 67 m; lng scaled by cos(lat)
+    const maxDeg = axis === 'lat' ? 0.0006 : 0.0008;
+    const offset = ((seed & 0xffff) / 0xffff - 0.5) * 2 * maxDeg;
+    return base + offset;
+  }
+
   try {
     const { results } = await env.DB.prepare(queryStr).bind(...queryParams).all();
-    
+
+    const formattedResults = results.map((row: any) => ({
+      ...row,
+      lat: row.latitude  ? privacyOffset(String(row.id), row.latitude,  'lat') : null,
+      lng: row.longitude ? privacyOffset(String(row.id), row.longitude, 'lng') : null,
+      transportation: row.transports ? row.transports.split(',') : [],
+      equipment: row.equipments ? row.equipments.split(',') : [],
+      features: row.features ? row.features.split(',') : [],
+      pricePerPing: row.pricePerPyeong,
+      hasElevator: Boolean(row.hasElevator),
+      hasBalcony: Boolean(row.hasBalcony),
+      canCook: Boolean(row.canCook),
+      canMoveHuji: Boolean(row.canMoveHuji),
+      canPet: Boolean(row.canPet),
+      trashService: Boolean(row.trashService),
+      canSubsidize: Boolean(row.canSubsidize),
+      agencyFeeCharged: Boolean(row.agencyFeeCharged),
+      genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
+    }));
+
     return Response.json(
-      { success: true, data: results },
+      { success: true, data: formattedResults },
       { 
         headers: {
           'Content-Type': 'application/json',
@@ -158,6 +191,7 @@ export async function POST(request: Request) {
     const canMoveHuji = (body.canMoveHuji === 'on' || body.canMoveHuji === 'true') ? 1 : 0;
     const canPet = (body.canPet === 'on' || body.canPet === 'true') ? 1 : 0;
     const trashService = (body.trashService === 'on' || body.trashService === 'true') ? 1 : 0;
+    const canSubsidize = (body.canSubsidize === 'on' || body.canSubsidize === 'true') ? 1 : 0;
     const posterRole = body.posterRole || 'landlord';
     const agencyFeeCharged = (body.agencyFeeCharged === 'on' || body.agencyFeeCharged === 'true') ? 1 : 0;
 
@@ -165,12 +199,12 @@ export async function POST(request: Request) {
       `INSERT INTO rentals (
         id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, approved, contractFile, posterRole, agencyFeeCharged
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
+        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)`
     ).bind(
       newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
       includesWater, includesElectricity, hasParking, genderRestriction, equipments, features, transports,
-      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, contractFilename, posterRole, agencyFeeCharged
+      hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged
     ).run();
 
     return Response.json({ success: true, message: '提交成功，請等候管理員審核。' });

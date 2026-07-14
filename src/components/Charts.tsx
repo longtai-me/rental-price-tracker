@@ -4,13 +4,14 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 export function PriceTrendChart({ data }: { data: any[] }) {
   if (!data || data.length === 0) return null;
 
-  // Aggregate data by district
+  // Aggregate data by city + district
   const districtData = data.reduce((acc, item) => {
-    if (!acc[item.district]) {
-      acc[item.district] = { name: item.district, price: 0, count: 0 };
+    const locName = `${item.city}${item.district}`;
+    if (!acc[locName]) {
+      acc[locName] = { name: locName, price: 0, count: 0 };
     }
-    acc[item.district].price += item.price;
-    acc[item.district].count += 1;
+    acc[locName].price += item.price;
+    acc[locName].count += 1;
     return acc;
   }, {} as Record<string, any>);
 

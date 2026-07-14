@@ -210,3 +210,71 @@
   background-color: var(--primary);
   border-radius: 3px;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 0 0.75rem;
+    margin: 1rem auto;
+  }
+
+  .admin-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .admin-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .admin-tabs {
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .admin-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .rental-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .rental-card-content {
+    padding: 1rem;
+  }
+
+  .rental-actions {
+    padding: 0.875rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .rental-actions button {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 0;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .login-container {
+    margin: 2rem auto;
+    padding: 2rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rental-actions button {
+    flex: 1 1 100%;
+  }
+}
+

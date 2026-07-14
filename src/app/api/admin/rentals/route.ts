@@ -7,9 +7,10 @@ export interface Env {
   ADMIN_PASSWORD?: string;
   REMOVE_PASSWORD?: string;
   SUPER_ADMIN_PASSWORD?: string;
+  EDIT_PASSWORD?: string;
 }
 
-type Role = 'admin' | 'remove' | 'super' | null;
+type Role = 'admin' | 'remove' | 'super' | 'edit' | null;
 
 function getAuthRole(request: Request, env: Env | null): Role {
   const authHeader = request.headers.get('Authorization');
@@ -18,6 +19,7 @@ function getAuthRole(request: Request, env: Env | null): Role {
 
   if (env?.SUPER_ADMIN_PASSWORD && token === env.SUPER_ADMIN_PASSWORD) return 'super';
   if (env?.REMOVE_PASSWORD && token === env.REMOVE_PASSWORD) return 'remove';
+  if (env?.EDIT_PASSWORD && token === env.EDIT_PASSWORD) return 'edit';
   if (env?.ADMIN_PASSWORD && token === env.ADMIN_PASSWORD) return 'admin';
   return null;
 }
@@ -36,7 +38,23 @@ export async function GET(request: Request) {
 
   try {
     const { results } = await env.DB.prepare(`SELECT * FROM rentals ORDER BY createdAt DESC`).all();
-    return Response.json({ success: true, data: results });
+    const formattedResults = results.map((row: any) => ({
+      ...row,
+      transportation: row.transports ? row.transports.split(',') : [],
+      equipment: row.equipments ? row.equipments.split(',') : [],
+      features: row.features ? row.features.split(',') : [],
+      pricePerPing: row.pricePerPyeong,
+      hasElevator: Boolean(row.hasElevator),
+      hasBalcony: Boolean(row.hasBalcony),
+      canCook: Boolean(row.canCook),
+      canMoveHuji: Boolean(row.canMoveHuji),
+      canPet: Boolean(row.canPet),
+      trashService: Boolean(row.trashService),
+      canSubsidize: Boolean(row.canSubsidize),
+      agencyFeeCharged: Boolean(row.agencyFeeCharged),
+      genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
+    }));
+    return Response.json({ success: true, data: formattedResults });
   } catch (err: any) {
     return Response.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
   }
@@ -115,5 +133,78 @@ export async function DELETE(request: Request) {
     return Response.json({ success: true });
   } catch (err: any) {
     return Response.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  const env = getRequestContext().env as unknown as Env;
+  const role = getAuthRole(request, env);
+
+  if (!role) {
+    return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (role !== 'edit' && role !== 'super') {
+    return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to edit' }, { status: 403 });
+  }
+
+  if (!env || !env.DB) {
+    return Response.json({ success: false, error: 'DB not bound' }, { status: 500 });
+  }
+
+  try {
+    const data = await request.json() as any;
+    const { id, ...updateFields } = data;
+    
+    if (!id) return Response.json({ success: false, error: 'ID is required' }, { status: 400 });
+
+    const fieldsToUpdate = [];
+    const valuesToBind = [];
+
+    const allowedKeys = [
+      'city', 'district', 'address', 'type', 'layout', 'area', 'floor', 'buildingAge', 'price', 
+      'pricePerPyeong', 'includesWater', 'includesElectricity', 'hasParking', 'genderRestriction',
+      'equipments', 'features', 'transports', 'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
+      'canPet', 'trashService', 'canSubsidize', 'posterRole', 'agencyFeeCharged',
+      'latitude', 'longitude'
+    ];
+
+    if (updateFields.pricePerPing !== undefined) {
+      updateFields.pricePerPyeong = updateFields.pricePerPing;
+    }
+    if (Array.isArray(updateFields.equipment)) {
+      updateFields.equipments = updateFields.equipment.join(',');
+    }
+    if (Array.isArray(updateFields.features)) {
+      updateFields.features = updateFields.features.join(',');
+    }
+    if (Array.isArray(updateFields.transportation)) {
+      updateFields.transports = updateFields.transportation.join(',');
+    }
+    if (updateFields.genderRestriction === '限女') updateFields.genderRestriction = 'female';
+    else if (updateFields.genderRestriction === '限男') updateFields.genderRestriction = 'male';
+    else if (updateFields.genderRestriction === '不限') updateFields.genderRestriction = 'none';
+
+    for (const key of allowedKeys) {
+      if (updateFields[key] !== undefined) {
+        fieldsToUpdate.push(`${key} = ?`);
+        const val = updateFields[key];
+        valuesToBind.push(typeof val === 'boolean' ? (val ? 1 : 0) : val);
+      }
+    }
+
+    if (fieldsToUpdate.length === 0) {
+      return Response.json({ success: false, error: 'No fields to update' }, { status: 400 });
+    }
+
+    valuesToBind.push(id);
+
+    await env.DB.prepare(
+      `UPDATE rentals SET ${fieldsToUpdate.join(', ')} WHERE id = ?`
+    ).bind(...valuesToBind).run();
+
+    return Response.json({ success: true });
+  } catch (err: any) {
+    return Response.json({ success: false, error: `DB Update Error: ${err.message}` }, { status: 500 });
   }
 }

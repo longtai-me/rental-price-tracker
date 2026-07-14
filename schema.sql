@@ -27,6 +27,7 @@ CREATE TABLE rentals (
   canMoveHuji BOOLEAN NOT NULL,
   canPet BOOLEAN NOT NULL,
   trashService BOOLEAN NOT NULL,
+  canSubsidize BOOLEAN DEFAULT 0,
   approved BOOLEAN DEFAULT 0,
   contractFile TEXT,
   posterRole TEXT DEFAULT 'landlord',

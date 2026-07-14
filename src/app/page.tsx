@@ -39,6 +39,7 @@ interface Rental {
 export default function HomePage() {
   const [data, setData] = useState<Rental[]>([]);
   const [loading, setLoading] = useState(true);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
   
   // Filters
   const [city, setCity] = useState('');
@@ -70,11 +71,27 @@ export default function HomePage() {
 
   const getRoleLabel = (role?: string) => {
     switch (role) {
-      case 'renter': return '租客轉租';
-      case 'agent': return '房仲刊登';
+      case 'renter': return '租客登錄';
+      case 'agent': return '房仲登錄';
       case 'landlord':
-      default: return '屋主自租';
+      default: return '房東登錄';
     }
+  };
+
+  const maskAddress = (address: string) => {
+    if (!address) return '';
+    const lastIndex = Math.max(
+      address.lastIndexOf('路'),
+      address.lastIndexOf('街'),
+      address.lastIndexOf('道'),
+      address.lastIndexOf('段'),
+      address.lastIndexOf('巷'),
+      address.lastIndexOf('弄')
+    );
+    if (lastIndex !== -1) {
+      return address.substring(0, lastIndex + 1);
+    }
+    return address.replace(/\d+號.*/, '');
   };
 
   const fetchData = async () => {
@@ -113,6 +130,21 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await fetch('/api/cities');
+        const json = await res.json() as any;
+        if (json.success) {
+          setAvailableCities(json.cities || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch cities", err);
+      }
+    };
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
     fetchData();
   }, [city, type, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction]);
 
@@ -140,11 +172,9 @@ export default function HomePage() {
               <label><MapPin size={16}/> 縣市</label>
               <select className="input-field" value={city} onChange={(e) => setCity(e.target.value)}>
                 <option value="">全部縣市</option>
-                <option value="台北市">台北市</option>
-                <option value="新北市">新北市</option>
-                <option value="桃園市">桃園市</option>
-                <option value="台中市">台中市</option>
-                <option value="高雄市">高雄市</option>
+                {availableCities.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
             </div>
             <div className="filter-group">
@@ -267,8 +297,8 @@ export default function HomePage() {
             </label>
           </div>
 
-          <div className="filter-row-secondary" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', width: '100px' }}>交通條件：</span>
+          <div className="filter-row-secondary" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', flexShrink: 0 }}>交通條件：</span>
             {['捷運', '公車', '火車', '高鐵', '鄰近停車場'].map(t => (
               <label key={t} className="checkbox-label">
                 <input 
@@ -307,7 +337,7 @@ export default function HomePage() {
                 if(!showAdvancedFilters) e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              {showAdvancedFilters ? '收合進階條件' : '🔍 展開進階條件 (坪數、設備、特色規定)'}
+              {showAdvancedFilters ? '收合進階條件' : '展開進階條件'}
             </button>
           </div>
           
@@ -332,30 +362,34 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="filter-row-secondary" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', width: '100px' }}>提供設備：</span>
-                {['冷氣', '洗衣機', '冰箱', '天然瓦斯', '網路/第四台'].map(t => (
-                  <label key={t} className="checkbox-label">
-                    <input type="checkbox" checked={equipment.includes(t)} onChange={(e) => {
-                        if (e.target.checked) setEquipment([...equipment, t]);
-                        else setEquipment(equipment.filter(eq => eq !== t));
-                      }} 
-                    /> {t}
-                  </label>
-                ))}
+              <div className="filter-row-secondary" style={{ display: 'flex', gap: '1rem', flexWrap: 'nowrap' }}>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'flex-start', width: '100px', flexShrink: 0, marginTop: '4px' }}>提供設備：</span>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1 }}>
+                  {['冷氣', '洗衣機', '冰箱', '天然瓦斯', '網路/第四台'].map(t => (
+                    <label key={t} className="checkbox-label">
+                      <input type="checkbox" checked={equipment.includes(t)} onChange={(e) => {
+                          if (e.target.checked) setEquipment([...equipment, t]);
+                          else setEquipment(equipment.filter(eq => eq !== t));
+                        }} 
+                      /> {t}
+                    </label>
+                  ))}
+                </div>
               </div>
               
-              <div className="filter-row-secondary" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', width: '100px' }}>房屋特色：</span>
-                {['可養寵物', '可開伙', '有陽台', '代收垃圾'].map(t => (
-                  <label key={t} className="checkbox-label">
-                    <input type="checkbox" checked={features.includes(t)} onChange={(e) => {
-                        if (e.target.checked) setFeatures([...features, t]);
-                        else setFeatures(features.filter(ft => ft !== t));
-                      }} 
-                    /> {t}
-                  </label>
-                ))}
+              <div className="filter-row-secondary" style={{ display: 'flex', gap: '1rem', flexWrap: 'nowrap' }}>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'flex-start', width: '100px', flexShrink: 0, marginTop: '4px' }}>房屋特色：</span>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1 }}>
+                  {['可養寵物', '可開伙', '有陽台', '代收垃圾'].map(t => (
+                    <label key={t} className="checkbox-label">
+                      <input type="checkbox" checked={features.includes(t)} onChange={(e) => {
+                          if (e.target.checked) setFeatures([...features, t]);
+                          else setFeatures(features.filter(ft => ft !== t));
+                        }} 
+                      /> {t}
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -405,30 +439,32 @@ export default function HomePage() {
                 <div key={item.id} className="list-card" onClick={() => setSelectedItem(item)}>
                   <div className="card-header">
                     <span className="type-badge">{item.type}</span>
-                    <span className="price">NT$ {item.price.toLocaleString()}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                      <span className="price">NT$ {item.price.toLocaleString()}</span>
+                      {!!item.agencyFeeCharged && (
+                        <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
+                          需收仲介費
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <h4 className="address">{item.city}{item.district} {item.address}</h4>
+                  <h4 className="address">{item.city}{item.district} {maskAddress(item.address)}</h4>
                   <div className="card-meta">
                     <span>{item.layout}</span>
                     <span>{item.area} 坪</span>
                     <span>{item.floor} 樓</span>
                   </div>
                   <div className="card-tags" style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
-                    <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#d97706', padding: '2px 8px', borderRadius: '4px' }}>
-                      {getRoleLabel(item.posterRole)}
-                    </span>
-                    {item.agencyFeeCharged && (
-                      <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px' }}>
-                        需收仲介費
-                      </span>
-                    )}
-                    {item.contractFile && (
+                    {!!item.contractFile && (
                       <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <CheckCircle2 size={12} /> 已認證契約
                       </span>
                     )}
-                    {item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
-                    {item.canMoveHuji && <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>可入戶籍</span>}
+                    {!!item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
+                    {!!item.canMoveHuji && <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>可入戶籍</span>}
+                    <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#d97706', padding: '2px 8px', borderRadius: '4px' }}>
+                      {getRoleLabel(item.posterRole)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -443,7 +479,7 @@ export default function HomePage() {
           <div className="modal-content glass-panel animate-fade-in" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setSelectedItem(null)}><X size={24} /></button>
             <div className="modal-header">
-              <h2>{selectedItem.city}{selectedItem.district} {selectedItem.address}</h2>
+              <h2>{selectedItem.city}{selectedItem.district} {maskAddress(selectedItem.address)}</h2>
               <span className="modal-price">NT$ {selectedItem.price.toLocaleString()} / 月</span>
             </div>
             
@@ -483,12 +519,12 @@ export default function HomePage() {
                     <label>刊登者身分</label>
                     <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{getRoleLabel(selectedItem.posterRole)}</span>
-                      {selectedItem.agencyFeeCharged && (
+                      {!!selectedItem.agencyFeeCharged && (
                         <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>
                           需收取仲介費
                         </span>
                       )}
-                      {selectedItem.contractFile && (
+                      {!!selectedItem.contractFile && (
                         <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <CheckCircle2 size={14} /> 經過房屋租賃契約書審核
                         </span>

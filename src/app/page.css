@@ -264,20 +264,152 @@
   .split-view {
     flex-direction: column;
     height: auto;
-    margin: 0;
+    margin: -1rem;
   }
   
   .map-panel {
-    height: 400px;
+    height: 350px;
     border-right: none;
     border-bottom: 1px solid var(--card-border);
+    padding: 0.75rem;
   }
   
   .data-panel {
     max-width: 100%;
+    padding: 1.25rem;
+    gap: 1.25rem;
   }
   
   .charts-section {
     grid-template-columns: 1fr;
   }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
+
+@media (max-width: 768px) {
+  .split-view {
+    margin: -1rem;
+  }
+
+  .map-panel {
+    height: 280px;
+    padding: 0.5rem;
+  }
+
+  .data-panel {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.875rem;
+  }
+
+  .filters-section {
+    padding: 1rem;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .filter-group:has(input[type="number"]) {
+    grid-column: 1 / -1;
+  }
+
+  .filter-row-secondary {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+
+  .stat-card {
+    padding: 0.875rem 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .stat-card h3 {
+    font-size: 0.75rem;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .chart-box {
+    padding: 1rem;
+  }
+
+  .list-section {
+    padding: 1rem;
+  }
+
+  .list-card {
+    padding: 0.875rem;
+  }
+
+  .address {
+    font-size: 0.95rem;
+  }
+
+  .price {
+    font-size: 1.1rem;
+  }
+
+  .card-meta {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .modal-price {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+}
+
