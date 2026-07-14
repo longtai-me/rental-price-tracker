@@ -1,7 +1,16 @@
 {
   "name": "rental-price-tracker",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/longtai-me/rental-price-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/longtai-me/rental-price-tracker/issues"
+  },
+  "homepage": "https://github.com/longtai-me/rental-price-tracker#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
