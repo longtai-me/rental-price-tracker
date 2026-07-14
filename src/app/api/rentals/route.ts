@@ -241,7 +241,7 @@ export async function GET(request: Request) {
       genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
     }));
 
-    return Response.json(
+    return NextResponse.json(
       { success: true, data: formattedResults },
       { 
         headers: {
@@ -251,7 +251,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (err: any) {
-    return Response.json(
+    return NextResponse.json(
       { success: false, data: [], error: err?.message || 'Failed to fetch rentals' },
       { status: 500 }
     );
@@ -331,8 +331,8 @@ export async function POST(request: Request) {
       hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged
     ).run();
 
-    return Response.json({ success: true, message: '提交成功，請等候管理員審核。' });
+    return NextResponse.json({ success: true, message: '提交成功，請等候管理員審核。' });
   } catch (err: any) {
-    return Response.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

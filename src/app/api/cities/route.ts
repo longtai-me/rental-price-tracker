@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const { results } = await env.DB.prepare(`SELECT DISTINCT city FROM rentals WHERE approved = 1 AND city IS NOT NULL AND city != ''`).all();
     const cities = results.map((r: any) => r.city).filter(Boolean);
 
-    return Response.json(
+    return NextResponse.json(
       { success: true, cities },
       { 
         headers: {
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (err: any) {
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         cities: [],

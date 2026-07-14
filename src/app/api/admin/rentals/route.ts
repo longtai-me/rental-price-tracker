@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { recordAdminRequest } from '@/lib/adminAccessLog';
 
@@ -36,11 +37,11 @@ export async function GET(request: Request) {
   const role = getAuthRole(request, env);
 
   if (!role) {
-    return Response.json({ success: false, error: 'Unauthorized (Invalid Password)' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized (Invalid Password)' }, { status: 401 });
   }
 
   if (!env || !env.DB) {
-    return Response.json({ success: false, error: 'DB not bound in Cloudflare Pages settings' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'DB not bound in Cloudflare Pages settings' }, { status: 500 });
   }
 
   try {
@@ -67,9 +68,9 @@ export async function GET(request: Request) {
       waterSummerPricePerUnit: row.waterSummerPricePerUnit,
       genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
     }));
-    return Response.json({ success: true, data: formattedResults });
+    return NextResponse.json({ success: true, data: formattedResults });
   } catch (err: any) {
-    return Response.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
+    return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
   }
 }
 
@@ -79,47 +80,47 @@ export async function PATCH(request: Request) {
   const role = getAuthRole(request, env);
 
   if (!role) {
-    return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
   if (!env || !env.DB) {
-    return Response.json({ success: false, error: 'DB not bound' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'DB not bound' }, { status: 500 });
   }
 
   try {
     const { id, action } = await request.json() as any;
-    if (!id || !action) return Response.json({ success: false, error: 'ID and action are required' }, { status: 400 });
+    if (!id || !action) return NextResponse.json({ success: false, error: 'ID and action are required' }, { status: 400 });
 
     let targetApprovedState = 0;
 
     if (action === 'approve') {
       if (role !== 'admin' && role !== 'super') {
-         return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to approve' }, { status: 403 });
+         return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to approve' }, { status: 403 });
       }
       targetApprovedState = 1;
     } else if (action === 'reject') {
       if (role !== 'admin' && role !== 'super') {
-         return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to reject' }, { status: 403 });
+         return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to reject' }, { status: 403 });
       }
       targetApprovedState = -1;
     } else if (action === 'remove') {
       if (role !== 'remove' && role !== 'super') {
-         return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to remove' }, { status: 403 });
+         return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to remove' }, { status: 403 });
       }
       targetApprovedState = -1;
     } else if (action === 'unarchive') {
       if (role !== 'admin' && role !== 'super') {
-         return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to unarchive' }, { status: 403 });
+         return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to unarchive' }, { status: 403 });
       }
       targetApprovedState = 0;
     } else {
-      return Response.json({ success: false, error: 'Invalid action' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
 
     await env.DB.prepare(`UPDATE rentals SET approved = ? WHERE id = ?`).bind(targetApprovedState, id).run();
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    return Response.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
+    return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
   }
 }
 
@@ -129,25 +130,25 @@ export async function DELETE(request: Request) {
   const role = getAuthRole(request, env);
 
   if (!role) {
-    return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
   if (role !== 'super') {
-    return Response.json({ success: false, error: 'Forbidden: Insufficient permissions for hard delete' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions for hard delete' }, { status: 403 });
   }
 
   if (!env || !env.DB) {
-    return Response.json({ success: false, error: 'DB not bound' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'DB not bound' }, { status: 500 });
   }
 
   try {
     const { id } = await request.json() as any;
-    if (!id) return Response.json({ success: false, error: 'ID is required' }, { status: 400 });
+    if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
 
     await env.DB.prepare(`DELETE FROM rentals WHERE id = ?`).bind(id).run();
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    return Response.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
+    return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
   }
 }
 
@@ -157,22 +158,22 @@ export async function PUT(request: Request) {
   const role = getAuthRole(request, env);
 
   if (!role) {
-    return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
   if (role !== 'edit' && role !== 'super') {
-    return Response.json({ success: false, error: 'Forbidden: Insufficient permissions to edit' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Forbidden: Insufficient permissions to edit' }, { status: 403 });
   }
 
   if (!env || !env.DB) {
-    return Response.json({ success: false, error: 'DB not bound' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'DB not bound' }, { status: 500 });
   }
 
   try {
     const data = await request.json() as any;
     const { id, ...updateFields } = data;
     
-    if (!id) return Response.json({ success: false, error: 'ID is required' }, { status: 400 });
+    if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
 
     const fieldsToUpdate = [];
     const valuesToBind = [];
@@ -222,7 +223,7 @@ export async function PUT(request: Request) {
     }
 
     if (fieldsToUpdate.length === 0) {
-      return Response.json({ success: false, error: 'No fields to update' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'No fields to update' }, { status: 400 });
     }
 
     valuesToBind.push(id);
@@ -231,8 +232,8 @@ export async function PUT(request: Request) {
       `UPDATE rentals SET ${fieldsToUpdate.join(', ')} WHERE id = ?`
     ).bind(...valuesToBind).run();
 
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    return Response.json({ success: false, error: `DB Update Error: ${err.message}` }, { status: 500 });
+    return NextResponse.json({ success: false, error: `DB Update Error: ${err.message}` }, { status: 500 });
   }
 }
