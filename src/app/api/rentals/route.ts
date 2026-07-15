@@ -173,10 +173,10 @@ export async function GET(request: Request) {
       const requestedRoomCount = roomCount || rooms;
       if (requestedRoomCount) {
         if (requestedRoomCount === '4+') {
-          conditions.push(`(layout LIKE '4房%' OR layout LIKE '5房%' OR layout LIKE '6房%')`);
+          conditions.push(`rooms >= 4`);
         } else {
-          conditions.push(`layout LIKE ?`);
-          queryParams.push(`${requestedRoomCount}房%`);
+          conditions.push(`rooms = ?`);
+          queryParams.push(parseInt(requestedRoomCount));
         }
       }
 
@@ -318,6 +318,13 @@ export async function GET(request: Request) {
         equipment: row.equipments ? row.equipments.split(',') : [],
         features: row.features ? row.features.split(',') : [],
         pricePerPing: row.pricePerPyeong,
+        hasManager: Boolean(row.hasManager),
+        managementFee: row.managementFee,
+        rooms: row.rooms,
+        livingRooms: row.livingRooms,
+        bathrooms: row.bathrooms,
+        totalFloors: row.totalFloors,
+        layout: `${row.rooms}房${row.livingRooms}廳${row.bathrooms}衛`,
         hasElevator: Boolean(row.hasElevator),
         hasBalcony: Boolean(row.hasBalcony),
         canCook: Boolean(row.canCook),
@@ -405,7 +412,7 @@ export async function POST(request: Request) {
     const address = body.address || '';
     const propertyType = body.propertyType || '其他';
     const type = body.type || '整層住家';
-    const layout = body.layout || '1房1廳1衛';
+    
     const area = parseFloat(body.area) || 0;
     const floor = body.floor || '1/1';
     const buildingAge = parseInt(body.buildingAge) || 0;
@@ -425,14 +432,11 @@ export async function POST(request: Request) {
     const genderRestriction = body.genderRestriction || 'none';
     const equipments = formData.getAll('equipments').join(',') || '';
     const featuresArr = formData.getAll('features').map(f => String(f));
-    if (body.hasManager === 'on' || body.hasManager === 'true') {
-      featuresArr.push('有管理員');
-    }
-    if (body.managementFee && body.managementFee.trim() !== '') {
-      featuresArr.push(`管理費:${body.managementFee}`);
-    }
+    
     const features = featuresArr.join(',') || '';
     const transports = formData.getAll('transports').join(',') || '';
+    const hasManager = (body.hasManager === 'on' || body.hasManager === 'true') ? 1 : 0;
+    const managementFee = body.managementFee && body.managementFee.trim() !== '' ? parseInt(body.managementFee) : null;
     const hasElevator = (body.hasElevator === 'on' || body.hasElevator === 'true') ? 1 : 0;
     const canCook = (body.canCook === 'on' || body.canCook === 'true') ? 1 : 0;
     const hasBalcony = (body.hasBalcony === 'on' || body.hasBalcony === 'true') ? 1 : 0;
@@ -446,7 +450,7 @@ export async function POST(request: Request) {
     // New fields
     const startDate = body.startDate || null;
     const leaseTerm = parseOptionalNumber(body.leaseTerm);
-    const ghostStory = body.ghostStory || null;
+    const ghostStory = (body.ghostStory === 'on' || body.ghostStory === 'true') ? 1 : 0;
     const badLandlord = (body.badLandlord === 'on' || body.badLandlord === 'true') ? 1 : 0;
     const evidenceLink = body.evidenceLink || null;
     const contactEmail = body.contactEmail || null;
@@ -454,20 +458,36 @@ export async function POST(request: Request) {
     await env.DB.batch([
       env.DB.prepare(
         `INSERT INTO rentals (
-          id, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
-          includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
-          waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
-          hasParking, genderRestriction, equipments, features, transports,
-          hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged,
-          startDate, leaseTerm, ghostStory, badLandlord, evidenceLink, contactEmail
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          id, posterRole, approved, verificationStatus, city, district, address, latitude, longitude,
+          propertyType, type, rooms, livingRooms, bathrooms, kitchens, area, floor, totalFloors, buildingAge,
+          price, pricePerPyeong, agencyFeeCharged, managementFee,
+          includesWater, waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
+          includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
+          hasElevator, hasParking, hasBalcony, trashService, hasManager,
+          genderRestriction, canCook, canPet, canMoveHuji, canSubsidize,
+          equipments, features, transports,
+          ghostStory, badLandlord, evidenceLink, startDate, leaseTerm, contactEmail, contractFile
+        ) VALUES (
+          ?, ?, 0, 'unverified', ?, ?, ?, ?, ?,
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?,
+          ?, ?, ?, ?, ?, ?, ?
+        )`
       ).bind(
-        newId, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
-        includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
-        waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
-        hasParking, genderRestriction, equipments, features, transports,
-        hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, contractFilename, posterRole, agencyFeeCharged,
-        startDate, leaseTerm, ghostStory, badLandlord, evidenceLink, contactEmail
+        newId, posterRole, city, district, address, latitude, longitude,
+        propertyType, type, parseInt(body.rooms) || 0, parseInt(body.livingRooms) || 0, parseInt(body.bathrooms) || 0, parseInt(body.kitchens) || 0, area, floor, parseInt(body.totalFloors) || null, buildingAge,
+        price, pricePerPyeong, agencyFeeCharged, managementFee,
+        includesWater, waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
+        includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
+        hasElevator, hasParking, hasBalcony, trashService, hasManager,
+        genderRestriction, canCook, canPet, canMoveHuji, canSubsidize,
+        equipments, features, transports,
+        ghostStory, badLandlord, evidenceLink, startDate, leaseTerm, contactEmail, contractFilename
       ),
       env.DB.prepare(
         `INSERT INTO audit_logs (id, rentalId, action, role, ip) VALUES (?, ?, ?, ?, ?)`

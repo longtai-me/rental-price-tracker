@@ -330,6 +330,9 @@ export default function SubmitPage() {
                 <div className="flex items-center gap-2">
                   <input required type="number" name="bathrooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">衛</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <input required type="number" name="kitchens" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廚</span>
+                </div>
               </div>
             </div>
           </div>

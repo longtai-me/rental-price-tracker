@@ -277,7 +277,7 @@ export async function PUT(request: Request) {
     const valuesToBind = [];
 
     const allowedKeys = [
-      'city', 'district', 'address', 'propertyType', 'type', 'layout', 'rooms', 'livingRooms', 'bathrooms', 'area', 'floor', 'totalFloors', 'buildingAge', 'price', 
+      'city', 'district', 'address', 'propertyType', 'type', 'layout', 'rooms', 'livingRooms', 'bathrooms', 'kitchens', 'area', 'floor', 'totalFloors', 'buildingAge', 'price', 
       'pricePerPyeong', 'includesWater', 'includesElectricity', 'hasParking', 'genderRestriction',
       'electricityBillingType', 'electricityPricePerKwh', 'electricitySummerPricePerKwh',
       'waterBillingType', 'waterPricePerUnit', 'waterSummerPricePerUnit',

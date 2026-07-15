@@ -520,6 +520,9 @@ export default function AdminPage() {
                       <div className="flex items-center gap-2">
                         <input required type="number" name="bathrooms" defaultValue={editingRental.bathrooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>衛</span>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <input required type="number" name="kitchens" defaultValue={editingRental.kitchens || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>廚</span>
+                      </div>
                     </div>
                   </div>
 

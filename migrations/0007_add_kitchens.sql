@@ -1,0 +1,1 @@
+ALTER TABLE rentals ADD COLUMN kitchens INTEGER DEFAULT 0;
