@@ -204,23 +204,12 @@ export async function GET(request: Request) {
       queryStr += ` AND ${conditions.join(' AND ')}`;
     }
 
-    function privacyOffset(id: string, base: number, axis: 'lat' | 'lng'): number {
-      let hash = 0;
-      for (let i = 0; i < id.length; i++) {
-        hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
-      }
-      const seed = axis === 'lat' ? hash : (hash >> 16) ^ hash;
-      const maxDeg = axis === 'lat' ? 0.00076 : 0.00085;
-      const offset = ((seed & 0xffff) / 0xffff - 0.5) * 2 * maxDeg;
-      return base + offset;
-    }
-
     const { results } = await env.DB.prepare(queryStr).bind(...queryParams).all();
 
     const formattedResults = results.map((row: any) => ({
       ...row,
-      lat: row.latitude  ? privacyOffset(String(row.id), row.latitude,  'lat') : null,
-      lng: row.longitude ? privacyOffset(String(row.id), row.longitude, 'lng') : null,
+      lat: row.latitude ? row.latitude : null,
+      lng: row.longitude ? row.longitude : null,
       transportation: row.transports ? row.transports.split(',') : [],
       equipment: row.equipments ? row.equipments.split(',') : [],
       features: row.features ? row.features.split(',') : [],
