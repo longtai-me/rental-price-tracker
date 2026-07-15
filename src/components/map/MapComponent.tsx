@@ -67,25 +67,6 @@ export default function MapComponent({ data, onMarkerClick, externalCenter, onBo
   const defaultCenter: [number, number] = [25.0330, 121.5654];
   const center = externalCenter || defaultCenter;
 
-  // Pre-calculate spiral offsets in O(N) time
-  const spiralOffsets = new Map<string, { lat: number, lng: number }>();
-  const coordCounts = new Map<string, number>();
-
-  data.forEach((item) => {
-    if (!item.lat || !item.lng) return;
-    const coordKey = `${item.lat},${item.lng}`;
-    const count = coordCounts.get(coordKey) || 0;
-    coordCounts.set(coordKey, count + 1);
-    
-    if (count > 0) {
-      const angle = count * Math.PI / 4;
-      const radius = 0.0001 + (Math.floor(count / 8) * 0.0001);
-      spiralOffsets.set(item.id, {
-        lat: Math.sin(angle) * radius,
-        lng: Math.cos(angle) * radius
-      });
-    }
-  });
 
   return (
     <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%', borderRadius: '8px', zIndex: 10 }}>
@@ -96,15 +77,10 @@ export default function MapComponent({ data, onMarkerClick, externalCenter, onBo
       />
       {data.map((item, index) => {
         if (!item.lat || !item.lng) return null;
-        
-        const offset = spiralOffsets.get(item.id);
-        const latOffset = offset?.lat || 0;
-        const lngOffset = offset?.lng || 0;
-
         return (
           <Marker 
             key={item.id} 
-            position={[item.lat + latOffset, item.lng + lngOffset]} 
+            position={[item.lat, item.lng]} 
             icon={icon}
             eventHandlers={{
               click: () => onMarkerClick(item)
