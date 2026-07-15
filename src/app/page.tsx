@@ -52,6 +52,7 @@ interface Rental {
   badLandlord?: boolean;
   evidenceLink?: string;
   verificationStatus: string;
+  propertyType?: string;
 }
 
 export default function HomePage() {
@@ -62,6 +63,7 @@ export default function HomePage() {
   // Filters
   const [city, setCity] = useState('');
   const [type, setType] = useState('');
+  const [propertyType, setPropertyType] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [minArea, setMinArea] = useState('');
@@ -136,6 +138,7 @@ export default function HomePage() {
       const params = new URLSearchParams();
       if (city) params.append('city', city);
       if (type) params.append('type', type);
+      if (propertyType) params.append('propertyType', propertyType);
       if (minPrice) params.append('minPrice', minPrice);
       if (maxPrice) params.append('maxPrice', maxPrice);
       if (minArea) params.append('minArea', minArea);
@@ -206,7 +209,7 @@ export default function HomePage() {
       fetchData();
     }, 300);
     return () => clearTimeout(timer);
-  }, [city, type, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction, posterRoles]);
+  }, [city, type, propertyType, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction, posterRoles]);
 
   const avgPrice = data.length > 0 ? Math.round(data.reduce((acc, curr) => acc + curr.price, 0) / data.length) : 0;
   const avgPingPrice = data.length > 0 ? Math.round(data.reduce((acc, curr) => acc + curr.pricePerPing, 0) / data.length) : 0;
@@ -239,12 +242,24 @@ export default function HomePage() {
             </div>
             <div className="filter-group">
               <label><House size={20} weight="regular" /> 物件類型</label>
+              <select className="input-field" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
+                <option value="">全部類型</option>
+                <option value="公寓">公寓</option>
+                <option value="電梯大樓">電梯大樓</option>
+                <option value="透天厝">透天厝</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div className="filter-group">
+              <label><House size={20} weight="regular" /> 房間類型</label>
               <select className="input-field" value={type} onChange={(e) => setType(e.target.value)}>
                 <option value="">全部類型</option>
                 <option value="整層住家">整層住家</option>
                 <option value="獨立套房">獨立套房</option>
                 <option value="分租套房">分租套房</option>
-                <option value="分租雅房">分租雅房</option>
+                <option value="雅房">雅房</option>
+                <option value="車位">車位</option>
+                <option value="其他">其他</option>
               </select>
             </div>
             <div className="filter-group" style={{ gridColumn: 'span 2' }}>

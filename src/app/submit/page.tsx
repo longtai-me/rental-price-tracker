@@ -62,26 +62,24 @@ export default function SubmitPage() {
       setGeocodeStatus('loading');
 
       const fetchGeocode = async (q: string) => {
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+          console.error("Missing Google Maps API Key");
+          return [];
+        }
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=tw`,
-          { headers: { 'User-Agent': 'rental-price-tracker/1.0' } }
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(q)}&key=${apiKey}`
         );
         if (!res.ok) {
           console.error("Geocoding API error:", res.status);
           return [];
         }
         try {
-          const text = await res.text();
-          if (!text) return [];
-          const results = JSON.parse(text) as any[];
+          const data = await res.json();
+          if (data.status !== "OK" || !data.results || data.results.length === 0) return [];
           
-          if (district && results.length > 0) {
-            const matched = results.find(r => r.display_name && r.display_name.includes(district));
-            if (matched) return [matched];
-            return [];
-          }
-          
-          return results.length > 0 ? [results[0]] : [];
+          const location = data.results[0].geometry.location;
+          return [{ lat: location.lat, lon: location.lng }];
         } catch (e) {
           console.error("Geocoding parse error:", e);
           return [];
@@ -91,23 +89,21 @@ export default function SubmitPage() {
       const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
       try {
-                let data = await fetchGeocode(query);
+        let data = await fetchGeocode(query);
         
-        // Fallback strategies for Taiwan addresses
+        // Fallback strategies for Taiwan addresses (Google Maps API is much better, less fallback needed, but we keep the logic without sleep)
         if (!data || data.length === 0) {
           const roadMatch = address.match(/(.+?(?:路|街|大道)(?:[一二三四五六七八九十0-9]+段)?)/);
           if (roadMatch) {
             // Try city + district + road
             const fallbackQuery1 = `${selectedCity}${district}${roadMatch[1]}`;
             if (fallbackQuery1 !== query) {
-              await sleep(1000); // Prevent rate limiting (max 1 req/sec)
               data = await fetchGeocode(fallbackQuery1);
             }
-            // Try city + road (Nominatim sometimes fails with district)
+            // Try city + road
             if (!data || data.length === 0) {
               const fallbackQuery2 = `${selectedCity}${roadMatch[1]}`;
               if (fallbackQuery2 !== fallbackQuery1 && fallbackQuery2 !== query) {
-                await sleep(1000); // Prevent rate limiting
                 data = await fetchGeocode(fallbackQuery2);
               }
             }
@@ -116,7 +112,6 @@ export default function SubmitPage() {
           if (!data || data.length === 0) {
             const fallbackQuery3 = `${selectedCity}${district}`;
             if (fallbackQuery3 !== query) {
-              await sleep(1000); // Prevent rate limiting
               data = await fetchGeocode(fallbackQuery3);
             }
           }
@@ -284,12 +279,23 @@ export default function SubmitPage() {
               </div>
 
               <div className="form-group">
-                <label>型態 <span style={{color: '#ef4444'}}>*</span></label>
+                <label>物件類型 <span style={{color: '#ef4444'}}>*</span></label>
+                <select name="propertyType" className="input-field" defaultValue="公寓">
+                  <option value="公寓">公寓</option>
+                  <option value="電梯大樓">電梯大樓</option>
+                  <option value="透天厝">透天厝</option>
+                  <option value="其他">其他</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>房間類型 <span style={{color: '#ef4444'}}>*</span></label>
                 <select name="type" className="input-field">
                   <option>整層住家</option>
                   <option>獨立套房</option>
                   <option>分租套房</option>
                   <option>雅房</option>
+                  <option>其他</option>
                 </select>
               </div>
 

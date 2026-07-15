@@ -87,7 +87,7 @@ export default function MapComponent({ data, onMarkerClick }: MapProps) {
               <div style={{ fontSize: '0.9rem', color: '#1e293b' }}>
                 <strong style={{ fontSize: '1rem' }}>{maskAddress(item.address)}</strong><br/>
                 租金: <strong>NT$ {item.price.toLocaleString()}</strong><br/>
-                {item.type} | {item.layout} | {item.area} 坪
+                {item.propertyType || "其他"} | {item.type} | {item.layout} | {item.area} 坪
               </div>
             </Popup>
           </Marker>

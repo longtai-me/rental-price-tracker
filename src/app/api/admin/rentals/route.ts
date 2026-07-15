@@ -154,14 +154,14 @@ export async function DELETE(request: Request) {
     await env.DB.batch([
       env.DB.prepare(`
         INSERT INTO deleted_rentals (
-          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          id, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
           includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
           hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged, createdAt
         )
         SELECT 
-          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          id, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
           includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
@@ -237,7 +237,7 @@ export async function PUT(request: Request) {
     const valuesToBind = [];
 
     const allowedKeys = [
-      'city', 'district', 'address', 'type', 'layout', 'area', 'floor', 'buildingAge', 'price', 
+      'city', 'district', 'address', 'propertyType', 'type', 'layout', 'area', 'floor', 'buildingAge', 'price', 
       'pricePerPyeong', 'includesWater', 'includesElectricity', 'hasParking', 'genderRestriction',
       'electricityBillingType', 'electricityPricePerKwh', 'electricitySummerPricePerKwh',
       'waterBillingType', 'waterPricePerUnit', 'waterSummerPricePerUnit',

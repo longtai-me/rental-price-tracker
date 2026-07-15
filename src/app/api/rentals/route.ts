@@ -48,6 +48,7 @@ export async function GET(request: Request) {
     const canPet = searchParams.get('canPet');
     const hasParking = searchParams.get('hasParking');
     const type = searchParams.get('type');
+    const propertyType = searchParams.get('propertyType');
     const minArea = searchParams.get('minArea');
     const maxArea = searchParams.get('maxArea');
     const needsSubsidize = searchParams.get('needsSubsidize');
@@ -109,6 +110,10 @@ export async function GET(request: Request) {
     if (type) {
       conditions.push(`type = ?`);
       queryParams.push(type);
+    }
+    if (propertyType) {
+      conditions.push(`propertyType = ?`);
+      queryParams.push(propertyType);
     }
 
     if (minArea) {
@@ -308,6 +313,7 @@ export async function POST(request: Request) {
     const city = body.city || '';
     const district = body.district || '';
     const address = body.address || '';
+    const propertyType = body.propertyType || '其他';
     const type = body.type || '整層住家';
     const layout = body.layout || '1房1廳1衛';
     const area = parseFloat(body.area) || 0;
@@ -358,15 +364,15 @@ export async function POST(request: Request) {
     await env.DB.batch([
       env.DB.prepare(
         `INSERT INTO rentals (
-          id, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+          id, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
           includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
           waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
           hasParking, genderRestriction, equipments, features, transports,
           hasElevator, canCook, hasBalcony, canMoveHuji, canPet, trashService, canSubsidize, approved, contractFile, posterRole, agencyFeeCharged,
           startDate, leaseTerm, ghostStory, badLandlord, evidenceLink, contactEmail
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
-        newId, city, district, address, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
+        newId, city, district, address, propertyType, type, layout, area, floor, buildingAge, price, pricePerPyeong, latitude, longitude,
         includesWater, includesElectricity, electricityBillingType, electricityPricePerKwh, electricitySummerPricePerKwh,
         waterBillingType, waterPricePerUnit, waterSummerPricePerUnit,
         hasParking, genderRestriction, equipments, features, transports,

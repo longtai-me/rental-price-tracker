@@ -149,8 +149,17 @@ export default function AdminPage() {
     
     setGeocodeStatus('loading');
     const fetchGeocode = async (q: string) => {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw`, { headers: { 'User-Agent': 'rental-price-tracker/1.0' } });
-      return await res.json() as any[];
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+      if (!apiKey) {
+        console.error("Missing Google Maps API Key");
+        return [];
+      }
+      const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(q)}&key=${apiKey}`);
+      const data = await res.json();
+      if (data.status === "OK" && data.results && data.results.length > 0) {
+        return [{ lat: data.results[0].geometry.location.lat, lon: data.results[0].geometry.location.lng }];
+      }
+      return [];
     };
     
     try {
@@ -297,7 +306,7 @@ export default function AdminPage() {
                 <tr key={rental.id}>
                   <td>{rental.city}{rental.district}</td>
                   <td>{rental.address}</td>
-                  <td>{rental.type}<br/><span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{rental.layout}</span></td>
+                  <td>{rental.propertyType || '其他'} | {rental.type}<br/><span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{rental.layout}</span></td>
                   <td>NT$ {rental.price}<br/><span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{rental.area} 坪</span></td>
                   <td>
                     <div className="badge-group">
@@ -339,7 +348,7 @@ export default function AdminPage() {
           {list.map(rental => (
             <div key={rental.id} className="mobile-card">
               <div className="mobile-card-header">
-                <span className="mobile-card-title">{rental.city}{rental.district} - {rental.type}</span>
+                <span className="mobile-card-title">{rental.city}{rental.district} - {rental.propertyType || '其他'} | {rental.type}</span>
                 <span className="mobile-card-price">NT$ {rental.price}</span>
               </div>
               <div className="mobile-card-details">
@@ -506,7 +515,16 @@ export default function AdminPage() {
                   <h3><House style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />房屋規格</h3>
                   <div className="form-grid">
                     <div className="form-group">
-                      <label>房屋類型</label>
+                      <label>物件類型</label>
+                      <select name="propertyType" defaultValue={editingRental.propertyType || "其他"} className="input-field">
+                        <option value="公寓">公寓</option>
+                        <option value="電梯大樓">電梯大樓</option>
+                        <option value="透天厝">透天厝</option>
+                        <option value="其他">其他</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>房間類型</label>
                       <select name="type" defaultValue={editingRental.type} className="input-field">
                         <option value="獨立套房">獨立套房</option>
                         <option value="分租套房">分租套房</option>
