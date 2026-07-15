@@ -512,7 +512,7 @@ export default function SubmitPage() {
             <div className="form-grid">
               <div className="form-group">
                 <label>起租日 <span style={{color: '#ef4444'}}>*</span></label>
-                <input required type="date" name="startDate" className="input-field" />
+                <input required type="date" name="startDate" max="9999-12-31" className="input-field" />
               </div>
               <div className="form-group">
                 <label>租屋期限 <span style={{color: '#ef4444'}}>*</span></label>

@@ -558,7 +558,7 @@ export default function AdminPage() {
                     </div>
                     <div className="form-group">
                       <label>起租日</label>
-                      <input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" />
+                      <input type="date" name="startDate" max="9999-12-31" defaultValue={editingRental.startDate} className="input-field" />
                     </div>
                     <div className="form-group">
                       <label>租期</label>
