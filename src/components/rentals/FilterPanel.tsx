@@ -221,13 +221,24 @@ export default function FilterPanel({
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-800 border-b pb-2">水電與費用</h4>
               
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">電費計費方式</label>
-                <select value={filters.electricityBillingType} onChange={(e) => onFilterChange('electricityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
-                  <option value="all">不限</option>
-                  <option value="official">台電</option>
-                  <option value="non-official">自訂費率 (一度電)</option>
-                </select>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">電費計費方式</label>
+                  <select value={filters.electricityBillingType} onChange={(e) => onFilterChange('electricityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
+                    <option value="all">不限</option>
+                    <option value="official">台電</option>
+                    <option value="non-official">自訂費率 (一度電)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">水費計費方式</label>
+                  <select value={filters.waterBillingType} onChange={(e) => onFilterChange('waterBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
+                    <option value="all">不限</option>
+                    <option value="official">台水</option>
+                    <option value="non-official">自訂費率</option>
+                  </select>
+                </div>
               </div>
               
               {filters.electricityBillingType === 'non-official' && (
@@ -239,15 +250,6 @@ export default function FilterPanel({
                   </div>
                 </div>
               )}
-
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">水費計費方式</label>
-                <select value={filters.waterBillingType} onChange={(e) => onFilterChange('waterBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
-                  <option value="all">不限</option>
-                  <option value="official">台水</option>
-                  <option value="non-official">自訂費率</option>
-                </select>
-              </div>
 
               {filters.waterBillingType === 'non-official' && (
                 <div className="space-y-2 p-3 bg-gray-50 rounded border border-gray-200">
