@@ -221,7 +221,7 @@ export default function FilterPanel({
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-800 border-b pb-2">水電與費用</h4>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="block text-xs font-medium text-gray-500">電費計費方式</label>
                   <select value={filters.electricityBillingType} onChange={(e) => onFilterChange('electricityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
