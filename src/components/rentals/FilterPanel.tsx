@@ -45,8 +45,6 @@ export const initialFilterState: FilterState = {
   maxElectricityPriceSummer: '',
   maxElectricityPriceNonSummer: '',
   maxWaterPrice: '',
-  includesWater: false,
-  includesElectricity: false,
   transports: [],
   equipment: [],
   features: [],
