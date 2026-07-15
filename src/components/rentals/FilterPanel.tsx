@@ -19,8 +19,6 @@ export interface FilterState {
   maxElectricityPriceSummer: string;
   maxElectricityPriceNonSummer: string;
   maxWaterPrice: string;
-  includesWater: boolean;
-  includesElectricity: boolean;
   transports: string[];
   equipment: string[];
   features: string[];
@@ -228,11 +226,8 @@ export default function FilterPanel({
                     <option value="all">不限</option>
                     <option value="official">台電</option>
                     <option value="non-official">自訂費率 (一度電)</option>
+                    <option value="included">租金包電</option>
                   </select>
-                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mt-1">
-                    <input type="checkbox" checked={filters.includesElectricity} onChange={(e) => onFilterChange('includesElectricity', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                    <span>租金包電</span>
-                  </label>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -241,11 +236,8 @@ export default function FilterPanel({
                     <option value="all">不限</option>
                     <option value="official">台水</option>
                     <option value="non-official">自訂費率</option>
+                    <option value="included">租金包水</option>
                   </select>
-                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mt-1">
-                    <input type="checkbox" checked={filters.includesWater} onChange={(e) => onFilterChange('includesWater', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                    <span>租金包水</span>
-                  </label>
                 </div>
               </div>
               

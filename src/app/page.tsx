@@ -95,8 +95,6 @@ export default function HomePage() {
         if (filters.hasParking) params.append('hasParking', 'true');
         if (filters.needsSubsidize) params.append('needsSubsidize', 'true');
         if (filters.needsHuji) params.append('needsHuji', 'true');
-        if (filters.includesWater) params.append('includesWater', 'true');
-        if (filters.includesElectricity) params.append('includesElectricity', 'true');
         if (filters.electricityBillingType && filters.electricityBillingType !== 'all') params.append('electricityBillingType', filters.electricityBillingType);
         if (filters.waterBillingType && filters.waterBillingType !== 'all') params.append('waterBillingType', filters.waterBillingType);
         if (filters.maxElectricityPriceNonSummer) params.append('maxElectricityPriceNonSummer', filters.maxElectricityPriceNonSummer);

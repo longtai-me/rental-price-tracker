@@ -206,12 +206,16 @@ export async function GET(request: Request) {
         conditions.push(`electricityBillingType = 'taipower'`);
       } else if (electricityBillingType === 'non-official') {
         conditions.push(`electricityBillingType = 'custom'`);
+      } else if (electricityBillingType === 'included') {
+        conditions.push(`includesElectricity = 1`);
       }
 
       if (waterBillingType === 'official') {
         conditions.push(`waterBillingType = 'taiwater'`);
       } else if (waterBillingType === 'non-official') {
         conditions.push(`waterBillingType = 'custom'`);
+      } else if (waterBillingType === 'included') {
+        conditions.push(`includesWater = 1`);
       }
 
       if (verifiedOnly === 'true') {
