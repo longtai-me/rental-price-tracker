@@ -5,9 +5,9 @@ import { SpinnerGap } from '@phosphor-icons/react';
 const DraggableMapPicker = dynamic(() => import('./DraggableMapPicker'), {
   ssr: false,
   loading: () => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '300px', background: 'var(--card-bg)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+    <div className="flex items-center justify-center h-[300px] bg-white rounded-lg border border-gray-200">
       <SpinnerGap className="spinner"  size={24} weight="regular" />
-      <span style={{ marginLeft: '0.5rem', color: 'var(--text-muted)' }}>載入地圖中...</span>
+      <span className="ml-2 text-gray-500">載入地圖中...</span>
     </div>
   ),
 });

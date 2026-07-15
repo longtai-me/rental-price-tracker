@@ -5,7 +5,7 @@ import { SpinnerGap } from '@phosphor-icons/react';
 const MapComponent = dynamic(() => import('./MapComponent'), {
   ssr: false,
   loading: () => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: 'var(--card-bg)', borderRadius: '16px' }}>
+    <div className="flex items-center justify-center h-full bg-white rounded-2xl">
       <SpinnerGap className="spinner"  size={32} weight="regular" />
     </div>
   )

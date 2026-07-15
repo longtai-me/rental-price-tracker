@@ -33,10 +33,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
         <ToastProvider>
           <Navbar />
-          <main className="main-content">
+          <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-20 pb-8 min-h-[calc(100vh-4rem)]">
             {children}
           </main>
           <Footer />
