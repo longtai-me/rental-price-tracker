@@ -12,13 +12,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2 group" onClick={() => setMenuOpen(false)}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" className="h-12 w-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 55" className="h-10 w-auto">
               <path d="M15 45 L15 25 L35 10 L55 25 L55 45 Z" fill="none" stroke="#1e293b" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round"/>
               <path d="M5 15 L25 35 L40 25 L65 45" fill="none" stroke="#e53e3e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M50 45 L65 45 L65 30" fill="none" stroke="#e53e3e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-              <text x="85" y="38" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="24" fill="#0f172a" letterSpacing="-0.5">Rental Price</text>
-              <text x="85" y="62" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="600" fontSize="20" fill="#64748b" letterSpacing="1">TRACKER</text>
             </svg>
+            <div className="flex flex-col justify-center translate-y-[2px]">
+              <span className="font-[800] text-[22px] leading-none text-[#0f172a] tracking-tight">Rental Price</span>
+              <span className="font-[600] text-[15px] leading-none text-[#64748b] tracking-widest mt-1">TRACKER</span>
+            </div>
           </Link>
 
           {/* Desktop nav */}
