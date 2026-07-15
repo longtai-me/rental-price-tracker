@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, PencilSimple, Trash, ArchiveBox, ArrowUUpLeft, MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, XCircle, FileText } from '@phosphor-icons/react';
+import { Check, X, PencilSimple, Trash, Archive, ArrowUUpLeft, MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, XCircle, FileText } from '@phosphor-icons/react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
 import './admin.css';
 
@@ -322,7 +322,7 @@ export default function AdminPage() {
                         </>
                       )}
                       {tab === 'published' && (
-                        <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject" title="下架移除"><ArchiveBox size={32} weight="regular" /></button>
+                        <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject" title="下架移除"><Archive size={32} weight="regular" /></button>
                       )}
                       {tab === 'archived' && (
                         <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve" title="撤銷封存/重新審核"><ArrowUUpLeft size={32} weight="regular" /></button>
@@ -366,7 +366,7 @@ export default function AdminPage() {
                     <button onClick={() => handleAction(rental.id, 'reject')} className="action-btn reject"><X size={32} weight="regular" /></button>
                   </>
                 )}
-                {tab === 'published' && <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject"><ArchiveBox size={32} weight="regular" /></button>}
+                {tab === 'published' && <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject"><Archive size={32} weight="regular" /></button>}
                 {tab === 'archived' && <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve"><ArrowUUpLeft size={32} weight="regular" /></button>}
                 <button onClick={() => { if(confirm('警告：這是永久刪除操作，無法復原。是否繼續？')) handleAction(rental.id, 'delete', 'DELETE'); }} className="action-btn delete"><Trash size={32} weight="regular" /></button>
               </div>
