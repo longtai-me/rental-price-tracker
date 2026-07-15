@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { MapPin, House, CurrencyDollar, SpinnerGap, X, Car, Buildings, Ruler, CheckCircle, XCircle, Lightning, Warning, Drop } from '@phosphor-icons/react';
+import { MapPin, House, CurrencyDollar, SpinnerGap, X, Car, Buildings, Ruler, CheckCircle, XCircle, Lightning, Warning, Drop, Ghost, Link } from '@phosphor-icons/react';
 import MapWrapper from '@/components/MapWrapper';
 import { PriceTrendChart, TypePieChart } from '@/components/Charts';
 import './page.css';
@@ -743,7 +743,7 @@ export default function HomePage() {
                             rel="noopener noreferrer"
                             style={{ display: 'inline-block', marginTop: '0.5rem', color: 'var(--primary)', textDecoration: 'underline' }}
                           >
-                            🔗 點此查看客觀證據 (判決書/公文/新聞)
+                            <span style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Link size={16} weight="regular" /> 點此查看客觀證據 (判決書/公文/新聞)</span>
                           </a>
                         )}
                       </div>
@@ -753,7 +753,7 @@ export default function HomePage() {
                     <div className="info-item" style={{ gridColumn: '1 / -1' }}>
                       <Lightning className="info-icon" style={{ color: '#ef4444' }}  size={24} weight="regular" />
                       <div>
-                        <label style={{ color: '#ef4444' }}>👻 租屋鬼故事 / 恐怖經歷</label>
+                        <label style={{ color: '#ef4444', display: "inline-flex", alignItems: "center", gap: "4px" }}><Ghost size={16} weight="regular" /> 租屋鬼故事 / 恐怖經歷</label>
                         <p style={{ color: 'var(--foreground)', marginTop: '0.25rem', whiteSpace: 'pre-wrap', fontStyle: 'italic', lineHeight: '1.6' }}>
                           {selectedItem.ghostStory}
                         </p>

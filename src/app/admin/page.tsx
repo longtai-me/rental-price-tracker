@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, PencilSimple, Trash, Archive, ArrowUUpLeft, MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, XCircle, FileText } from '@phosphor-icons/react';
+import { Check, X, PencilSimple, Trash, Archive, ArrowUUpLeft, MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, XCircle, FileText, Question, Ghost, Warning, Link } from '@phosphor-icons/react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
 import './admin.css';
 
@@ -301,14 +301,12 @@ export default function AdminPage() {
                   <td>NT$ {rental.price}<br/><span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{rental.area} 坪</span></td>
                   <td>
                     <div className="badge-group">
-                      {rental.verificationStatus === 'verified' && <span className="badge" style={{background: '#d1fae5', color: '#059669'}}>✅ 已審核</span>}
-                      {rental.verificationStatus === 'doubtful' && <span className="badge" style={{background: '#fee2e2', color: '#b91c1c'}}>❓ 存疑</span>}
-                      {rental.verificationStatus === 'verified' && <span className="badge" style={{background: '#d1fae5', color: '#059669'}}>✅ 已審核</span>}
-                  {rental.verificationStatus === 'doubtful' && <span className="badge" style={{background: '#fee2e2', color: '#b91c1c'}}>❓ 存疑</span>}
-                  {rental.ghostStory && <span className="badge badge-ghost">👻 鬼故事</span>}
-                      {rental.badLandlord && <span className="badge badge-bad-landlord">⚠️ 惡房東</span>}
-                      {rental.evidenceLink && <a href={rental.evidenceLink} target="_blank" rel="noreferrer" className="badge badge-evidence">🔗 證據</a>}
-                      {rental.contractFile && <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noreferrer" className="badge badge-contract">📄 契約</a>}
+                      {rental.verificationStatus === 'verified' && <span className="badge" style={{background: '#d1fae5', color: '#059669', display: 'inline-flex', alignItems: 'center', gap: '4px'}}><CheckCircle size={16} weight="regular" /> 已審核</span>}
+                      {rental.verificationStatus === 'doubtful' && <span className="badge" style={{background: '#fee2e2', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '4px'}}><Question size={16} weight="regular" /> 存疑</span>}
+                  {rental.ghostStory && <span className="badge badge-ghost" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Ghost size={16} weight="regular" /> 鬼故事</span>}
+                      {rental.badLandlord && <span className="badge badge-bad-landlord" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Warning size={16} weight="regular" /> 惡房東</span>}
+                      {rental.evidenceLink && <a href={rental.evidenceLink} target="_blank" rel="noreferrer" className="badge badge-evidence" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Link size={16} weight="regular" /> 證據</a>}
+                      {rental.contractFile && <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noreferrer" className="badge badge-contract" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><FileText size={16} weight="regular" /> 契約</a>}
                     </div>
                   </td>
                   <td style={{fontSize: '0.85rem'}}>{new Date(rental.createdAt).toLocaleDateString()}</td>
@@ -348,10 +346,10 @@ export default function AdminPage() {
                 <p>{rental.address}</p>
                 <p>{rental.layout} | {rental.area} 坪</p>
                 <div className="badge-group" style={{ flexWrap: 'wrap', gap: '4px' }}>
-                  {rental.ghostStory && <span className="badge badge-ghost">👻 鬼故事</span>}
-                  {rental.badLandlord && <span className="badge badge-bad-landlord">⚠️ 惡房東</span>}
-                  {rental.evidenceLink && <a href={rental.evidenceLink} target="_blank" rel="noreferrer" className="badge badge-evidence">🔗 證據</a>}
-                  {rental.contractFile && <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noreferrer" className="badge badge-contract">📄 契約</a>}
+                  {rental.ghostStory && <span className="badge badge-ghost" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Ghost size={16} weight="regular" /> 鬼故事</span>}
+                  {rental.badLandlord && <span className="badge badge-bad-landlord" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Warning size={16} weight="regular" /> 惡房東</span>}
+                  {rental.evidenceLink && <a href={rental.evidenceLink} target="_blank" rel="noreferrer" className="badge badge-evidence" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><Link size={16} weight="regular" /> 證據</a>}
+                  {rental.contractFile && <a href={`/api/contracts?key=${encodeURIComponent(rental.contractFile)}`} target="_blank" rel="noreferrer" className="badge badge-contract" style={{display: "inline-flex", alignItems: "center", gap: "4px"}}><FileText size={16} weight="regular" /> 契約</a>}
                   {rental.hasElevator && <span className="badge" style={{background: '#e5e7eb', color: '#374151'}}>電梯</span>}
                   {rental.hasParking && <span className="badge" style={{background: '#e5e7eb', color: '#374151'}}>車位</span>}
                   {rental.canPet && <span className="badge" style={{background: '#e5e7eb', color: '#374151'}}>寵物</span>}
@@ -474,8 +472,8 @@ export default function AdminPage() {
                       <label>認證狀態</label>
                       <select name="verificationStatus" defaultValue={editingRental.verificationStatus || 'unverified'} className="input-field">
                         <option value="unverified">未驗證</option>
-                        <option value="verified">✅ 已審核</option>
-                        <option value="doubtful">❓ 存疑</option>
+                        <option value="verified">已審核</option>
+                        <option value="doubtful">存疑</option>
                       </select>
                     </div>
                     <div className="form-group">
