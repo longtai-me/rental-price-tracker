@@ -345,7 +345,7 @@ export default function AdminPage() {
                       </a>
                     )}
                     {r.badLandlord && <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">惡房東</span>}
-                    {r.ghostStory && <span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">事故屋</span>}
+                    {r.ghostStory && (typeof r.ghostStory === 'string' ? <span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800" title={r.ghostStory}>避雷心得</span> : <span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">事故屋</span>)}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -469,10 +469,9 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">刊登者身分</label>
                     <select name="posterRole" defaultValue={editingRental.posterRole || 'renter'} className="w-full bg-gray-50 border border-gray-300 rounded p-2">
-                      <option value="renter">承租人 (我要轉租/退租)</option>
-                      <option value="landlord">屋主自租</option>
-                      <option value="agency">仲介/代管</option>
-                      <option value="other">其他</option>
+                      <option value="renter">租客</option>
+                      <option value="landlord">房東</option>
+                      <option value="agent">房仲</option>
                     </select>
                   </div>
                   <div>
@@ -553,7 +552,7 @@ export default function AdminPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">性別限制</label>
-                    <select name="genderRestriction" defaultValue={editingRental.genderRestriction === 'female' ? 'female' : editingRental.genderRestriction === 'male' ? 'male' : 'none'} className="w-full bg-gray-50 border border-gray-300 rounded p-2">
+                    <select name="genderRestriction" defaultValue={editingRental.genderRestriction === '限女' ? 'female' : editingRental.genderRestriction === '限男' ? 'male' : 'none'} className="w-full bg-gray-50 border border-gray-300 rounded p-2">
                       <option value="none">不限</option>
                       <option value="female">限女</option>
                       <option value="male">限男</option>
@@ -655,11 +654,11 @@ export default function AdminPage() {
                 <div className="bg-gray-50 p-4 rounded-lg border border-red-100">
                   <h4 className="font-semibold text-red-700 mb-3">風險警告與合約檔案</h4>
                   <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-red-800 mb-1">租屋鬼故事 / 避雷心得</label>
+                      <textarea name="ghostStory" defaultValue={editingRental.ghostStory || ''} className="w-full bg-white border border-red-200 rounded p-2" rows={3}></textarea>
+                    </div>
                     <div className="flex gap-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="ghostStory" defaultChecked={editingRental.ghostStory} className="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
-                        <span className="text-red-700 text-sm font-medium">曾有非自然身故 (凶宅)</span>
-                      </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" name="badLandlord" defaultChecked={editingRental.badLandlord} className="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
                         <span className="text-red-700 text-sm font-medium">惡房東/有糾紛紀錄</span>

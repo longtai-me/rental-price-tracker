@@ -453,7 +453,7 @@ export async function POST(request: Request) {
     // New fields
     const startDate = body.startDate || null;
     const leaseTerm = parseOptionalNumber(body.leaseTerm);
-    const ghostStory = (body.ghostStory === 'on' || body.ghostStory === 'true') ? 1 : 0;
+    const ghostStory = body.ghostStory || null;
     const badLandlord = (body.badLandlord === 'on' || body.badLandlord === 'true') ? 1 : 0;
     const evidenceLink = body.evidenceLink || null;
     const contactEmail = body.contactEmail || null;

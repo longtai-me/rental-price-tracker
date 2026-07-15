@@ -324,7 +324,7 @@ export async function PUT(request: Request) {
     const booleanKeys = [
       'includesWater', 'includesElectricity', 'hasParking',
       'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
-      'canPet', 'trashService', 'canSubsidize', 'agencyFeeCharged', 'badLandlord', 'hasManager', 'ghostStory'
+      'canPet', 'trashService', 'canSubsidize', 'agencyFeeCharged', 'badLandlord', 'hasManager'
     ];
     for (const key of booleanKeys) {
       if (updateFields[key] !== undefined) {
