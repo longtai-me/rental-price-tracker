@@ -143,13 +143,7 @@ export default function SubmitPage() {
 
     const formData = new FormData(e.currentTarget);
     
-    formData.set('rooms', formData.get('layout_rooms') || '0');
-    formData.set('livingRooms', formData.get('layout_living') || '0');
-    formData.set('bathrooms', formData.get('layout_baths') || '0');
-    formData.delete('layout_rooms');
-    formData.delete('layout_living');
-    formData.delete('layout_baths');
-    formData.delete('layout_kitchens');
+
 
     // Inject coordinates and turnstile
     formData.set('latitude', String(lat));
