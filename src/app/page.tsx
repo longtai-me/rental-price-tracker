@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { SpinnerGap } from '@phosphor-icons/react';
-import MapWrapper from '@/components/MapWrapper';
-import { PriceTrendChart, TypePieChart } from '@/components/Charts';
-import FilterPanel, { FilterState, initialFilterState } from '@/components/FilterPanel';
-import RentalCard from '@/components/RentalCard';
-import RentalDetailModal from '@/components/RentalDetailModal';
-import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import { useToast } from '@/components/Toast';
+import MapWrapper from '@/components/map/MapWrapper';
+import { PriceTrendChart, TypePieChart } from '@/components/rentals/Charts';
+import FilterPanel, { FilterState, initialFilterState } from '@/components/rentals/FilterPanel';
+import RentalCard from '@/components/rentals/RentalCard';
+import RentalDetailModal from '@/components/rentals/RentalDetailModal';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
+import { useToast } from '@/components/ui/Toast';
 import { Rental } from '@/types';
+import { TAIWAN_DISTRICTS } from '@/data/taiwanDistricts';
 
 // Map specific partial type
 type MapRental = Pick<Rental, 'id' | 'lat' | 'lng' | 'price' | 'type' | 'propertyType' | 'posterRole' | 'verificationStatus' | 'agencyFeeCharged'>;
@@ -19,7 +20,6 @@ export default function HomePage() {
   const [listData, setListData] = useState<Rental[]>([]);
   const [mapData, setMapData] = useState<MapRental[]>([]);
   const [loading, setLoading] = useState(true);
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
   
   // UI States
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -60,7 +60,13 @@ export default function HomePage() {
   };
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters(prev => {
+      const newFilters = { ...prev, [key]: value };
+      if (key === 'city') {
+        newFilters.district = '';
+      }
+      return newFilters;
+    });
     if (key === 'city' && value && CITY_COORDINATES[value]) {
       setMapCenter(CITY_COORDINATES[value]);
     }
@@ -78,6 +84,7 @@ export default function HomePage() {
         params.append('mode', mode);
         
         if (filters.city) params.append('city', filters.city);
+        if (filters.district) params.append('district', filters.district);
         if (filters.type) params.append('type', filters.type);
         if (filters.propertyType) params.append('propertyType', filters.propertyType);
         if (filters.minPrice) params.append('minPrice', filters.minPrice);
@@ -129,15 +136,6 @@ export default function HomePage() {
       if (listRes.ok) {
         const listData = await listRes.json() as any;
         setListData(listData.data || []);
-        
-        // Populate available cities if empty
-        if (availableCities.length === 0 && listData.data) {
-          const cities = new Set<string>();
-          listData.data.forEach((item: any) => {
-            if (item.city) cities.add(item.city);
-          });
-          setAvailableCities(Array.from(cities).sort());
-        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -145,7 +143,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [filters, bounds, availableCities.length, showToast]);
+  }, [filters, bounds, showToast]);
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -191,7 +189,8 @@ export default function HomePage() {
         <FilterPanel 
           filters={filters}
           setFilters={setFilters}
-          availableCities={availableCities}
+          availableCities={Object.keys(TAIWAN_DISTRICTS)}
+          availableDistricts={filters.city ? TAIWAN_DISTRICTS[filters.city] || [] : []}
           showAdvancedFilters={showAdvancedFilters}
           setShowAdvancedFilters={setShowAdvancedFilters}
           onFilterChange={handleFilterChange}

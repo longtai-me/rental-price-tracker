@@ -6,7 +6,7 @@ import {
   MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, 
   XCircle, FileText, Ghost, Warning, Link as LinkIcon 
 } from '@phosphor-icons/react';
-import DraggableMapWrapper from '@/components/DraggableMapWrapper';
+import DraggableMapWrapper from '@/components/map/DraggableMapWrapper';
 
 const ITEMS_PER_PAGE = 20;
 

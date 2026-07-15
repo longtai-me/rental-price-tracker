@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { ToastProvider } from '@/components/Toast';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import { ToastProvider } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
   title: '租屋實價登錄 Tracker',

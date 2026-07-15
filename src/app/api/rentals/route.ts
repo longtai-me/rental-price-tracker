@@ -39,6 +39,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const city = searchParams.get('city');
+    const districtParam = searchParams.get('district');
     const maxPrice = searchParams.get('maxPrice');
     const minPrice = searchParams.get('minPrice');
     const location = searchParams.get('location');
@@ -115,6 +116,11 @@ export async function GET(request: Request) {
       if (city && !location) {
         conditions.push(`city = ?`);
         queryParams.push(city);
+      }
+      
+      if (districtParam && !location) {
+        conditions.push(`district = ?`);
+        queryParams.push(districtParam);
       }
 
       if (minPrice) {

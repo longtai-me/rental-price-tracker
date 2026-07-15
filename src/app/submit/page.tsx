@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import DraggableMapWrapper from '@/components/DraggableMapWrapper';
+import DraggableMapWrapper from '@/components/map/DraggableMapWrapper';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { MapPin, CheckCircle, XCircle } from '@phosphor-icons/react';
 

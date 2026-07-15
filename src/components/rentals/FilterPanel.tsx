@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 export interface FilterState {
   city: string;
+  district: string;
   type: string;
   propertyType: string;
   minPrice: string;
@@ -28,6 +29,7 @@ export interface FilterState {
 
 export const initialFilterState: FilterState = {
   city: '',
+  district: '',
   type: '',
   propertyType: '',
   minPrice: '',
@@ -55,6 +57,7 @@ interface FilterPanelProps {
   filters: FilterState;
   setFilters: Dispatch<SetStateAction<FilterState>>;
   availableCities: string[];
+  availableDistricts: string[];
   showAdvancedFilters: boolean;
   setShowAdvancedFilters: (show: boolean) => void;
   onFilterChange: (key: keyof FilterState, value: any) => void;
@@ -63,6 +66,7 @@ interface FilterPanelProps {
 export default function FilterPanel({ 
   filters, 
   availableCities, 
+  availableDistricts,
   showAdvancedFilters, 
   setShowAdvancedFilters, 
   onFilterChange 
@@ -80,7 +84,7 @@ export default function FilterPanel({
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-5 mb-6">
       {/* Basic Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">縣市</label>
           <select 
@@ -91,6 +95,21 @@ export default function FilterPanel({
             <option value="">全部縣市</option>
             {availableCities.map(c => (
               <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">行政區</label>
+          <select 
+            value={filters.district} 
+            onChange={(e) => onFilterChange('district', e.target.value)}
+            className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            disabled={!filters.city}
+          >
+            <option value="">全部行政區</option>
+            {availableDistricts.map(d => (
+              <option key={d} value={d}>{d}</option>
             ))}
           </select>
         </div>
