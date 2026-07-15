@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Building2, Menu, X } from 'lucide-react';
+import { Buildings, List, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import './Navbar.css';
 
@@ -12,7 +12,7 @@ export default function Navbar() {
     <nav className="navbar glass-panel">
       <div className="navbar-container">
         <Link href="/" className="logo" onClick={() => setMenuOpen(false)}>
-          <Building2 className="logo-icon" />
+          <Buildings className="logo-icon"  size={32} weight="regular" />
           <span>租屋實價登錄 Tracker</span>
         </Link>
 
@@ -30,7 +30,7 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="開關選單"
         >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          {menuOpen ? <X  size={32} weight="regular" /> : <List  size={32} weight="regular" />}
         </button>
       </div>
 

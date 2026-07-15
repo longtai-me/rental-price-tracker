@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, Edit, Trash2, Archive, ArchiveRestore, Search, MapPin, Home, DollarSign, CheckCircle2, XCircle, FileText } from 'lucide-react';
+import { Check, X, PencilSimple, Trash, ArchiveBox, ArrowUUpLeft, MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, XCircle, FileText } from '@phosphor-icons/react';
 import DraggableMapWrapper from '@/components/DraggableMapWrapper';
 import './admin.css';
 
@@ -314,20 +314,20 @@ export default function AdminPage() {
                   <td style={{fontSize: '0.85rem'}}>{new Date(rental.createdAt).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
-                      <button onClick={() => setEditingRental(rental)} className="action-btn edit" title="編輯"><Edit size={16}/></button>
+                      <button onClick={() => setEditingRental(rental)} className="action-btn edit" title="編輯"><PencilSimple size={32} weight="regular" /></button>
                       {tab === 'pending' && (
                         <>
-                          <button onClick={() => handleAction(rental.id, 'approve')} className="action-btn approve" title="核准上架"><Check size={16}/></button>
-                          <button onClick={() => handleAction(rental.id, 'reject')} className="action-btn reject" title="拒絕(封存)"><X size={16}/></button>
+                          <button onClick={() => handleAction(rental.id, 'approve')} className="action-btn approve" title="核准上架"><Check size={32} weight="regular" /></button>
+                          <button onClick={() => handleAction(rental.id, 'reject')} className="action-btn reject" title="拒絕(封存)"><X size={32} weight="regular" /></button>
                         </>
                       )}
                       {tab === 'published' && (
-                        <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject" title="下架移除"><Archive size={16}/></button>
+                        <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject" title="下架移除"><ArchiveBox size={32} weight="regular" /></button>
                       )}
                       {tab === 'archived' && (
-                        <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve" title="撤銷封存/重新審核"><ArchiveRestore size={16}/></button>
+                        <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve" title="撤銷封存/重新審核"><ArrowUUpLeft size={32} weight="regular" /></button>
                       )}
-                      <button onClick={() => { if(confirm('警告：這是永久刪除操作，無法復原。是否繼續？')) { handleAction(rental.id, 'delete', 'DELETE'); } }} className="action-btn delete" title="完全刪除"><Trash2 size={16}/></button>
+                      <button onClick={() => { if(confirm('警告：這是永久刪除操作，無法復原。是否繼續？')) { handleAction(rental.id, 'delete', 'DELETE'); } }} className="action-btn delete" title="完全刪除"><Trash size={32} weight="regular" /></button>
                     </div>
                   </td>
                 </tr>
@@ -359,16 +359,16 @@ export default function AdminPage() {
                 </div>
               </div>
               <div className="mobile-card-actions">
-                <button onClick={() => setEditingRental(rental)} className="action-btn edit"><Edit size={16}/></button>
+                <button onClick={() => setEditingRental(rental)} className="action-btn edit"><PencilSimple size={32} weight="regular" /></button>
                 {tab === 'pending' && (
                   <>
-                    <button onClick={() => handleAction(rental.id, 'approve')} className="action-btn approve"><Check size={16}/></button>
-                    <button onClick={() => handleAction(rental.id, 'reject')} className="action-btn reject"><X size={16}/></button>
+                    <button onClick={() => handleAction(rental.id, 'approve')} className="action-btn approve"><Check size={32} weight="regular" /></button>
+                    <button onClick={() => handleAction(rental.id, 'reject')} className="action-btn reject"><X size={32} weight="regular" /></button>
                   </>
                 )}
-                {tab === 'published' && <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject"><Archive size={16}/></button>}
-                {tab === 'archived' && <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve"><ArchiveRestore size={16}/></button>}
-                <button onClick={() => { if(confirm('警告：這是永久刪除操作，無法復原。是否繼續？')) handleAction(rental.id, 'delete', 'DELETE'); }} className="action-btn delete"><Trash2 size={16}/></button>
+                {tab === 'published' && <button onClick={() => handleAction(rental.id, 'remove')} className="action-btn reject"><ArchiveBox size={32} weight="regular" /></button>}
+                {tab === 'archived' && <button onClick={() => handleAction(rental.id, 'unarchive')} className="action-btn approve"><ArrowUUpLeft size={32} weight="regular" /></button>}
+                <button onClick={() => { if(confirm('警告：這是永久刪除操作，無法復原。是否繼續？')) handleAction(rental.id, 'delete', 'DELETE'); }} className="action-btn delete"><Trash size={32} weight="regular" /></button>
               </div>
             </div>
           ))}
@@ -399,7 +399,7 @@ export default function AdminPage() {
         </div>
 
         <div className="search-container">
-          <Search size={18} color="#9ca3af" />
+          <MagnifyingGlass color="#9ca3af"  size={32} weight="regular" />
           <input 
             type="text" 
             placeholder="搜尋城市、區域、地址或ID..." 
@@ -420,7 +420,7 @@ export default function AdminPage() {
           <div className="edit-modal-content">
             <div className="edit-modal-header">
               <h2>編輯租屋資訊</h2>
-              <button onClick={() => setEditingRental(null)} style={{background: 'none', border: 'none', cursor: 'pointer'}}><X size={24} color="#6b7280" /></button>
+              <button onClick={() => setEditingRental(null)} style={{background: 'none', border: 'none', cursor: 'pointer'}}><X color="#6b7280"  size={32} weight="regular" /></button>
             </div>
             
             <div className="edit-modal-body">
@@ -428,7 +428,7 @@ export default function AdminPage() {
                 
                 {/* 區塊 1: 基本資料與位置 */}
                 <div className="modal-section">
-                  <h3><MapPin size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>基本資料與位置</h3>
+                  <h3><MapPin style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />基本資料與位置</h3>
                   <div className="form-grid">
 
                     <div className="form-group">
@@ -468,7 +468,7 @@ export default function AdminPage() {
 
                 {/* 區塊 1.5: 認證與登錄者資訊 */}
                 <div className="modal-section" style={{ borderLeft: '4px solid #3b82f6' }}>
-                  <h3 style={{ color: '#3b82f6' }}><CheckCircle2 size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>管理員設定與登錄者</h3>
+                  <h3 style={{ color: '#3b82f6' }}><CheckCircle style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />管理員設定與登錄者</h3>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>認證狀態</label>
@@ -504,7 +504,7 @@ export default function AdminPage() {
 
                 {/* 區塊 2: 房屋規格 */}
                 <div className="modal-section">
-                  <h3><Home size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>房屋規格</h3>
+                  <h3><House style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />房屋規格</h3>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>房屋類型</label>
@@ -546,7 +546,7 @@ export default function AdminPage() {
 
                 {/* 區塊 3: 租金與水電 */}
                 <div className="modal-section">
-                  <h3><DollarSign size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>租金與水電</h3>
+                  <h3><CurrencyDollar style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />租金與水電</h3>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>月租金</label>
@@ -605,7 +605,7 @@ export default function AdminPage() {
 
                 {/* 區塊 4: 房屋條件與設備 */}
                 <div className="modal-section">
-                  <h3><CheckCircle2 size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>條件與設備</h3>
+                  <h3><CheckCircle style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />條件與設備</h3>
                   <div className="checkbox-grid" style={{marginBottom: '1rem'}}>
                     <label className="checkbox-label-custom"><input type="checkbox" name="hasElevator" defaultChecked={editingRental.hasElevator} /> 有電梯</label>
                     <label className="checkbox-label-custom"><input type="checkbox" name="hasParking" defaultChecked={editingRental.hasParking} /> 有車位</label>
@@ -638,7 +638,7 @@ export default function AdminPage() {
 
                 {/* 區塊 5: 避雷與特殊 */}
                 <div className="modal-section" style={{ borderLeft: '4px solid #ef4444', marginBottom: 0 }}>
-                  <h3 style={{ color: '#ef4444' }}><XCircle size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>避雷專區 (非必填)</h3>
+                  <h3 style={{ color: '#ef4444' }}><XCircle style={{verticalAlign: 'sub', marginRight: '0.4rem'}} size={32} weight="regular" />避雷專區 (非必填)</h3>
                   <div className="form-grid">
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
                       <label className="checkbox-label-custom" style={{ color: '#ef4444', fontWeight: 'bold' }}>
