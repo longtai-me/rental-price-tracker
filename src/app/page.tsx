@@ -107,6 +107,7 @@ export default function HomePage() {
     switch (role) {
       case 'renter': return '租客登錄';
       case 'agent': return '房仲登錄';
+      case 'government': return '內政部資料';
       case 'landlord':
       default: return '房東登錄';
     }

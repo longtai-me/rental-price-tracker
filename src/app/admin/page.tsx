@@ -482,6 +482,7 @@ export default function AdminPage() {
                         <option value="renter">租客</option>
                         <option value="landlord">房東</option>
                         <option value="agent">房仲</option>
+                        <option value="government">內政部</option>
                       </select>
                     </div>
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
