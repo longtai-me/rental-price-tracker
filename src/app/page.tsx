@@ -226,7 +226,7 @@ export default function HomePage() {
         <div className="filters-section glass-panel">
           <div className="filter-row">
             <div className="filter-group">
-              <label><MapPin size={16} weight="regular" /> 縣市</label>
+              <label><MapPin size={20} weight="regular" /> 縣市</label>
               <select className="input-field" value={city} onChange={(e) => setCity(e.target.value)}>
                 <option value="">全部縣市</option>
                 {availableCities.map(c => (
@@ -235,7 +235,7 @@ export default function HomePage() {
               </select>
             </div>
             <div className="filter-group">
-              <label><House size={16} weight="regular" /> 物件類型</label>
+              <label><House size={20} weight="regular" /> 物件類型</label>
               <select className="input-field" value={type} onChange={(e) => setType(e.target.value)}>
                 <option value="">全部類型</option>
                 <option value="整層住家">整層住家</option>
@@ -245,7 +245,7 @@ export default function HomePage() {
               </select>
             </div>
             <div className="filter-group" style={{ gridColumn: 'span 2' }}>
-              <label><CurrencyDollar  size={16} weight="regular" /> 租金範圍</label>
+              <label><CurrencyDollar  size={20} weight="regular" /> 租金範圍</label>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <input 
                   type="number" 
@@ -266,7 +266,7 @@ export default function HomePage() {
             </div>
             
             <div className="filter-group">
-              <label><Buildings  size={16} weight="regular" /> 房數</label>
+              <label><Buildings  size={20} weight="regular" /> 房數</label>
               <select className="input-field" value={rooms} onChange={(e) => setRooms(e.target.value)}>
                 <option value="">不限房數</option>
                 <option value="1">1房</option>
@@ -276,7 +276,7 @@ export default function HomePage() {
               </select>
             </div>
             <div className="filter-group">
-              <label><Lightning size={16} weight="regular" /> 水電費計費</label>
+              <label><Lightning size={20} weight="regular" /> 水電費計費</label>
               <select className="input-field" value={utilityBillingType} onChange={(e) => setUtilityBillingType(e.target.value)}>
                 <option value="all">全部方式</option>
                 <option value="official">台水台電依帳單</option>
@@ -296,7 +296,7 @@ export default function HomePage() {
               border: '1px solid var(--card-border)' 
             }}>
               <div className="filter-group">
-                <label><Lightning size={16} weight="regular" /> 非夏季電費 (元/度)</label>
+                <label><Lightning size={20} weight="regular" /> 非夏季電費 (元/度)</label>
                 <input 
                   type="number" 
                   className="input-field" 
@@ -307,7 +307,7 @@ export default function HomePage() {
                 />
               </div>
               <div className="filter-group">
-                <label><Lightning  size={16} weight="regular" /> 夏季電費 (元/度)</label>
+                <label><Lightning  size={20} weight="regular" /> 夏季電費 (元/度)</label>
                 <input 
                   type="number" 
                   className="input-field" 
@@ -318,7 +318,7 @@ export default function HomePage() {
                 />
               </div>
               <div className="filter-group">
-                <label><Lightning  size={16} weight="regular" /> 最高水費 (元/度)</label>
+                <label><Lightning  size={20} weight="regular" /> 最高水費 (元/度)</label>
                 <input 
                   type="number" 
                   className="input-field" 
@@ -334,23 +334,23 @@ export default function HomePage() {
           <div className="filter-row-secondary" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             <label className="checkbox-label">
               <input type="checkbox" checked={hasParking} onChange={(e) => setHasParking(e.target.checked)} />
-              <Car  size={16} weight="regular" /> 包含車位
+              <Car  size={20} weight="regular" /> 包含車位
             </label>
             <label className="checkbox-label">
               <input type="checkbox" checked={needsSubsidize} onChange={(e) => setNeedsSubsidize(e.target.checked)} />
-              <CheckCircle className="text-emerald-500"  size={16} weight="regular" /> 可申請租補
+              <CheckCircle className="text-emerald-500"  size={20} weight="regular" /> 可申請租補
             </label>
             <label className="checkbox-label">
               <input type="checkbox" checked={needsHuji} onChange={(e) => setNeedsHuji(e.target.checked)} />
-              <CheckCircle className="text-blue-500"  size={16} weight="regular" /> 可入戶籍
+              <CheckCircle className="text-blue-500"  size={20} weight="regular" /> 可入戶籍
             </label>
             <label className="checkbox-label">
               <input type="checkbox" checked={includesWater} onChange={(e) => setIncludesWater(e.target.checked)} />
-              <Lightning className="text-blue-400"  size={16} weight="regular" /> 包含水費
+              <Lightning className="text-blue-400"  size={20} weight="regular" /> 包含水費
             </label>
             <label className="checkbox-label">
               <input type="checkbox" checked={includesElectricity} onChange={(e) => setIncludesElectricity(e.target.checked)} />
-              <Lightning className="text-orange-400"  size={16} weight="regular" /> 包含電費
+              <Lightning className="text-orange-400"  size={20} weight="regular" /> 包含電費
             </label>
           </div>
 
@@ -402,7 +402,7 @@ export default function HomePage() {
             <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div className="filter-row" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                 <div className="filter-group">
-                  <label><Ruler  size={16} weight="regular" /> 坪數範圍 (坪)</label>
+                  <label><Ruler  size={20} weight="regular" /> 坪數範圍 (坪)</label>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <input type="number" className="input-field" placeholder="最小" value={minArea} onChange={(e) => setMinArea(e.target.value)} />
                     <span style={{ color: 'var(--text-muted)' }}>-</span>
@@ -505,7 +505,19 @@ export default function HomePage() {
                       )}
                     </div>
                   </div>
-                  <h4 className="address">{item.city}{item.district} {maskAddress(item.address)}</h4>
+                  <h4 className="address" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {item.city}{item.district} {maskAddress(item.address)}
+                    {item.verificationStatus === 'verified' && (
+                      <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'normal' }}>
+                        <CheckCircle size={20} weight="regular" /> 已審核
+                      </span>
+                    )}
+                    {item.verificationStatus === 'doubtful' && (
+                      <span style={{ background: 'rgba(220, 38, 38, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'normal' }}>
+                        <Warning size={20} weight="regular" /> 資訊存疑
+                      </span>
+                    )}
+                  </h4>
                   <div className="card-meta">
                     <span>{item.layout}</span>
                     <span>{item.area} 坪</span>
@@ -514,17 +526,17 @@ export default function HomePage() {
                   <div className="card-tags" style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
                     {!!item.contractFile && (
                       <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <CheckCircle  size={16} weight="regular" /> 已認證契約
+                        <CheckCircle  size={20} weight="regular" /> 已認證契約
                       </span>
                     )}
                     {!!item.badLandlord && (
                       <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                        <XCircle  size={16} weight="regular" /> 惡房東避雷
+                        <XCircle  size={20} weight="regular" /> 惡房東避雷
                       </span>
                     )}
                     {!!item.ghostStory && (
                       <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '2px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                        <Lightning  size={16} weight="regular" /> 靈異事件
+                        <Lightning  size={20} weight="regular" /> 靈異事件
                       </span>
                     )}
                     {!!item.canSubsidize && <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px' }}>可租補</span>}
@@ -546,35 +558,47 @@ export default function HomePage() {
           <div className="modal-content glass-panel animate-fade-in" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setSelectedItem(null)}><X  size={24} weight="regular" /></button>
             <div className="modal-header">
-              <h2>{selectedItem.city}{selectedItem.district} {maskAddress(selectedItem.address)}</h2>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              {selectedItem.city}{selectedItem.district} {maskAddress(selectedItem.address)}
+              {selectedItem.verificationStatus === 'verified' && (
+                <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '4px 10px', borderRadius: '4px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'normal' }}>
+                  <CheckCircle size={24} weight="regular" /> 已審核
+                </span>
+              )}
+              {selectedItem.verificationStatus === 'doubtful' && (
+                <span style={{ background: 'rgba(220, 38, 38, 0.2)', color: '#dc2626', padding: '4px 10px', borderRadius: '4px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'normal' }}>
+                  <Warning size={24} weight="regular" /> 資訊存疑
+                </span>
+              )}
+            </h2>
               <span className="modal-price">NT$ {selectedItem.price.toLocaleString()} / 月</span>
             </div>
             
             <div className="modal-body">
               <div className="info-grid">
                 <div className="info-item">
-                  <House className="info-icon"  size={16} weight="regular" />
+                  <House className="info-icon"  size={24} weight="regular" />
                   <div>
                     <label>型態/格局</label>
                     <p>{selectedItem.type} | {selectedItem.layout}</p>
                   </div>
                 </div>
                 <div className="info-item">
-                  <Ruler className="info-icon"  size={16} weight="regular" />
+                  <Ruler className="info-icon"  size={24} weight="regular" />
                   <div>
                     <label>建坪/單價</label>
                     <p>{selectedItem.area} 坪 (NT$ {selectedItem.pricePerPing}/坪)</p>
                   </div>
                 </div>
                 <div className="info-item">
-                  <Buildings className="info-icon"  size={16} weight="regular" />
+                  <Buildings className="info-icon"  size={24} weight="regular" />
                   <div>
                     <label>樓層/屋齡</label>
                     <p>{selectedItem.floor} | {selectedItem.buildingAge} 年</p>
                   </div>
                 </div>
                 <div className="info-item">
-                  <Car className="info-icon"  size={16} weight="regular" />
+                  <Car className="info-icon"  size={24} weight="regular" />
                   <div>
                     <label>車位/管理/電梯</label>
                     <p>
@@ -592,7 +616,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                  <Buildings className="info-icon" style={{ color: 'var(--primary)' }}  size={16} weight="regular" />
+                  <Buildings className="info-icon" style={{ color: 'var(--primary)' }}  size={24} weight="regular" />
                   <div>
                     <label>刊登者身分</label>
                     <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -602,16 +626,7 @@ export default function HomePage() {
                           需中介費
                         </span>
                       )}
-                      {selectedItem.verificationStatus === 'verified' && (
-                        <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <CheckCircle  size={16} weight="regular" /> 已審核
-                        </span>
-                      )}
-                      {selectedItem.verificationStatus === 'doubtful' && (
-                        <span style={{ background: 'rgba(220, 38, 38, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Warning  size={16} weight="regular" /> 資訊存疑
-                        </span>
-                      )}
+                      
                     </p>
                   </div>
                 </div>
@@ -622,7 +637,7 @@ export default function HomePage() {
                 <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--primary)' }}>合約與費用資訊</h3>
                 <div className="info-grid">
                   <div className="info-item">
-                    <CheckCircle className="info-icon" style={{ color: 'var(--primary)' }}  size={16} weight="regular" />
+                    <CheckCircle className="info-icon" style={{ color: 'var(--primary)' }}  size={24} weight="regular" />
                     <div>
                       <label>租期資訊</label>
                       <p style={{ color: 'var(--foreground)' }}>
@@ -632,26 +647,26 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="info-item">
-                    <CheckCircle className="info-icon" style={{ color: selectedItem.canSubsidize ? 'var(--primary)' : 'var(--text-muted)' }}  size={16} weight="regular" />
+                    <CheckCircle className="info-icon" style={{ color: selectedItem.canSubsidize ? 'var(--primary)' : 'var(--text-muted)' }}  size={24} weight="regular" />
                     <div>
                       <label>租屋補助</label>
                       <p style={{ color: selectedItem.canSubsidize ? 'var(--primary)' : 'var(--text-muted)' }}>{selectedItem.canSubsidize ? '可申請租屋補助' : '不可申請租補'}</p>
                     </div>
                   </div>
                   <div className="info-item">
-                    <CheckCircle className="info-icon" style={{ color: selectedItem.canMoveHuji ? 'var(--primary)' : 'var(--text-muted)' }}  size={16} weight="regular" />
+                    <CheckCircle className="info-icon" style={{ color: selectedItem.canMoveHuji ? 'var(--primary)' : 'var(--text-muted)' }}  size={24} weight="regular" />
                     <div>
                       <label>入戶籍</label>
                       <p style={{ color: selectedItem.canMoveHuji ? 'var(--primary)' : 'var(--text-muted)' }}>{selectedItem.canMoveHuji ? '可遷入戶籍' : '不可遷入戶籍'}</p>
                     </div>
                   </div>
                   <div className="info-item" style={{ gridColumn: '1 / -1', alignItems: 'flex-start' }}>
-                    <Lightning className="info-icon" style={{ color: 'var(--warning)', marginTop: '4px' }}  size={16} weight="regular" />
+                    <Lightning className="info-icon" style={{ color: 'var(--warning)', marginTop: '4px' }}  size={24} weight="regular" />
                     <div>
                       <label>水電瓦斯費</label>
                       <div style={{ color: 'var(--foreground)', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.4rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <Lightning style={{ color: '#f59e0b' }}  size={16} weight="regular" />
+                          <Lightning style={{ color: '#f59e0b' }}  size={20} weight="regular" />
                           <span>電費：{
                             selectedItem.electricityBillingType === 'included' ? '包含在房租中' :
                             selectedItem.electricityBillingType === 'taipower' ? '依台電價格' :
@@ -660,7 +675,7 @@ export default function HomePage() {
                           }</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <Drop style={{ color: '#3b82f6' }}  size={16} weight="regular" />
+                          <Drop style={{ color: '#3b82f6' }}  size={20} weight="regular" />
                           <span>水費：{
                             selectedItem.waterBillingType === 'included' ? '包含在房租中' :
                             selectedItem.waterBillingType === 'taiwater' ? '依台水價格' :
@@ -672,7 +687,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                    <Car className="info-icon" style={{ color: 'var(--text-muted)' }}  size={16} weight="regular" />
+                    <Car className="info-icon" style={{ color: 'var(--text-muted)' }}  size={24} weight="regular" />
                     <div>
                       <label>交通條件</label>
                       <p style={{ color: 'var(--foreground)' }}>
@@ -683,7 +698,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                    <CheckCircle className="info-icon" style={{ color: 'var(--success)' }}  size={16} weight="regular" />
+                    <CheckCircle className="info-icon" style={{ color: 'var(--success)' }}  size={24} weight="regular" />
                     <div>
                       <label>提供設備</label>
                       <p style={{ color: 'var(--foreground)' }}>
@@ -694,7 +709,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                    <CheckCircle className="info-icon" style={{ color: 'var(--warning)' }}  size={16} weight="regular" />
+                    <CheckCircle className="info-icon" style={{ color: 'var(--warning)' }}  size={24} weight="regular" />
                     <div>
                       <label>房屋特色與規定</label>
                       <p style={{ color: 'var(--foreground)' }}>
@@ -715,7 +730,7 @@ export default function HomePage() {
                   </div>
                   {selectedItem.badLandlord && (
                     <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                      <XCircle className="info-icon" style={{ color: '#dc2626' }}  size={16} weight="regular" />
+                      <XCircle className="info-icon" style={{ color: '#dc2626' }}  size={24} weight="regular" />
                       <div>
                         <label style={{ color: '#dc2626' }}>🚨 惡房東避雷警告</label>
                         <p style={{ color: 'var(--foreground)', marginTop: '0.25rem', fontWeight: 600 }}>
@@ -736,7 +751,7 @@ export default function HomePage() {
                   )}
                   {selectedItem.ghostStory && (
                     <div className="info-item" style={{ gridColumn: '1 / -1' }}>
-                      <Lightning className="info-icon" style={{ color: '#ef4444' }}  size={16} weight="regular" />
+                      <Lightning className="info-icon" style={{ color: '#ef4444' }}  size={24} weight="regular" />
                       <div>
                         <label style={{ color: '#ef4444' }}>👻 租屋鬼故事 / 恐怖經歷</label>
                         <p style={{ color: 'var(--foreground)', marginTop: '0.25rem', whiteSpace: 'pre-wrap', fontStyle: 'italic', lineHeight: '1.6' }}>
