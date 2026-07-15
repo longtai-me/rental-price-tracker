@@ -66,16 +66,29 @@ export default function SubmitPage() {
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=tw`,
           { headers: { 'User-Agent': 'rental-price-tracker/1.0' } }
         );
-        const results = await res.json() as any[];
-        
-        if (district && results.length > 0) {
-          const matched = results.find(r => r.display_name && r.display_name.includes(district));
-          if (matched) return [matched];
+        if (!res.ok) {
+          console.error("Geocoding API error:", res.status);
           return [];
         }
-        
-        return results.length > 0 ? [results[0]] : [];
+        try {
+          const text = await res.text();
+          if (!text) return [];
+          const results = JSON.parse(text) as any[];
+          
+          if (district && results.length > 0) {
+            const matched = results.find(r => r.display_name && r.display_name.includes(district));
+            if (matched) return [matched];
+            return [];
+          }
+          
+          return results.length > 0 ? [results[0]] : [];
+        } catch (e) {
+          console.error("Geocoding parse error:", e);
+          return [];
+        }
       };
+      
+      const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
       try {
                 let data = await fetchGeocode(query);
@@ -87,12 +100,14 @@ export default function SubmitPage() {
             // Try city + district + road
             const fallbackQuery1 = `${selectedCity}${district}${roadMatch[1]}`;
             if (fallbackQuery1 !== query) {
+              await sleep(1000); // Prevent rate limiting (max 1 req/sec)
               data = await fetchGeocode(fallbackQuery1);
             }
             // Try city + road (Nominatim sometimes fails with district)
             if (!data || data.length === 0) {
               const fallbackQuery2 = `${selectedCity}${roadMatch[1]}`;
               if (fallbackQuery2 !== fallbackQuery1 && fallbackQuery2 !== query) {
+                await sleep(1000); // Prevent rate limiting
                 data = await fetchGeocode(fallbackQuery2);
               }
             }
@@ -101,6 +116,7 @@ export default function SubmitPage() {
           if (!data || data.length === 0) {
             const fallbackQuery3 = `${selectedCity}${district}`;
             if (fallbackQuery3 !== query) {
+              await sleep(1000); // Prevent rate limiting
               data = await fetchGeocode(fallbackQuery3);
             }
           }
@@ -118,7 +134,7 @@ export default function SubmitPage() {
       } catch {
         setGeocodeStatus('error');
       }
-    }, 600);
+    }, 1500);
     return () => { if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current); };
   }, [selectedCity, district, address]);
 
