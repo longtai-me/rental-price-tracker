@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -15,15 +15,47 @@ const icon = L.icon({
   shadowSize: [41, 41]
 });
 
-function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
-  const map = useMap();
-  map.setView(center, zoom);
+function MapController({ externalCenter, onBoundsChange }: { externalCenter?: [number, number] | null; onBoundsChange?: (bounds: any) => void }) {
+  const map = useMapEvents({
+    moveend: () => {
+      if (onBoundsChange) {
+        const bounds = map.getBounds();
+        onBoundsChange({
+          minLat: bounds.getSouth(),
+          maxLat: bounds.getNorth(),
+          minLng: bounds.getWest(),
+          maxLng: bounds.getEast(),
+        });
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (externalCenter) {
+      map.setView(externalCenter, 13);
+    }
+  }, [externalCenter, map]);
+
+  useEffect(() => {
+    if (onBoundsChange) {
+      const bounds = map.getBounds();
+      onBoundsChange({
+        minLat: bounds.getSouth(),
+        maxLat: bounds.getNorth(),
+        minLng: bounds.getWest(),
+        maxLng: bounds.getEast(),
+      });
+    }
+  }, [map, onBoundsChange]);
+
   return null;
 }
 
 interface MapProps {
   data: any[];
   onMarkerClick: (item: any) => void;
+  externalCenter?: [number, number] | null;
+  onBoundsChange?: (bounds: {minLat: number, maxLat: number, minLng: number, maxLng: number}) => void;
 }
 
 const maskAddress = (address: string) => {
@@ -42,14 +74,14 @@ const maskAddress = (address: string) => {
   return address.replace(/\d+號.*/, '');
 };
 
-export default function MapComponent({ data, onMarkerClick }: MapProps) {
+export default function MapComponent({ data, onMarkerClick, externalCenter, onBoundsChange }: MapProps) {
   // Center on Taipei by default
   const defaultCenter: [number, number] = [25.0330, 121.5654];
-  const center = data.length > 0 && data[0].lat ? [data[0].lat, data[0].lng] as [number, number] : defaultCenter;
+  const center = externalCenter || defaultCenter;
 
   return (
     <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%', borderRadius: '8px', zIndex: 10 }}>
-      <ChangeView center={center} zoom={13} />
+      <MapController externalCenter={externalCenter} onBoundsChange={onBoundsChange} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -92,7 +124,7 @@ export default function MapComponent({ data, onMarkerClick }: MapProps) {
             </Popup>
           </Marker>
         )
-      ))}
+      })}
     </MapContainer>
   );
 }

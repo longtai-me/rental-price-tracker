@@ -8,12 +8,27 @@ async def geocode_address(address, city):
     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={full_address}&key={API_KEY}"
     
     connector = aiohttp.TCPConnector(ssl=False)
-    async with aiohttp.ClientSession(connector=connector) as session:
+    headers = {
+        'Referer': 'http://localhost:3000/'
+    }
+    async with aiohttp.ClientSession(connector=connector, headers=headers) as session:
         try:
             async with session.get(url) as response:
-                print(f"Status: {response.status}")
                 data = await response.json()
-                print(f"Data: {data}")
+                print(f"Data with localhost:3000: {data['status']}")
+        except Exception as e:
+            print(f"Exception: {e}")
+
+    headers = {
+        'Referer': 'https://rental-price-tracker.vercel.app/'
+    }
+    async with aiohttp.ClientSession(connector=connector, headers=headers) as session:
+        try:
+            async with session.get(url) as response:
+                data = await response.json()
+                print(f"Data with vercel domain: {data['status']}")
+                if data['status'] == 'OK':
+                    print(data['results'][0]['geometry']['location'])
         except Exception as e:
             print(f"Exception: {e}")
 

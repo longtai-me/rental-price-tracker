@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { ToastProvider } from '@/components/Toast';
 
 export const metadata: Metadata = {
   title: '租屋實價登錄 Tracker',
@@ -33,11 +34,13 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Navbar />
-        <main className="main-content">
-          {children}
-        </main>
-        <Footer />
+        <ToastProvider>
+          <Navbar />
+          <main className="main-content">
+            {children}
+          </main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

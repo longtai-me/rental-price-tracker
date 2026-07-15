@@ -11,4 +11,13 @@ const MapComponent = dynamic(() => import('./MapComponent'), {
   )
 });
 
-export default MapComponent;
+interface MapWrapperProps {
+  data: any[];
+  onMarkerClick: (item: any) => void;
+  externalCenter?: [number, number] | null;
+  onBoundsChange?: (bounds: {minLat: number, maxLat: number, minLng: number, maxLng: number}) => void;
+}
+
+export default function MapWrapper(props: MapWrapperProps) {
+  return <MapComponent {...props} />;
+}

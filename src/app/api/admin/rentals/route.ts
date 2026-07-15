@@ -45,7 +45,47 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { results } = await env.DB.prepare(`SELECT * FROM rentals ORDER BY createdAt DESC`).all();
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const statusParam = url.searchParams.get('status');
+    const limit = parseInt(url.searchParams.get('limit') || '50');
+    const offset = parseInt(url.searchParams.get('offset') || '0');
+
+    let queryStr = `SELECT * FROM rentals WHERE 1=1`;
+    const queryParams: any[] = [];
+
+    if (statusParam !== null && statusParam !== '') {
+      queryStr += ` AND approved = ?`;
+      queryParams.push(parseInt(statusParam));
+    }
+
+    if (search) {
+      queryStr += ` AND (title LIKE ? OR address LIKE ? OR id LIKE ?)`;
+      const searchParam = `%${search}%`;
+      queryParams.push(searchParam, searchParam, searchParam);
+    }
+
+    queryStr += ` ORDER BY createdAt DESC LIMIT ? OFFSET ?`;
+    queryParams.push(limit, offset);
+
+    // Also get total count for pagination
+    let countQueryStr = `SELECT COUNT(*) as total FROM rentals WHERE 1=1`;
+    const countParams: any[] = [];
+    
+    if (statusParam !== null && statusParam !== '') {
+      countQueryStr += ` AND approved = ?`;
+      countParams.push(parseInt(statusParam));
+    }
+
+    if (search) {
+      countQueryStr += ` AND (title LIKE ? OR address LIKE ? OR id LIKE ?)`;
+      const searchParam = `%${search}%`;
+      countParams.push(searchParam, searchParam, searchParam);
+    }
+    const countResult = await env.DB.prepare(countQueryStr).bind(...countParams).first();
+    const total = countResult ? countResult.total : 0;
+
+    const { results } = await env.DB.prepare(queryStr).bind(...queryParams).all();
     const formattedResults = results.map((row: any) => ({
       ...row,
       transportation: row.transports ? row.transports.split(',') : [],
@@ -68,7 +108,7 @@ export async function GET(request: Request) {
       waterSummerPricePerUnit: row.waterSummerPricePerUnit,
       genderRestriction: row.genderRestriction === 'none' ? '不限' : (row.genderRestriction === 'female' ? '限女' : '限男')
     }));
-    return NextResponse.json({ success: true, data: formattedResults });
+    return NextResponse.json({ success: true, data: formattedResults, total });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: `DB Query Error: ${err.message}` }, { status: 500 });
   }
