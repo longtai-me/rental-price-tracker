@@ -82,7 +82,7 @@ export default function SubmitPage() {
         
         // Fallback strategies for Taiwan addresses
         if (!data || data.length === 0) {
-          const roadMatch = address.match(/(.+?[路街大道段])/);
+          const roadMatch = address.match(/(.+?(?:路|街|大道)(?:[一二三四五六七八九十0-9]+段)?)/);
           if (roadMatch) {
             // Try city + district + road
             const fallbackQuery1 = `${selectedCity}${district}${roadMatch[1]}`;
