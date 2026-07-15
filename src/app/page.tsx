@@ -591,11 +591,6 @@ export default function HomePage() {
                     <label>刊登者身分</label>
                     <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{getRoleLabel(selectedItem.posterRole)}</span>
-                      {selectedItem.contactEmail && (
-                        <span style={{ color: 'var(--foreground)' }}>
-                          - <a href={`mailto:${selectedItem.contactEmail}`} style={{ color: 'var(--primary)', textDecoration: 'underline' }}>{selectedItem.contactEmail}</a>
-                        </span>
-                      )}
                       {!!selectedItem.agencyFeeCharged && (
                         <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#dc2626', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>
                           需中介費

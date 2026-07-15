@@ -22,6 +22,8 @@ export default function AdminPage() {
   const [editLat, setEditLat] = useState<number>(25.0330);
   const [editLng, setEditLng] = useState<number>(121.5654);
   const [geocodeStatus, setGeocodeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [editElectricityType, setEditElectricityType] = useState<string>('');
+  const [editWaterType, setEditWaterType] = useState<string>('');
 
   useEffect(() => {
     fetch('/api/admin/access-log', {
@@ -38,6 +40,8 @@ export default function AdminPage() {
       setEditLat(editingRental.latitude || 25.0330);
       setEditLng(editingRental.longitude || 121.5654);
       setGeocodeStatus('idle');
+      setEditElectricityType(editingRental.electricityBillingType || (editingRental.includesElectricity ? 'included' : 'taipower'));
+      setEditWaterType(editingRental.waterBillingType || (editingRental.includesWater ? 'included' : 'taiwater'));
     }
   }, [editingRental]);
 
@@ -522,16 +526,34 @@ export default function AdminPage() {
                     
                     <div className="form-group">
                       <label>電費收費標準</label>
-                      <select name="electricityBillingType" defaultValue={editingRental.electricityBillingType || (editingRental.includesElectricity ? 'included' : 'taipower')} className="input-field">
+                      <select name="electricityBillingType" value={editElectricityType} onChange={e => setEditElectricityType(e.target.value)} className="input-field">
                         <option value="included">包含在房租中</option><option value="taipower">依照台電價格</option><option value="custom">其他標準</option>
                       </select>
                     </div>
+                    {editElectricityType === 'custom' && (
+                      <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                        <label>自訂電費價格 (每度)</label>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <input type="number" step="0.1" min="0" name="electricityPricePerKwh" defaultValue={editingRental.electricityPricePerKwh} placeholder="非夏季" className="input-field" />
+                          <input type="number" step="0.1" min="0" name="electricitySummerPricePerKwh" defaultValue={editingRental.electricitySummerPricePerKwh} placeholder="夏季" className="input-field" />
+                        </div>
+                      </div>
+                    )}
                     <div className="form-group">
                       <label>水費收費標準</label>
-                      <select name="waterBillingType" defaultValue={editingRental.waterBillingType || (editingRental.includesWater ? 'included' : 'taiwater')} className="input-field">
+                      <select name="waterBillingType" value={editWaterType} onChange={e => setEditWaterType(e.target.value)} className="input-field">
                         <option value="included">包含在房租中</option><option value="taiwater">依照台水價格</option><option value="custom">其他標準</option>
                       </select>
                     </div>
+                    {editWaterType === 'custom' && (
+                      <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                        <label>自訂水費價格 (每單位)</label>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <input type="number" step="0.1" min="0" name="waterPricePerUnit" defaultValue={editingRental.waterPricePerUnit} placeholder="非夏季" className="input-field" />
+                          <input type="number" step="0.1" min="0" name="waterSummerPricePerUnit" defaultValue={editingRental.waterSummerPricePerUnit} placeholder="夏季" className="input-field" />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

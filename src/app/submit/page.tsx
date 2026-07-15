@@ -293,7 +293,7 @@ export default function SubmitPage() {
               </div>
               <div className="form-group" style={{gridColumn: '1 / -1'}}>
                 <label>聯絡信箱 (選填)</label>
-                <input type="email" name="contactEmail" placeholder="讓有興趣的人可以聯絡您" className="input-field" />
+                <input type="email" name="contactEmail" placeholder="僅供管理員聯絡用，不會對外公開" className="input-field" />
               </div>
             </div>
           </div>
