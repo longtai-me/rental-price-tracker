@@ -273,6 +273,17 @@ export async function PUT(request: Request) {
       if (updateFields[key] === '') updateFields[key] = null;
     }
 
+    const booleanKeys = [
+      'includesWater', 'includesElectricity', 'hasParking',
+      'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
+      'canPet', 'trashService', 'canSubsidize', 'agencyFeeCharged', 'badLandlord'
+    ];
+    for (const key of booleanKeys) {
+      if (updateFields[key] !== undefined) {
+        updateFields[key] = (updateFields[key] === 'true' || updateFields[key] === '1' || updateFields[key] === 'on' || updateFields[key] === true);
+      }
+    }
+
     for (const key of allowedKeys) {
       if (updateFields[key] !== undefined) {
         fieldsToUpdate.push(`${key} = ?`);

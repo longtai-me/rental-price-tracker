@@ -184,21 +184,24 @@ export default function AdminPage() {
     
     const booleanFields = ['hasElevator', 'hasParking', 'canPet', 'canCook', 'trashService', 'hasBalcony', 'canMoveHuji', 'canSubsidize', 'agencyFeeCharged', 'badLandlord'];
     for (const field of booleanFields) {
-      data[field] = formData.has(field);
+      formData.set(field, formData.has(field) ? 'true' : 'false');
     }
-    data.includesWater = data.waterBillingType === 'included';
-    data.includesElectricity = data.electricityBillingType === 'included';
-    data.equipment = formData.getAll('equipments');
-    data.transportation = formData.getAll('transports');
+    formData.set('includesWater', formData.get('waterBillingType') === 'included' ? 'true' : 'false');
+    formData.set('includesElectricity', formData.get('electricityBillingType') === 'included' ? 'true' : 'false');
     
     // Parse features
     const featuresArr = [];
     if (formData.get('hasManager') === 'on') featuresArr.push('有管理員');
     const managementFee = formData.get('managementFee');
     if (managementFee) featuresArr.push(`管理費:${managementFee}`);
-    data.features = featuresArr;
-    data.latitude = editLat;
-    data.longitude = editLng;
+    
+    const equipmentsArr = formData.getAll('equipments');
+    formData.delete('equipments');
+    equipmentsArr.forEach(e => formData.append('equipment', e));
+    
+    const transportsArr = formData.getAll('transports');
+    formData.delete('transports');
+    transportsArr.forEach(t => formData.append('transportation', t));
     
     
     formData.set('id', editingRental.id);
