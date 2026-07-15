@@ -277,14 +277,15 @@ export async function PUT(request: Request) {
     const valuesToBind = [];
 
     const allowedKeys = [
-      'city', 'district', 'address', 'propertyType', 'type', 'layout', 'area', 'floor', 'buildingAge', 'price', 
+      'city', 'district', 'address', 'propertyType', 'type', 'layout', 'rooms', 'livingRooms', 'bathrooms', 'area', 'floor', 'totalFloors', 'buildingAge', 'price', 
       'pricePerPyeong', 'includesWater', 'includesElectricity', 'hasParking', 'genderRestriction',
       'electricityBillingType', 'electricityPricePerKwh', 'electricitySummerPricePerKwh',
       'waterBillingType', 'waterPricePerUnit', 'waterSummerPricePerUnit',
       'equipments', 'features', 'transports', 'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
       'canPet', 'trashService', 'canSubsidize', 'posterRole', 'agencyFeeCharged',
       'latitude', 'longitude', 'startDate', 'leaseTerm', 'ghostStory',
-      'badLandlord', 'evidenceLink', 'verificationStatus', 'contractFile', 'contactEmail'
+      'badLandlord', 'evidenceLink', 'verificationStatus', 'contractFile', 'contactEmail',
+      'hasManager', 'managementFee'
     ];
 
     if (updateFields.pricePerPing !== undefined) {
@@ -308,6 +309,13 @@ export async function PUT(request: Request) {
       'electricitySummerPricePerKwh',
       'waterPricePerUnit',
       'waterSummerPricePerUnit',
+      'managementFee',
+      'totalFloors',
+      'buildingAge',
+      'leaseTerm',
+      'rooms',
+      'livingRooms',
+      'bathrooms'
     ];
     for (const key of optionalNumberKeys) {
       if (updateFields[key] === '') updateFields[key] = null;
@@ -316,7 +324,7 @@ export async function PUT(request: Request) {
     const booleanKeys = [
       'includesWater', 'includesElectricity', 'hasParking',
       'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
-      'canPet', 'trashService', 'canSubsidize', 'agencyFeeCharged', 'badLandlord'
+      'canPet', 'trashService', 'canSubsidize', 'agencyFeeCharged', 'badLandlord', 'hasManager', 'ghostStory'
     ];
     for (const key of booleanKeys) {
       if (updateFields[key] !== undefined) {

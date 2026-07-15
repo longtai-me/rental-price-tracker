@@ -241,19 +241,12 @@ export default function AdminPage() {
     formData.set('includesWater', formData.get('waterBillingType') === 'included' ? 'true' : 'false');
     formData.set('includesElectricity', formData.get('electricityBillingType') === 'included' ? 'true' : 'false');
     
-    // Parse features
-    const featuresArr = [];
-    if (formData.get('hasManager') === 'on') featuresArr.push('有管理員');
-    const managementFee = formData.get('managementFee');
-    if (managementFee) featuresArr.push(`管理費:${managementFee}`);
+    formData.set('hasManager', formData.get('hasManager') === 'on' ? 'true' : 'false');
     
     formData.set('id', editingRental.id);
     formData.set('action', 'edit');
     formData.set('latitude', String(editLat));
     formData.set('longitude', String(editLng));
-    // Re-append parsed features to override original input values
-    formData.delete('features');
-    featuresArr.forEach(f => formData.append('features', f));
     
     let currentToken = password;
     let res = await executeAction('PUT', formData, currentToken);
@@ -469,10 +462,14 @@ export default function AdminPage() {
               <form id="edit-form" onSubmit={handleEditSubmit} className="space-y-6">
                 {/* Form fields identical to submit form */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* ... Omitted to keep it clean, but adding essential inputs back ... */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">標題</label>
-                    <input type="text" name="title" defaultValue={editingRental.title} className="w-full bg-gray-50 border border-gray-300 rounded p-2" required />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">刊登者身分</label>
+                    <select name="posterRole" defaultValue={editingRental.posterRole || 'renter'} className="w-full bg-gray-50 border border-gray-300 rounded p-2">
+                      <option value="renter">承租人 (我要轉租/退租)</option>
+                      <option value="landlord">屋主自租</option>
+                      <option value="agency">仲介/代管</option>
+                      <option value="other">其他</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">地址</label>
@@ -484,6 +481,49 @@ export default function AdminPage() {
                   </div>
                   
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">樓層</label>
+                    <div className="flex gap-2 items-center">
+                      <input required type="text" name="floor" defaultValue={editingRental.floor} className="w-full bg-gray-50 border border-gray-300 rounded p-2" />
+                      <span>/</span>
+                      <input type="number" name="totalFloors" defaultValue={editingRental.totalFloors || ''} className="w-full bg-gray-50 border border-gray-300 rounded p-2" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">物件類型 & 房間類型</label>
+                    <div className="flex gap-2">
+                      <select name="propertyType" defaultValue={editingRental.propertyType || "公寓"} className="w-1/2 bg-gray-50 border border-gray-300 rounded p-2">
+                        <option value="公寓">公寓</option>
+                        <option value="電梯大樓">電梯大樓</option>
+                        <option value="透天厝">透天厝</option>
+                        <option value="其他">其他</option>
+                      </select>
+                      <select name="type" defaultValue={editingRental.type || "整層住家"} className="w-1/2 bg-gray-50 border border-gray-300 rounded p-2">
+                        <option>整層住家</option>
+                        <option>獨立套房</option>
+                        <option>分租套房</option>
+                        <option>雅房</option>
+                        <option>其他</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">格局</label>
+                    <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center gap-2">
+                        <input required type="number" name="rooms" defaultValue={editingRental.rooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>房</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input required type="number" name="livingRooms" defaultValue={editingRental.livingRooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>廳</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input required type="number" name="bathrooms" defaultValue={editingRental.bathrooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>衛</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">租金 (元/月)</label>
                     <input type="number" name="price" defaultValue={editingRental.price} className="w-full bg-gray-50 border border-gray-300 rounded p-2" required />
                   </div>
@@ -491,35 +531,136 @@ export default function AdminPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">坪數</label>
                     <input type="number" step="0.1" name="area" defaultValue={editingRental.area} className="w-full bg-gray-50 border border-gray-300 rounded p-2" required />
                   </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">屋齡 (年)</label>
+                    <input type="number" name="buildingAge" defaultValue={editingRental.buildingAge || ''} className="w-full bg-gray-50 border border-gray-300 rounded p-2" />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">性別限制</label>
+                    <select name="genderRestriction" defaultValue={editingRental.genderRestriction === 'female' ? 'female' : editingRental.genderRestriction === 'male' ? 'male' : 'none'} className="w-full bg-gray-50 border border-gray-300 rounded p-2">
+                      <option value="none">不限</option>
+                      <option value="female">限女</option>
+                      <option value="male">限男</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-700">地圖座標 (拖曳標記微調)</label>
-                    <button type="button" onClick={handleAutoGeocode} className="text-sm bg-white border border-gray-300 px-3 py-1 rounded shadow-sm hover:bg-gray-50 flex items-center gap-1">
-                      <MapPin size={16} /> 自動轉換座標
-                      {geocodeStatus === 'loading' && <span className="animate-pulse ml-1">...</span>}
-                      {geocodeStatus === 'success' && <CheckCircle size={16} className="text-green-500 ml-1" />}
-                      {geocodeStatus === 'error' && <XCircle size={16} className="text-red-500 ml-1" />}
-                    </button>
-                  </div>
-                  <div className="h-[300px] w-full rounded border border-gray-300 overflow-hidden relative z-0">
-                    <DraggableMapWrapper 
-                      lat={editLat}
-                      lng={editLng}
-                      onChange={(lat, lng) => {
-                        setEditLat(lat);
-                        setEditLng(lng);
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-4 mt-2 text-sm text-gray-500">
-                    <div>緯度: <span className="font-mono bg-white px-1 border rounded">{editLat.toFixed(6)}</span></div>
-                    <div>經度: <span className="font-mono bg-white px-1 border rounded">{editLng.toFixed(6)}</span></div>
+                  <h4 className="font-semibold text-gray-800 mb-3">水電收費標準</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">電費</label>
+                      <select value={editElectricityType} onChange={e => setEditElectricityType(e.target.value)} name="electricityBillingType" className="w-full bg-white border border-gray-300 rounded p-2 mb-2">
+                        <option value="taipower">依照台電</option>
+                        <option value="included">含在房租</option>
+                        <option value="custom">其他標準</option>
+                      </select>
+                      {editElectricityType === 'custom' && (
+                        <div className="flex gap-2">
+                          <input type="number" step="0.1" name="electricityPricePerKwh" defaultValue={editingRental.electricityPricePerKwh || ''} placeholder="一般" className="w-1/2 p-2 border rounded" />
+                          <input type="number" step="0.1" name="electricitySummerPricePerKwh" defaultValue={editingRental.electricitySummerPricePerKwh || ''} placeholder="夏季" className="w-1/2 p-2 border rounded" />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">水費</label>
+                      <select value={editWaterType} onChange={e => setEditWaterType(e.target.value)} name="waterBillingType" className="w-full bg-white border border-gray-300 rounded p-2 mb-2">
+                        <option value="taiwater">依照台水</option>
+                        <option value="included">含在房租</option>
+                        <option value="custom">其他標準</option>
+                      </select>
+                      {editWaterType === 'custom' && (
+                        <div className="flex gap-2">
+                          <input type="number" step="0.1" name="waterPricePerUnit" defaultValue={editingRental.waterPricePerUnit || ''} placeholder="一般" className="w-1/2 p-2 border rounded" />
+                          <input type="number" step="0.1" name="waterSummerPricePerUnit" defaultValue={editingRental.waterSummerPricePerUnit || ''} placeholder="夏季" className="w-1/2 p-2 border rounded" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Additional detailed fields can be added here if needed to be editable by admin */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <h4 className="font-semibold text-gray-800 mb-3">房屋特色與條件</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
+                    {[
+                      { id: 'hasElevator', label: '有電梯' },
+                      { id: 'hasParking', label: '有車位' },
+                      { id: 'hasManager', label: '有管理員' },
+                      { id: 'canPet', label: '可養寵物' },
+                      { id: 'canCook', label: '可開伙' },
+                      { id: 'trashService', label: '代收垃圾' },
+                      { id: 'hasBalcony', label: '有陽台' },
+                      { id: 'canMoveHuji', label: '可入戶籍' },
+                      { id: 'canSubsidize', label: '可申請租補' },
+                      { id: 'agencyFeeCharged', label: '需中介費' }
+                    ].map(item => (
+                      <label key={item.id} className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name={item.id} defaultChecked={editingRental[item.id]} className="w-4 h-4 text-blue-600 rounded" /> 
+                        <span className="text-gray-700 text-sm">{item.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">管理費 (元/月)</label>
+                    <input type="number" min="0" name="managementFee" defaultValue={editingRental.managementFee || ''} className="w-full bg-white border border-gray-300 rounded p-2" />
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <h4 className="font-semibold text-gray-800 mb-3">設備、交通與其他特徵</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">提供設備 (用逗號分隔)</label>
+                      <input type="text" name="equipments" defaultValue={(editingRental.equipment || []).join(',')} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">周邊交通 (用逗號分隔)</label>
+                      <input type="text" name="transports" defaultValue={(editingRental.transportation || []).join(',')} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">房屋特色字串 (用逗號分隔，舊版相容用)</label>
+                      <input type="text" name="features" defaultValue={(editingRental.features || []).join(',')} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">起租日</label>
+                      <input type="date" name="startDate" defaultValue={editingRental.startDate || ''} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">租期 (年)</label>
+                      <input type="number" step="0.5" name="leaseTerm" defaultValue={editingRental.leaseTerm || ''} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">聯絡信箱 (不公開)</label>
+                      <input type="email" name="contactEmail" defaultValue={editingRental.contactEmail || ''} className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg border border-red-100">
+                  <h4 className="font-semibold text-red-700 mb-3">風險警告與合約檔案</h4>
+                  <div className="space-y-4">
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="ghostStory" defaultChecked={editingRental.ghostStory} className="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
+                        <span className="text-red-700 text-sm font-medium">曾有非自然身故 (凶宅)</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="badLandlord" defaultChecked={editingRental.badLandlord} className="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
+                        <span className="text-red-700 text-sm font-medium">惡房東/有糾紛紀錄</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">佐證資料連結</label>
+                      <input type="url" name="evidenceLink" defaultValue={editingRental.evidenceLink || ''} className="w-full bg-white border border-red-200 rounded p-2" placeholder="https://..." />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">合約檔案 (重新上傳會覆蓋舊檔)</label>
+                      <input type="file" name="contractFile" accept=".pdf,image/*" className="w-full bg-white border border-gray-300 rounded p-2" />
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex justify-end gap-4 pt-4 border-t">
                   <button type="button" onClick={() => setEditingRental(null)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">

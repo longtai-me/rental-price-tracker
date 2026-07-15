@@ -143,13 +143,9 @@ export default function SubmitPage() {
 
     const formData = new FormData(e.currentTarget);
     
-    // Construct layout string
-    const rooms = formData.get('layout_rooms') || '0';
-    const living = formData.get('layout_living') || '0';
-    const baths = formData.get('layout_baths') || '0';
-    const kitchens = formData.get('layout_kitchens') || '0';
-    const layout = `${rooms}房${living}廳${baths}衛${kitchens}廚`;
-    formData.set('layout', layout);
+    formData.set('rooms', formData.get('layout_rooms') || '0');
+    formData.set('livingRooms', formData.get('layout_living') || '0');
+    formData.set('bathrooms', formData.get('layout_baths') || '0');
     formData.delete('layout_rooms');
     formData.delete('layout_living');
     formData.delete('layout_baths');
@@ -294,7 +290,11 @@ export default function SubmitPage() {
 
             <div>
               <label className={labelClass}>樓層 <span className="text-red-500">*</span></label>
-              <input required type="text" name="floor" placeholder="例如：5/12" className={inputClass} />
+              <div className="flex gap-2 items-center">
+                <input required type="text" name="floor" placeholder="所在樓層 (如: 5)" className={inputClass} />
+                <span className="text-gray-500">/</span>
+                <input type="number" name="totalFloors" placeholder="總樓層 (如: 12)" className={inputClass} />
+              </div>
             </div>
 
             <div>
@@ -322,16 +322,13 @@ export default function SubmitPage() {
               <label className={labelClass}>格局 <span className="text-red-500">*</span></label>
               <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <div className="flex items-center gap-2">
-                  <input required type="number" name="layout_rooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">房</span>
+                  <input required type="number" name="rooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">房</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <input required type="number" name="layout_living" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廳</span>
+                  <input required type="number" name="livingRooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廳</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <input required type="number" name="layout_baths" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">衛</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input required type="number" name="layout_kitchens" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廚</span>
+                  <input required type="number" name="bathrooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">衛</span>
                 </div>
               </div>
             </div>
