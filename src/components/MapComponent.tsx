@@ -54,11 +54,30 @@ export default function MapComponent({ data, onMarkerClick }: MapProps) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      {data.map(item => (
-        item.lat && item.lng && (
+      {data.map((item, index) => {
+        if (!item.lat || !item.lng) return null;
+        
+        // Calculate spiral offset for identical coordinates
+        const sameCoordsIndex = data.findIndex(d => d.lat === item.lat && d.lng === item.lng);
+        const isDuplicate = sameCoordsIndex !== index;
+        
+        let latOffset = 0;
+        let lngOffset = 0;
+        
+        if (isDuplicate) {
+          // Count how many duplicates of this coordinate appear before this item
+          const duplicateCount = data.slice(0, index).filter(d => d.lat === item.lat && d.lng === item.lng).length;
+          // Simple spiral algorithm
+          const angle = duplicateCount * Math.PI / 4;
+          const radius = 0.0001 + (Math.floor(duplicateCount / 8) * 0.0001);
+          latOffset = Math.sin(angle) * radius;
+          lngOffset = Math.cos(angle) * radius;
+        }
+
+        return (
           <Marker 
             key={item.id} 
-            position={[item.lat, item.lng]} 
+            position={[item.lat + latOffset, item.lng + lngOffset]} 
             icon={icon}
             eventHandlers={{
               click: () => onMarkerClick(item)
