@@ -63,10 +63,18 @@ export default function SubmitPage() {
 
       const fetchGeocode = async (q: string) => {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=tw`,
           { headers: { 'User-Agent': 'rental-price-tracker/1.0' } }
         );
-        return await res.json() as any[];
+        const results = await res.json() as any[];
+        
+        if (district && results.length > 0) {
+          const matched = results.find(r => r.display_name && r.display_name.includes(district));
+          if (matched) return [matched];
+          return [];
+        }
+        
+        return results.length > 0 ? [results[0]] : [];
       };
 
       try {
