@@ -276,6 +276,10 @@ export default function FilterPanel({
               
               <div className="flex flex-col gap-3 mt-4">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={filters.verifiedOnly} onChange={(e) => onFilterChange('verifiedOnly', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                  <span>只顯示已驗證資訊</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={filters.needsSubsidize} onChange={(e) => onFilterChange('needsSubsidize', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
                   <span>必須可申請租金補貼</span>
                 </label>
@@ -286,10 +290,6 @@ export default function FilterPanel({
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={filters.hasParking} onChange={(e) => onFilterChange('hasParking', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
                   <span>必須有車位</span>
-                </label>
-                <label className="flex items-center gap-2 text-sm font-medium text-green-700 cursor-pointer mt-2 bg-green-50 p-2 rounded border border-green-200">
-                  <input type="checkbox" checked={filters.verifiedOnly} onChange={(e) => onFilterChange('verifiedOnly', e.target.checked)} className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500" />
-                  <span>只顯示已驗證資訊</span>
                 </label>
               </div>
 
