@@ -62,6 +62,7 @@ export async function GET(request: Request) {
     const equipment = searchParams.get('equipment');
     const features = searchParams.get('features');
     const genderRestriction = searchParams.get('genderRestriction');
+    const posterRoles = searchParams.get('posterRoles');
 
     const env = getRequestContext().env as unknown as Env;
 
@@ -197,6 +198,15 @@ export async function GET(request: Request) {
         conditions.push(`genderRestriction = 'male'`);
       } else {
         conditions.push(`genderRestriction = 'none'`);
+      }
+    }
+
+    if (posterRoles) {
+      const roles = posterRoles.split(',').filter(Boolean);
+      if (roles.length > 0) {
+        const placeholders = roles.map(() => '?').join(',');
+        conditions.push(`posterRole IN (${placeholders})`);
+        queryParams.push(...roles);
       }
     }
 

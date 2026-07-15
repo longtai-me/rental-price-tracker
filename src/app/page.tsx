@@ -80,6 +80,7 @@ export default function HomePage() {
   const [equipment, setEquipment] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
   const [genderRestriction, setGenderRestriction] = useState('不限');
+  const [posterRoles, setPosterRoles] = useState<string[]>(['renter', 'agent', 'landlord', 'government']);
   
   // UI State
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -153,6 +154,7 @@ export default function HomePage() {
       if (equipment.length > 0) params.append('equipment', equipment.join(','));
       if (features.length > 0) params.append('features', features.join(','));
       if (genderRestriction && genderRestriction !== '不限') params.append('genderRestriction', genderRestriction);
+      if (posterRoles.length > 0 && posterRoles.length < 4) params.append('posterRoles', posterRoles.join(','));
 
       const res = await fetch(`/api/rentals?${params.toString()}`);
       const result = await parseJsonSafely<{ success?: boolean; data?: Rental[]; error?: string }>(res);
@@ -204,7 +206,7 @@ export default function HomePage() {
       fetchData();
     }, 300);
     return () => clearTimeout(timer);
-  }, [city, type, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction]);
+  }, [city, type, minPrice, maxPrice, minArea, maxArea, rooms, hasParking, needsSubsidize, needsHuji, utilityBillingType, maxElectricityPriceSummer, maxElectricityPriceNonSummer, maxWaterPrice, includesWater, includesElectricity, transports, equipment, features, genderRestriction, posterRoles]);
 
   const avgPrice = data.length > 0 ? Math.round(data.reduce((acc, curr) => acc + curr.price, 0) / data.length) : 0;
   const avgPingPrice = data.length > 0 ? Math.round(data.reduce((acc, curr) => acc + curr.pricePerPing, 0) / data.length) : 0;
@@ -353,6 +355,28 @@ export default function HomePage() {
               <input type="checkbox" checked={includesElectricity} onChange={(e) => setIncludesElectricity(e.target.checked)} />
               <Lightning className="text-orange-400"  size={20} weight="regular" /> 包含電費
             </label>
+          </div>
+
+          <div className="filter-row-secondary" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', flexShrink: 0 }}>資料來源：</span>
+            {[
+              { id: 'government', label: '內政部資料' },
+              { id: 'renter', label: '租客登錄' },
+              { id: 'landlord', label: '房東登錄' },
+              { id: 'agent', label: '房仲登錄' }
+            ].map(role => (
+              <label key={role.id} className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  checked={posterRoles.includes(role.id)} 
+                  onChange={(e) => {
+                    if (e.target.checked) setPosterRoles([...posterRoles, role.id]);
+                    else setPosterRoles(posterRoles.filter(r => r !== role.id));
+                  }} 
+                />
+                {role.label}
+              </label>
+            ))}
           </div>
 
           <div className="filter-row-secondary" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', alignItems: 'center' }}>
