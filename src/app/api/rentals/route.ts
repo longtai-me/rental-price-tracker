@@ -90,7 +90,7 @@ export async function GET(request: Request) {
 
     let selectClause = '*';
     if (mode === 'map') {
-      selectClause = 'id, latitude, longitude, price, type, propertyType, posterRole, verificationStatus, agencyFeeCharged';
+      selectClause = 'id, latitude, longitude, price, type, propertyType, posterRole, verificationStatus, agencyFeeCharged, rooms, livingRooms, bathrooms, kitchens, area, address';
     }
 
     let queryStr = `SELECT ${selectClause} FROM rentals WHERE approved = 1`;
@@ -306,7 +306,10 @@ export async function GET(request: Request) {
           propertyType: row.propertyType,
           posterRole: row.posterRole,
           verificationStatus: row.verificationStatus,
-          agencyFeeCharged: Boolean(row.agencyFeeCharged)
+          agencyFeeCharged: Boolean(row.agencyFeeCharged),
+          address: row.address,
+          area: row.area,
+          layout: `${row.rooms}房${row.livingRooms}廳${row.bathrooms}衛${row.kitchens || 0}廚`
         };
       }
 
@@ -324,7 +327,7 @@ export async function GET(request: Request) {
         livingRooms: row.livingRooms,
         bathrooms: row.bathrooms,
         totalFloors: row.totalFloors,
-        layout: `${row.rooms}房${row.livingRooms}廳${row.bathrooms}衛`,
+        layout: `${row.rooms}房${row.livingRooms}廳${row.bathrooms}衛${row.kitchens || 0}廚`,
         hasElevator: Boolean(row.hasElevator),
         hasBalcony: Boolean(row.hasBalcony),
         canCook: Boolean(row.canCook),
