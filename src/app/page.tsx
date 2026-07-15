@@ -97,11 +97,13 @@ export default function HomePage() {
         if (filters.needsHuji) params.append('needsHuji', 'true');
         if (filters.includesWater) params.append('includesWater', 'true');
         if (filters.includesElectricity) params.append('includesElectricity', 'true');
-        if (filters.utilityBillingType) params.append('utilityBillingType', filters.utilityBillingType);
+        if (filters.electricityBillingType && filters.electricityBillingType !== 'all') params.append('electricityBillingType', filters.electricityBillingType);
+        if (filters.waterBillingType && filters.waterBillingType !== 'all') params.append('waterBillingType', filters.waterBillingType);
         if (filters.maxElectricityPriceNonSummer) params.append('maxElectricityPriceNonSummer', filters.maxElectricityPriceNonSummer);
         if (filters.maxElectricityPriceSummer) params.append('maxElectricityPriceSummer', filters.maxElectricityPriceSummer);
         if (filters.maxWaterPrice) params.append('maxWaterPrice', filters.maxWaterPrice);
         if (filters.genderRestriction && filters.genderRestriction !== '不限') params.append('genderRestriction', filters.genderRestriction);
+        if (filters.verifiedOnly) params.append('verifiedOnly', 'true');
         
         if (filters.transports.length > 0) params.append('transports', filters.transports.join(','));
         if (filters.equipment.length > 0) params.append('equipment', filters.equipment.join(','));
@@ -214,9 +216,9 @@ export default function HomePage() {
         {listData.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-5 mt-4 overflow-hidden">
             <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">當前畫面統計分析</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-64">
-              <PriceTrendChart data={listData} />
-              <TypePieChart data={listData} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-64 min-w-0">
+              <div className="min-w-0 h-full"><PriceTrendChart data={listData} /></div>
+              <div className="min-w-0 h-full"><TypePieChart data={listData} /></div>
             </div>
           </div>
         )}

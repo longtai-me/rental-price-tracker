@@ -39,9 +39,9 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
           {getRoleLabel(item.posterRole)}
         </span>
         
-        {item.contractFile && (
+        {(item.verificationStatus === 'verified' || item.posterRole === 'government' || item.contractFile) && (
           <span className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded text-xs font-medium">
-            <CheckCircle size={14} /> 已驗證契約
+            <CheckCircle size={14} /> 已驗證
           </span>
         )}
         

@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      queryStr += ` AND (title LIKE ? OR address LIKE ? OR id LIKE ?)`;
+      queryStr += ` AND (type LIKE ? OR address LIKE ? OR id LIKE ?)`;
       const searchParam = `%${search}%`;
       queryParams.push(searchParam, searchParam, searchParam);
     }
@@ -78,7 +78,7 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      countQueryStr += ` AND (title LIKE ? OR address LIKE ? OR id LIKE ?)`;
+      countQueryStr += ` AND (type LIKE ? OR address LIKE ? OR id LIKE ?)`;
       const searchParam = `%${search}%`;
       countParams.push(searchParam, searchParam, searchParam);
     }

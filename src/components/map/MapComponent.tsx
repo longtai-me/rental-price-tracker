@@ -36,18 +36,6 @@ function MapController({ externalCenter, onBoundsChange }: { externalCenter?: [n
     }
   }, [externalCenter, map]);
 
-  useEffect(() => {
-    if (onBoundsChange) {
-      const bounds = map.getBounds();
-      onBoundsChange({
-        minLat: bounds.getSouth(),
-        maxLat: bounds.getNorth(),
-        minLng: bounds.getWest(),
-        maxLng: bounds.getEast(),
-      });
-    }
-  }, [map, onBoundsChange]);
-
   return null;
 }
 
@@ -79,6 +67,26 @@ export default function MapComponent({ data, onMarkerClick, externalCenter, onBo
   const defaultCenter: [number, number] = [25.0330, 121.5654];
   const center = externalCenter || defaultCenter;
 
+  // Pre-calculate spiral offsets in O(N) time
+  const spiralOffsets = new Map<string, { lat: number, lng: number }>();
+  const coordCounts = new Map<string, number>();
+
+  data.forEach((item) => {
+    if (!item.lat || !item.lng) return;
+    const coordKey = `${item.lat},${item.lng}`;
+    const count = coordCounts.get(coordKey) || 0;
+    coordCounts.set(coordKey, count + 1);
+    
+    if (count > 0) {
+      const angle = count * Math.PI / 4;
+      const radius = 0.0001 + (Math.floor(count / 8) * 0.0001);
+      spiralOffsets.set(item.id, {
+        lat: Math.sin(angle) * radius,
+        lng: Math.cos(angle) * radius
+      });
+    }
+  });
+
   return (
     <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%', borderRadius: '8px', zIndex: 10 }}>
       <MapController externalCenter={externalCenter} onBoundsChange={onBoundsChange} />
@@ -89,22 +97,9 @@ export default function MapComponent({ data, onMarkerClick, externalCenter, onBo
       {data.map((item, index) => {
         if (!item.lat || !item.lng) return null;
         
-        // Calculate spiral offset for identical coordinates
-        const sameCoordsIndex = data.findIndex(d => d.lat === item.lat && d.lng === item.lng);
-        const isDuplicate = sameCoordsIndex !== index;
-        
-        let latOffset = 0;
-        let lngOffset = 0;
-        
-        if (isDuplicate) {
-          // Count how many duplicates of this coordinate appear before this item
-          const duplicateCount = data.slice(0, index).filter(d => d.lat === item.lat && d.lng === item.lng).length;
-          // Simple spiral algorithm
-          const angle = duplicateCount * Math.PI / 4;
-          const radius = 0.0001 + (Math.floor(duplicateCount / 8) * 0.0001);
-          latOffset = Math.sin(angle) * radius;
-          lngOffset = Math.cos(angle) * radius;
-        }
+        const offset = spiralOffsets.get(item.id);
+        const latOffset = offset?.lat || 0;
+        const lngOffset = offset?.lng || 0;
 
         return (
           <Marker 

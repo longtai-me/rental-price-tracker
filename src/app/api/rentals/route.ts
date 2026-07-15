@@ -56,7 +56,8 @@ export async function GET(request: Request) {
     const needsHuji = searchParams.get('needsHuji');
     const includesWater = searchParams.get('includesWater');
     const includesElectricity = searchParams.get('includesElectricity');
-    const utilityBillingType = searchParams.get('utilityBillingType');
+    const electricityBillingType = searchParams.get('electricityBillingType');
+    const waterBillingType = searchParams.get('waterBillingType');
     const maxElectricityPriceSummer = searchParams.get('maxElectricityPriceSummer');
     const maxElectricityPriceNonSummer = searchParams.get('maxElectricityPriceNonSummer');
     const maxWaterPrice = searchParams.get('maxWaterPrice');
@@ -65,6 +66,7 @@ export async function GET(request: Request) {
     const features = searchParams.get('features');
     const genderRestriction = searchParams.get('genderRestriction');
     const posterRoles = searchParams.get('posterRoles');
+    const verifiedOnly = searchParams.get('verifiedOnly');
     const minLat = searchParams.get('minLat');
     const maxLat = searchParams.get('maxLat');
     const minLng = searchParams.get('minLng');
@@ -200,10 +202,20 @@ export async function GET(request: Request) {
         conditions.push(`includesElectricity = 1`);
       }
 
-      if (utilityBillingType === 'official') {
-        conditions.push(`(electricityBillingType = 'taipower' OR waterBillingType = 'taiwater')`);
-      } else if (utilityBillingType === 'non-official') {
-        conditions.push(`(electricityBillingType = 'custom' OR waterBillingType = 'custom')`);
+      if (electricityBillingType === 'official') {
+        conditions.push(`electricityBillingType = 'taipower'`);
+      } else if (electricityBillingType === 'non-official') {
+        conditions.push(`electricityBillingType = 'custom'`);
+      }
+
+      if (waterBillingType === 'official') {
+        conditions.push(`waterBillingType = 'taiwater'`);
+      } else if (waterBillingType === 'non-official') {
+        conditions.push(`waterBillingType = 'custom'`);
+      }
+
+      if (verifiedOnly === 'true') {
+        conditions.push(`(verificationStatus = 'verified' OR posterRole = 'government' OR contractFile IS NOT NULL)`);
       }
 
       if (maxElectricityPriceNonSummer) {

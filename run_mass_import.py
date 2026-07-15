@@ -110,7 +110,7 @@ async def main():
     sorted_cities = sorted(records_by_city.keys(), key=lambda x: (0 if '市' in x else 1, x))
     
     total_geocoded = 0
-    GEOCODE_LIMIT = 2500
+    GEOCODE_LIMIT = 100000
     
     completed_cities = []
     half_processed_cities = []

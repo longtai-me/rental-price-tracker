@@ -14,7 +14,8 @@ export interface FilterState {
   hasParking: boolean;
   needsSubsidize: boolean;
   needsHuji: boolean;
-  utilityBillingType: string;
+  electricityBillingType: string;
+  waterBillingType: string;
   maxElectricityPriceSummer: string;
   maxElectricityPriceNonSummer: string;
   maxWaterPrice: string;
@@ -25,6 +26,7 @@ export interface FilterState {
   features: string[];
   genderRestriction: string;
   posterRoles: string[];
+  verifiedOnly: boolean;
 }
 
 export const initialFilterState: FilterState = {
@@ -40,7 +42,8 @@ export const initialFilterState: FilterState = {
   hasParking: false,
   needsSubsidize: false,
   needsHuji: false,
-  utilityBillingType: 'all',
+  electricityBillingType: 'all',
+  waterBillingType: 'all',
   maxElectricityPriceSummer: '',
   maxElectricityPriceNonSummer: '',
   maxWaterPrice: '',
@@ -50,7 +53,8 @@ export const initialFilterState: FilterState = {
   equipment: [],
   features: [],
   genderRestriction: '不限',
-  posterRoles: ['renter', 'agent', 'landlord', 'government']
+  posterRoles: ['renter', 'agent', 'landlord', 'government'],
+  verifiedOnly: false
 };
 
 interface FilterPanelProps {
@@ -218,21 +222,37 @@ export default function FilterPanel({
               <h4 className="font-semibold text-gray-800 border-b pb-2">水電與費用</h4>
               
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">水電計費方式</label>
-                <select value={filters.utilityBillingType} onChange={(e) => onFilterChange('utilityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
+                <label className="block text-xs font-medium text-gray-500 mb-1">電費計費方式</label>
+                <select value={filters.electricityBillingType} onChange={(e) => onFilterChange('electricityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
                   <option value="all">不限</option>
-                  <option value="official">台水台電</option>
-                  <option value="non-official">自訂費率 (一度電/一人水)</option>
+                  <option value="official">台電</option>
+                  <option value="non-official">自訂費率 (一度電)</option>
                 </select>
               </div>
               
-              {filters.utilityBillingType !== 'official' && (
+              {filters.electricityBillingType === 'non-official' && (
                 <div className="space-y-2 p-3 bg-gray-50 rounded border border-gray-200">
-                  <div className="text-xs font-medium text-gray-700 mb-2">最高接受費率</div>
+                  <div className="text-xs font-medium text-gray-700 mb-2">最高接受電費費率</div>
                   <div className="grid grid-cols-2 gap-2">
                     <input type="number" placeholder="非夏月電費/度" value={filters.maxElectricityPriceNonSummer} onChange={(e) => onFilterChange('maxElectricityPriceNonSummer', e.target.value)} className="w-full text-xs bg-white border border-gray-300 rounded p-1.5" />
                     <input type="number" placeholder="夏月電費/度" value={filters.maxElectricityPriceSummer} onChange={(e) => onFilterChange('maxElectricityPriceSummer', e.target.value)} className="w-full text-xs bg-white border border-gray-300 rounded p-1.5" />
                   </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">水費計費方式</label>
+                <select value={filters.waterBillingType} onChange={(e) => onFilterChange('waterBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
+                  <option value="all">不限</option>
+                  <option value="official">台水</option>
+                  <option value="non-official">自訂費率</option>
+                </select>
+              </div>
+
+              {filters.waterBillingType === 'non-official' && (
+                <div className="space-y-2 p-3 bg-gray-50 rounded border border-gray-200">
+                  <div className="text-xs font-medium text-gray-700 mb-2">最高接受水費費率</div>
+                  <input type="number" placeholder="水費/人 或 水費/度" value={filters.maxWaterPrice} onChange={(e) => onFilterChange('maxWaterPrice', e.target.value)} className="w-full text-xs bg-white border border-gray-300 rounded p-1.5" />
                 </div>
               )}
               
@@ -252,18 +272,22 @@ export default function FilterPanel({
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-800 border-b pb-2">其他條件</h4>
               
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" checked={filters.hasParking} onChange={(e) => onFilterChange('hasParking', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                  <span>有車位</span>
-                </label>
+              <div className="flex flex-col gap-3 mt-4">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={filters.needsSubsidize} onChange={(e) => onFilterChange('needsSubsidize', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                  <span>可租補</span>
+                  <span>必須可申請租金補貼</span>
                 </label>
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={filters.needsHuji} onChange={(e) => onFilterChange('needsHuji', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                  <span>可入籍</span>
+                  <span>必須可入戶籍</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={filters.hasParking} onChange={(e) => onFilterChange('hasParking', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                  <span>必須有車位</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-green-700 cursor-pointer mt-2 bg-green-50 p-2 rounded border border-green-200">
+                  <input type="checkbox" checked={filters.verifiedOnly} onChange={(e) => onFilterChange('verifiedOnly', e.target.checked)} className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500" />
+                  <span>只顯示已驗證資訊</span>
                 </label>
               </div>
 

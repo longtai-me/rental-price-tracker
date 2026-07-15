@@ -38,9 +38,9 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                 <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm font-medium">
                   {getRoleLabel(selectedItem.posterRole)}
                 </span>
-                {selectedItem.contractFile && (
+                {(selectedItem.verificationStatus === 'verified' || selectedItem.posterRole === 'government' || selectedItem.contractFile) && (
                   <span className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded text-sm font-medium">
-                    <CheckCircle size={16} /> 已驗證契約
+                    <CheckCircle size={16} /> 已驗證
                   </span>
                 )}
               </div>
