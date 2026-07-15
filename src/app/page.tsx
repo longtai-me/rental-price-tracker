@@ -602,7 +602,7 @@ export default function HomePage() {
                   <div>
                     <label>車位/管理/電梯</label>
                     <p>
-                      {selectedItem.parking || '無車位'} |{' '}
+                      {selectedItem.hasParking ? '有車位' : '無車位'} |{' '}
                       {(() => {
                         const hasManager = selectedItem.features?.includes('有管理員') || selectedItem.hasManagement;
                         const mgmtFee = selectedItem.features?.find(f => f.startsWith('管理費:'));
