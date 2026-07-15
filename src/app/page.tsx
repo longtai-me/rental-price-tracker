@@ -172,10 +172,10 @@ export default function HomePage() {
 
   const getRoleLabel = (role?: string) => {
     switch (role) {
-      case 'renter': return '租客登錄';
-      case 'agent': return '房仲登錄';
-      case 'government': return '內政部資料';
-      case 'landlord': return '房東登錄';
+      case 'renter': return '租客';
+      case 'agent': return '房仲';
+      case 'government': return '內政部';
+      case 'landlord': return '房東';
       default: return '未知';
     }
   };

@@ -284,10 +284,10 @@ export default function FilterPanel({
               <h4 className="font-semibold text-gray-800 border-b pb-2 mt-4">來源過濾</h4>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { id: 'renter', label: '租客登錄' },
-                  { id: 'agent', label: '房仲登錄' },
-                  { id: 'landlord', label: '房東登錄' },
-                  { id: 'government', label: '內政部資料' }
+                  { id: 'government', label: '內政部' },
+                  { id: 'renter', label: '租客' },
+                  { id: 'landlord', label: '房東' },
+                  { id: 'agent', label: '房仲' },
                 ].map(role => (
                   <label key={role.id} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                     <input 
