@@ -30,7 +30,7 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="開關選單"
         >
-          {menuOpen ? <X  size={32} weight="regular" /> : <List  size={32} weight="regular" />}
+          {menuOpen ? <X  size={24} weight="regular" /> : <List  size={24} weight="regular" />}
         </button>
       </div>
 
