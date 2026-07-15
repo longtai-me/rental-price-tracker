@@ -222,22 +222,30 @@ export default function FilterPanel({
               <h4 className="font-semibold text-gray-800 border-b pb-2">水電與費用</h4>
               
               <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">電費計費方式</label>
+                <div className="flex flex-col gap-2">
+                  <label className="block text-xs font-medium text-gray-500">電費計費方式</label>
                   <select value={filters.electricityBillingType} onChange={(e) => onFilterChange('electricityBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
                     <option value="all">不限</option>
                     <option value="official">台電</option>
                     <option value="non-official">自訂費率 (一度電)</option>
                   </select>
+                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mt-1">
+                    <input type="checkbox" checked={filters.includesElectricity} onChange={(e) => onFilterChange('includesElectricity', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                    <span>租金包電</span>
+                  </label>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">水費計費方式</label>
+                <div className="flex flex-col gap-2">
+                  <label className="block text-xs font-medium text-gray-500">水費計費方式</label>
                   <select value={filters.waterBillingType} onChange={(e) => onFilterChange('waterBillingType', e.target.value)} className="w-full text-sm bg-gray-50 border border-gray-300 rounded p-2">
                     <option value="all">不限</option>
                     <option value="official">台水</option>
                     <option value="non-official">自訂費率</option>
                   </select>
+                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mt-1">
+                    <input type="checkbox" checked={filters.includesWater} onChange={(e) => onFilterChange('includesWater', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                    <span>租金包水</span>
+                  </label>
                 </div>
               </div>
               
@@ -258,16 +266,6 @@ export default function FilterPanel({
                 </div>
               )}
               
-              <div className="flex flex-col gap-2 mt-2">
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" checked={filters.includesWater} onChange={(e) => onFilterChange('includesWater', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                  <span>租金包水</span>
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" checked={filters.includesElectricity} onChange={(e) => onFilterChange('includesElectricity', e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                  <span>租金包電</span>
-                </label>
-              </div>
             </div>
 
             {/* Grid 3: Checkboxes */}
