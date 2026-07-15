@@ -267,9 +267,9 @@ export async function GET(request: Request) {
 
     // Pagination
     let limit = 500; // Default limit
-    if (mode === 'map') limit = 1500; // Map can show more pins
+    if (mode === 'map') limit = 10000; // Map can show all pins
     if (limitParam) limit = parseInt(limitParam);
-    if (limit > 3000) limit = 3000; // Max cap
+    if (limit > 10000) limit = 10000; // Max cap
 
     let offset = 0;
     if (offsetParam) offset = parseInt(offsetParam);
