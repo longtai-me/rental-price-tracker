@@ -203,14 +203,14 @@ export async function PUT(request: Request) {
       data = Object.fromEntries(formData.entries());
       
       // Parse array fields that were sent as multiple FormData entries
-      const equipment = formData.getAll('equipment');
-      if (equipment.length > 0) data.equipment = equipment;
+      const equipments = formData.getAll('equipments');
+      if (equipments.length > 0) data.equipments = equipments;
       
       const features = formData.getAll('features');
       if (features.length > 0) data.features = features;
       
-      const transportation = formData.getAll('transportation');
-      if (transportation.length > 0) data.transportation = transportation;
+      const transports = formData.getAll('transports');
+      if (transports.length > 0) data.transports = transports;
 
       // Handle contractFile upload
       const contractFile = formData.get('contractFile') as File | null;
@@ -244,20 +244,20 @@ export async function PUT(request: Request) {
       'equipments', 'features', 'transports', 'hasElevator', 'canCook', 'hasBalcony', 'canMoveHuji',
       'canPet', 'trashService', 'canSubsidize', 'posterRole', 'agencyFeeCharged',
       'latitude', 'longitude', 'startDate', 'leaseTerm', 'ghostStory',
-      'badLandlord', 'evidenceLink', 'verificationStatus', 'contractFile'
+      'badLandlord', 'evidenceLink', 'verificationStatus', 'contractFile', 'contactEmail'
     ];
 
     if (updateFields.pricePerPing !== undefined) {
       updateFields.pricePerPyeong = updateFields.pricePerPing;
     }
-    if (Array.isArray(updateFields.equipment)) {
-      updateFields.equipments = updateFields.equipment.join(',');
+    if (Array.isArray(updateFields.equipments)) {
+      updateFields.equipments = updateFields.equipments.join(',');
     }
     if (Array.isArray(updateFields.features)) {
       updateFields.features = updateFields.features.join(',');
     }
-    if (Array.isArray(updateFields.transportation)) {
-      updateFields.transports = updateFields.transportation.join(',');
+    if (Array.isArray(updateFields.transports)) {
+      updateFields.transports = updateFields.transports.join(',');
     }
     if (updateFields.genderRestriction === '限女') updateFields.genderRestriction = 'female';
     else if (updateFields.genderRestriction === '限男') updateFields.genderRestriction = 'male';

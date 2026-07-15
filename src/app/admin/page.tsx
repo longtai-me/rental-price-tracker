@@ -195,13 +195,7 @@ export default function AdminPage() {
     const managementFee = formData.get('managementFee');
     if (managementFee) featuresArr.push(`管理費:${managementFee}`);
     
-    const equipmentsArr = formData.getAll('equipments');
-    formData.delete('equipments');
-    equipmentsArr.forEach(e => formData.append('equipment', e));
-    
-    const transportsArr = formData.getAll('transports');
-    formData.delete('transports');
-    transportsArr.forEach(t => formData.append('transportation', t));
+    // Arrays are kept as equipments and transports
     
     
     formData.set('id', editingRental.id);
@@ -436,14 +430,7 @@ export default function AdminPage() {
                 <div className="modal-section">
                   <h3><MapPin size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>基本資料與位置</h3>
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>登錄者身分</label>
-                      <select name="posterRole" defaultValue={editingRental.posterRole || 'renter'} className="input-field">
-                        <option value="renter">租客</option>
-                        <option value="landlord">房東</option>
-                        <option value="agent">房仲</option>
-                      </select>
-                    </div>
+
                     <div className="form-group">
                       <label>縣市</label>
                       <input type="text" name="city" defaultValue={editingRental.city} className="input-field" />
@@ -479,6 +466,42 @@ export default function AdminPage() {
                   </div>
                 </div>
 
+                {/* 區塊 1.5: 認證與登錄者資訊 */}
+                <div className="modal-section" style={{ borderLeft: '4px solid #3b82f6' }}>
+                  <h3 style={{ color: '#3b82f6' }}><CheckCircle2 size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>管理員設定與登錄者</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>認證狀態</label>
+                      <select name="verificationStatus" defaultValue={editingRental.verificationStatus || 'unverified'} className="input-field">
+                        <option value="unverified">未驗證</option>
+                        <option value="verified">✅ 已審核</option>
+                        <option value="doubtful">❓ 存疑</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>刊登者身分</label>
+                      <select name="posterRole" defaultValue={editingRental.posterRole || 'renter'} className="input-field">
+                        <option value="renter">租客</option>
+                        <option value="landlord">房東</option>
+                        <option value="agent">房仲</option>
+                      </select>
+                    </div>
+                    <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                      <label>聯絡信箱 (選填)</label>
+                      <input type="email" name="contactEmail" defaultValue={editingRental.contactEmail} placeholder="僅供管理員聯絡用" className="input-field" />
+                    </div>
+                    <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                      <label>租賃契約書 (如有上傳新檔案將會覆蓋舊檔)</label>
+                      {editingRental.contractFile && (
+                        <p style={{fontSize: '0.85rem', marginBottom: '0.5rem'}}>
+                          目前檔案：<a href={`/api/contracts?key=${encodeURIComponent(editingRental.contractFile)}`} target="_blank" rel="noreferrer">檢視</a>
+                        </p>
+                      )}
+                      <input type="file" name="contractFile" accept=".pdf,image/*" className="input-field" />
+                    </div>
+                  </div>
+                </div>
+
                 {/* 區塊 2: 房屋規格 */}
                 <div className="modal-section">
                   <h3><Home size={18} style={{verticalAlign: 'sub', marginRight: '0.4rem'}}/>房屋規格</h3>
@@ -510,6 +533,14 @@ export default function AdminPage() {
                       <label>屋齡 (年)</label>
                       <input type="number" name="buildingAge" defaultValue={editingRental.buildingAge} className="input-field" />
                     </div>
+                    <div className="form-group">
+                      <label>性別限制</label>
+                      <select name="genderRestriction" defaultValue={editingRental.genderRestriction === 'female' ? '限女' : editingRental.genderRestriction === 'male' ? '限男' : '不限'} className="input-field">
+                        <option value="不限">不限性別</option>
+                        <option value="限女">限女</option>
+                        <option value="限男">限男</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -525,7 +556,19 @@ export default function AdminPage() {
                       <label>管理費</label>
                       <input type="number" name="managementFee" defaultValue={editingRental.features?.find((f: string) => f.startsWith('管理費:'))?.replace('管理費:', '') || ''} className="input-field" placeholder="留空表示無" />
                     </div>
-                    <div className="form-group"><label>起租日</label><input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" /></div>
+                    <div className="form-group">
+                      <label>起租日</label>
+                      <input type="date" name="startDate" defaultValue={editingRental.startDate} className="input-field" />
+                    </div>
+                    <div className="form-group">
+                      <label>租期</label>
+                      <select name="leaseTerm" defaultValue={editingRental.leaseTerm || '1年'} className="input-field">
+                        <option value="1年">1年</option>
+                        <option value="半年">半年</option>
+                        <option value="短租">短租 (少於半年)</option>
+                        <option value="其他">其他</option>
+                      </select>
+                    </div>
                     
                     <div className="form-group">
                       <label>電費收費標準</label>
