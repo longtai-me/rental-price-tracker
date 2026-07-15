@@ -339,7 +339,11 @@ export default function AdminPage() {
                     {r.posterRole === 'agent' && <span className="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">房仲</span>}
                     {r.posterRole === 'renter' && <span className="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">租客</span>}
                     {r.posterRole === 'landlord' && <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-800">房東</span>}
-                    {r.contractFile && <span className="px-2 py-1 text-xs font-semibold rounded bg-teal-100 text-teal-800">有契約</span>}
+                    {r.contractFile && (
+                      <a href={`/api/contracts?key=${r.contractFile}`} target="_blank" rel="noreferrer" className="px-2 py-1 text-xs font-semibold rounded bg-teal-100 text-teal-800 hover:bg-teal-200 inline-block">
+                        查看契約
+                      </a>
+                    )}
                     {r.badLandlord && <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">惡房東</span>}
                     {r.ghostStory && <span className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">事故屋</span>}
                   </div>
@@ -496,6 +500,13 @@ export default function AdminPage() {
                         <option value="公寓">公寓</option>
                         <option value="電梯大樓">電梯大樓</option>
                         <option value="透天厝">透天厝</option>
+                        <option value="華廈">華廈</option>
+                        <option value="別墅">別墅</option>
+                        <option value="店面">店面</option>
+                        <option value="商辦">商辦</option>
+                        <option value="廠房">廠房</option>
+                        <option value="倉庫">倉庫</option>
+                        <option value="車位">車位</option>
                         <option value="其他">其他</option>
                       </select>
                       <select name="type" defaultValue={editingRental.type || "整層住家"} className="w-1/2 bg-gray-50 border border-gray-300 rounded p-2">
@@ -510,18 +521,18 @@ export default function AdminPage() {
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">格局</label>
-                    <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                      <div className="flex items-center gap-2">
-                        <input required type="number" name="rooms" defaultValue={editingRental.rooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>房</span>
+                    <div className="grid grid-cols-4 gap-2 items-center bg-gray-50 p-2 sm:p-4 rounded-lg border border-gray-200">
+                      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                        <input required type="number" name="rooms" defaultValue={editingRental.rooms || 0} min="0" className="w-full sm:w-16 text-center bg-white border border-gray-300 rounded p-1" /> <span className="whitespace-nowrap">房</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input required type="number" name="livingRooms" defaultValue={editingRental.livingRooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>廳</span>
+                      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                        <input required type="number" name="livingRooms" defaultValue={editingRental.livingRooms || 0} min="0" className="w-full sm:w-16 text-center bg-white border border-gray-300 rounded p-1" /> <span className="whitespace-nowrap">廳</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input required type="number" name="bathrooms" defaultValue={editingRental.bathrooms || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>衛</span>
+                      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                        <input required type="number" name="bathrooms" defaultValue={editingRental.bathrooms || 0} min="0" className="w-full sm:w-16 text-center bg-white border border-gray-300 rounded p-1" /> <span className="whitespace-nowrap">衛</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input required type="number" name="kitchens" defaultValue={editingRental.kitchens || 0} min="0" className="w-20 text-center bg-white border border-gray-300 rounded p-1" /> <span>廚</span>
+                      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                        <input required type="number" name="kitchens" defaultValue={editingRental.kitchens || 0} min="0" className="w-full sm:w-16 text-center bg-white border border-gray-300 rounded p-1" /> <span className="whitespace-nowrap">廚</span>
                       </div>
                     </div>
                   </div>
@@ -660,6 +671,11 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">合約檔案 (重新上傳會覆蓋舊檔)</label>
+                      {editingRental.contractFile && (
+                        <div className="mb-2">
+                          <a href={`/api/contracts?key=${editingRental.contractFile}`} target="_blank" className="text-blue-600 underline text-sm">查看現有合約</a>
+                        </div>
+                      )}
                       <input type="file" name="contractFile" accept=".pdf,image/*" className="w-full bg-white border border-gray-300 rounded p-2" />
                     </div>
                   </div>

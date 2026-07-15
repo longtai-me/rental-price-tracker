@@ -277,10 +277,7 @@ export default function SubmitPage() {
               )}
             </div>
 
-            <div>
-              <label className={labelClass}>標題 <span className="text-red-500">*</span></label>
-              <input required type="text" name="title" placeholder="例如：信義區電梯兩房" className={inputClass} />
-            </div>
+
 
             <div>
               <label className={labelClass}>樓層 <span className="text-red-500">*</span></label>
@@ -297,6 +294,13 @@ export default function SubmitPage() {
                 <option value="公寓">公寓</option>
                 <option value="電梯大樓">電梯大樓</option>
                 <option value="透天厝">透天厝</option>
+                <option value="華廈">華廈</option>
+                <option value="別墅">別墅</option>
+                <option value="店面">店面</option>
+                <option value="商辦">商辦</option>
+                <option value="廠房">廠房</option>
+                <option value="倉庫">倉庫</option>
+                <option value="車位">車位</option>
                 <option value="其他">其他</option>
               </select>
             </div>
@@ -314,18 +318,18 @@ export default function SubmitPage() {
 
             <div className="md:col-span-2">
               <label className={labelClass}>格局 <span className="text-red-500">*</span></label>
-              <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <div className="flex items-center gap-2">
-                  <input required type="number" name="rooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">房</span>
+              <div className="grid grid-cols-4 gap-2 items-center bg-gray-50 p-2 sm:p-4 rounded-lg border border-gray-200">
+                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                  <input required type="number" name="rooms" defaultValue="0" min="0" className={`${inputClass} w-full sm:w-16 text-center`} /> <span className="text-gray-700 whitespace-nowrap">房</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input required type="number" name="livingRooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廳</span>
+                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                  <input required type="number" name="livingRooms" defaultValue="0" min="0" className={`${inputClass} w-full sm:w-16 text-center`} /> <span className="text-gray-700 whitespace-nowrap">廳</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input required type="number" name="bathrooms" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">衛</span>
+                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                  <input required type="number" name="bathrooms" defaultValue="0" min="0" className={`${inputClass} w-full sm:w-16 text-center`} /> <span className="text-gray-700 whitespace-nowrap">衛</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input required type="number" name="kitchens" defaultValue="0" min="0" className={`${inputClass} w-20 text-center`} /> <span className="text-gray-700">廚</span>
+                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                  <input required type="number" name="kitchens" defaultValue="0" min="0" className={`${inputClass} w-full sm:w-16 text-center`} /> <span className="text-gray-700 whitespace-nowrap">廚</span>
                 </div>
               </div>
             </div>
