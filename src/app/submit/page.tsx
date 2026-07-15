@@ -70,15 +70,30 @@ export default function SubmitPage() {
       };
 
       try {
-        let data = await fetchGeocode(query);
+                let data = await fetchGeocode(query);
         
-        // Fallback: If exact address fails, try stripping details like 巷,弄,號,樓 and just search the road.
+        // Fallback strategies for Taiwan addresses
         if (!data || data.length === 0) {
           const roadMatch = address.match(/(.+?[路街大道段])/);
           if (roadMatch) {
-            const fallbackQuery = `${selectedCity}${district}${roadMatch[1]}`;
-            if (fallbackQuery !== query) {
-              data = await fetchGeocode(fallbackQuery);
+            // Try city + district + road
+            const fallbackQuery1 = `${selectedCity}${district}${roadMatch[1]}`;
+            if (fallbackQuery1 !== query) {
+              data = await fetchGeocode(fallbackQuery1);
+            }
+            // Try city + road (Nominatim sometimes fails with district)
+            if (!data || data.length === 0) {
+              const fallbackQuery2 = `${selectedCity}${roadMatch[1]}`;
+              if (fallbackQuery2 !== fallbackQuery1 && fallbackQuery2 !== query) {
+                data = await fetchGeocode(fallbackQuery2);
+              }
+            }
+          }
+          // If still fails, try just city + district
+          if (!data || data.length === 0) {
+            const fallbackQuery3 = `${selectedCity}${district}`;
+            if (fallbackQuery3 !== query) {
+              data = await fetchGeocode(fallbackQuery3);
             }
           }
         }
