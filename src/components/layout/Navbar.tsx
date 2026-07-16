@@ -47,7 +47,6 @@ export default function Navbar() {
           <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-blue-600 transition-colors" onClick={() => setMenuOpen(false)}>首頁</Link>
           <Link href="/submit" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-blue-600 transition-colors" onClick={() => setMenuOpen(false)}>我要刊登</Link>
           <Link href="/admin" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-blue-600 transition-colors" onClick={() => setMenuOpen(false)}>管理員</Link>
-          <a href="https://github.com/longtai-me/rental-price-tracker" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-blue-600 transition-colors" onClick={() => setMenuOpen(false)}>GitHub</a>
         </div>
       )}
     </nav>

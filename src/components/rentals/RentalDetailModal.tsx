@@ -132,8 +132,8 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                       selectedItem.hasParking ? '有車位' : null,
                       selectedItem.canCook ? '可開伙' : null,
                       selectedItem.canPet ? '可養寵物' : null,
-                      selectedItem.trashService ? '代收垃圾' : null,
-                      selectedItem.canMoveHuji ? '可入戶籍' : null,
+                      selectedItem.trashService ? '子母車' : null,
+                      selectedItem.canMoveHuji ? '可入籍' : null,
                       selectedItem.canSubsidize ? '可租補' : null,
                       selectedItem.genderRestriction !== '不限' ? selectedItem.genderRestriction : null
                     ].filter(Boolean).join('、') || '無特別標註'}
@@ -149,7 +149,7 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                   <div className="flex gap-3 bg-red-50 p-4 rounded-lg border border-red-200">
                     <XCircle size={24} className="text-red-600 shrink-0 mt-1" />
                     <div>
-                      <h4 className="text-sm font-bold text-red-600 uppercase tracking-wider mb-1">🚨 惡房東避雷警告</h4>
+                      <h4 className="text-sm font-bold text-red-600 uppercase tracking-wider mb-1">惡房東</h4>
                       <p className="text-gray-800 font-semibold">此物件被標記為惡房東！</p>
                       {selectedItem.evidenceLink && (
                         <a 
@@ -158,7 +158,7 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 underline mt-2 text-sm"
                         >
-                          <LinkIcon size={16} /> 點此查看客觀證據 (判決書/公文/新聞)
+                          <LinkIcon size={16} /> 點此查看證據 (判決書/公文/新聞)
                         </a>
                       )}
                     </div>

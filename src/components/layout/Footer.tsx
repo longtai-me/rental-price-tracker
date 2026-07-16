@@ -13,8 +13,6 @@ export default function Footer() {
           <Link href="/legal/privacy" className="hover:text-blue-600 transition-colors">隱私權政策</Link>
           <span className="hidden md:inline text-gray-300">|</span>
           <Link href="/legal/terms" className="hover:text-blue-600 transition-colors">服務條款與免責聲明</Link>
-          <span className="hidden md:inline text-gray-300">|</span>
-          <a href="https://github.com/longtai-me/rental-price-tracker" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">開源專案 (GitHub)</a>
         </div>
       </div>
     </footer>

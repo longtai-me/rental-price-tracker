@@ -17,7 +17,7 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
       <div className="absolute top-4 right-4 flex flex-col items-end whitespace-nowrap">
         <div>
           <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
-          <span className="text-sm text-gray-500"> /月</span>
+          <span className="text-sm text-gray-500">/月</span>
         </div>
         <div className="flex flex-col items-end gap-1.5 mt-1.5">
           {item.agencyFeeCharged && (
@@ -41,7 +41,7 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
       
       <div className="flex items-center text-gray-600 text-sm mb-2 gap-1">
         <House size={14} className="text-blue-600 shrink-0" />
-        <span>{item.layout} • {item.area} 坪 • {item.floor} {item.totalFloors ? `/ ${item.totalFloors}` : ''} 樓</span>
+        <span>{item.layout}｜{item.area} 坪｜{item.floor}{item.totalFloors ? `/${item.totalFloors}` : ''} 樓</span>
       </div>
       
       <div className="flex flex-wrap gap-2 mt-auto">
@@ -63,7 +63,7 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
         
         {item.ghostStory && (
           <span className="flex items-center gap-1 bg-purple-50 text-purple-700 border border-purple-200 px-2 py-1 rounded text-xs font-medium">
-            <Ghost size={14} /> 事故屋/鬼故事
+            <Ghost size={14} /> 鬼故事
           </span>
         )}
         
