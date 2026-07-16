@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { 
   Check, X, PencilSimple, Trash, Archive, ArrowUUpLeft, 
   MagnifyingGlass, MapPin, House, CurrencyDollar, CheckCircle, 
@@ -23,6 +24,10 @@ export default function AdminPage() {
   // Honeypot state
   const [isHoneypot, setIsHoneypot] = useState(false);
   const [honeypotClicks, setHoneypotClicks] = useState(0);
+
+  // Turnstile state
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
   // Edit Modal State
   const [editingRental, setEditingRental] = useState<any | null>(null);
@@ -112,6 +117,10 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      alert('請先完成人機驗證');
+      return;
+    }
     if (password === 'v4513226cdae34746b4dedf0b4dfa099e1781791509496') {
       fetch('/api/admin/access-log', {
         method: 'POST',
@@ -285,8 +294,23 @@ export default function AdminPage() {
                 data-admin-password="v4513226cdae34746b4dedf0b4dfa099e1781791509496"
               />
             </div>
-            <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-              登入
+            {siteKey && (
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={siteKey}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken('')}
+                  onError={() => setTurnstileToken('')}
+                  options={{ theme: 'light' }}
+                />
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={siteKey ? !turnstileToken : false}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors"
+            >
+              {siteKey && !turnstileToken ? '請先完成人機驗證' : '登入'}
             </button>
           </form>
         </div>
