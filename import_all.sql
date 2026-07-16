@@ -1,1 +1,0 @@
-DELETE FROM rentals WHERE posterRole = 'government';
