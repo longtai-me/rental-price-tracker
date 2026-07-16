@@ -53,7 +53,7 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
               </div>
               <div className="flex items-center gap-2">
                 <Buildings size={20} className="text-blue-500 shrink-0" />
-                <span>{selectedItem.layout} • {selectedItem.floor} 樓</span>
+                <span>{selectedItem.layout} • {selectedItem.floor} {selectedItem.totalFloors ? `/ ${selectedItem.totalFloors}` : ''} 樓</span>
               </div>
               <div className="flex items-center gap-2">
                 <Ruler size={20} className="text-blue-500 shrink-0" />
@@ -76,7 +76,7 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                 <div>
                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">費用說明</h4>
                   <ul className="text-gray-800 space-y-1">
-                    <li>管理費: {selectedItem.hasManagement ? '有管理費 (含在租金或另計)' : '無管理費'}</li>
+                    <li>管理費: {(selectedItem.managementFee || selectedItem.managementFee === 0) ? `${selectedItem.managementFee} 元/月` : (selectedItem.hasManager ? '有管理員 (費用含在租金或未標示)' : '無管理費')}</li>
                     <li>仲介費: {selectedItem.agencyFeeCharged ? '需收取仲介費' : '免仲介費'}</li>
                   </ul>
                 </div>
