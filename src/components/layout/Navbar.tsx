@@ -12,10 +12,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2 group" onClick={() => setMenuOpen(false)}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 55" className="h-10 w-auto">
-              <path d="M15 45 L15 25 L35 10 L55 25 L55 45 Z" fill="none" stroke="#1e293b" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round"/>
-              <path d="M5 15 L25 35 L40 25 L65 45" fill="none" stroke="#e53e3e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M50 45 L65 45 L65 30" fill="none" stroke="#e53e3e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="h-10 w-auto" fill="none">
+              <path d="M8 32 L32 12 L32 52 H8 Z" fill="#4F46E5" />
+              <path d="M38 24 H56 V38 L47 52 L38 38 V24 Z" fill="#EF4444" />
             </svg>
             <div className="flex flex-col justify-center translate-y-[2px]">
               <span className="font-[800] text-[22px] leading-none text-[#0f172a] tracking-tight">Rental Price</span>
