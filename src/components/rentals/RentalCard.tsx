@@ -15,12 +15,21 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-bold text-lg text-gray-800 line-clamp-1">{item.type}</h3>
-        <div className="text-right whitespace-nowrap">
-          <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
-          <span className="text-sm text-gray-500"> /月</span>
-          {item.agencyFeeCharged && (
-            <div className="text-xs text-amber-600 font-medium">需仲介費</div>
-          )}
+        <div className="flex flex-col items-end whitespace-nowrap">
+          <div>
+            <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
+            <span className="text-sm text-gray-500"> /月</span>
+          </div>
+          <div className="flex flex-col items-end gap-0.5 mt-0.5">
+            {item.agencyFeeCharged && (
+              <span className="text-xs text-amber-600 font-medium bg-amber-50 px-1.5 rounded">需仲介費</span>
+            )}
+            {(item.managementFee || item.managementFee === 0) ? (
+              <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">管理費 {item.managementFee}元/月</span>
+            ) : item.hasManager ? (
+              <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">有管理員</span>
+            ) : null}
+          </div>
         </div>
       </div>
       
@@ -31,7 +40,7 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
       
       <div className="flex items-center text-gray-600 text-sm mb-3 gap-1">
         <House size={16} className="text-blue-600 shrink-0" />
-        <span>{item.layout} • {item.area} 坪 • {item.floor} 樓</span>
+        <span>{item.layout} • {item.area} 坪 • {item.floor} {item.totalFloors ? `/ ${item.totalFloors}` : ''} 樓</span>
       </div>
       
       <div className="flex flex-wrap gap-2 mt-auto">
@@ -54,6 +63,12 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
         {item.ghostStory && (
           <span className="flex items-center gap-1 bg-purple-50 text-purple-700 border border-purple-200 px-2 py-1 rounded text-xs font-medium">
             <Ghost size={14} /> 事故屋/鬼故事
+          </span>
+        )}
+        
+        {item.genderRestriction && item.genderRestriction !== '不限' && (
+          <span className="bg-pink-50 text-pink-700 border border-pink-200 px-2 py-1 rounded text-xs">
+            {item.genderRestriction}
           </span>
         )}
         
