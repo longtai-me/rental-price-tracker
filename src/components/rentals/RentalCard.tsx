@@ -13,9 +13,9 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
       className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer p-4 relative"
       onClick={() => onClick(item)}
     >
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start mb-1">
         <h3 className="font-bold text-lg text-gray-800 line-clamp-1">{item.type}</h3>
-        <div className="flex flex-col items-end whitespace-nowrap">
+        <div className="flex flex-col items-end whitespace-nowrap ml-3">
           <div>
             <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
             <span className="text-sm text-gray-500"> /月</span>
@@ -33,13 +33,13 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
         </div>
       </div>
       
-      <div className="flex items-center text-gray-600 text-sm mb-2 gap-1 line-clamp-1">
-        <MapPin size={16} className="text-blue-600 shrink-0" />
+      <div className="flex items-center text-gray-600 text-sm mb-1 gap-1 line-clamp-1">
+        <MapPin size={14} className="text-blue-600 shrink-0" />
         <span>{item.city}{item.district} {item.address}</span>
       </div>
       
-      <div className="flex items-center text-gray-600 text-sm mb-3 gap-1">
-        <House size={16} className="text-blue-600 shrink-0" />
+      <div className="flex items-center text-gray-600 text-sm mb-2 gap-1">
+        <House size={14} className="text-blue-600 shrink-0" />
         <span>{item.layout} • {item.area} 坪 • {item.floor} {item.totalFloors ? `/ ${item.totalFloors}` : ''} 樓</span>
       </div>
       
