@@ -13,26 +13,27 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
       className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer p-4 relative"
       onClick={() => onClick(item)}
     >
-      <div className="flex justify-between items-start mb-1">
-        <h3 className="font-bold text-lg text-gray-800 line-clamp-1">{item.type}</h3>
-        <div className="flex flex-col items-end whitespace-nowrap ml-3">
-          <div>
-            <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
-            <span className="text-sm text-gray-500"> /月</span>
-          </div>
-          <div className="flex flex-col items-end gap-0.5 mt-0.5">
-            {item.agencyFeeCharged && (
-              <span className="text-xs text-amber-600 font-medium bg-amber-50 px-1.5 rounded">需仲介費</span>
-            )}
-            {(item.managementFee || item.managementFee === 0) ? (
-              <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">管理費 {item.managementFee}元/月</span>
-            ) : item.hasManager ? (
-              <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">有管理員</span>
-            ) : null}
-          </div>
+      {/* Price + badges — absolutely positioned top-right, doesn't affect left content height */}
+      <div className="absolute top-4 right-4 flex flex-col items-end whitespace-nowrap">
+        <div>
+          <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
+          <span className="text-sm text-gray-500"> /月</span>
+        </div>
+        <div className="flex flex-col items-end gap-0.5 mt-0.5">
+          {item.agencyFeeCharged && (
+            <span className="text-xs text-amber-600 font-medium bg-amber-50 px-1.5 rounded">需仲介費</span>
+          )}
+          {(item.managementFee || item.managementFee === 0) ? (
+            <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">管理費 {item.managementFee}元/月</span>
+          ) : item.hasManager ? (
+            <span className="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 rounded">有管理員</span>
+          ) : null}
         </div>
       </div>
-      
+
+      {/* Left content flows naturally */}
+      <h3 className="font-bold text-lg text-gray-800 line-clamp-1 pr-36 mb-1">{item.type}</h3>
+
       <div className="flex items-center text-gray-600 text-sm mb-1 gap-1 line-clamp-1">
         <MapPin size={14} className="text-blue-600 shrink-0" />
         <span>{item.city}{item.district} {item.address}</span>
