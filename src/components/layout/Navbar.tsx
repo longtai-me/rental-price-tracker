@@ -16,9 +16,9 @@ export default function Navbar() {
               <path d="M8 32 L32 12 L32 52 H8 Z" fill="#4F46E5" />
               <path d="M38 24 H56 V38 L47 52 L38 38 V24 Z" fill="#EF4444" />
             </svg>
-            <div className="flex flex-col justify-center translate-y-[2px]">
-              <span className="font-[800] text-[22px] leading-none text-[#0f172a] tracking-tight">Rental Price</span>
-              <span className="font-[600] text-[15px] leading-none text-[#64748b] tracking-widest mt-1">TRACKER</span>
+            <div className="flex flex-col justify-center" style={{ lineHeight: 1.1 }}>
+              <span className="font-[800] text-[20px] text-[#0f172a]" style={{ letterSpacing: '-0.5px' }}>Rental Price</span>
+              <span className="font-[600] text-[12px] text-[#64748b] uppercase" style={{ letterSpacing: '0.15em', marginTop: 3 }}>TRACKER</span>
             </div>
           </Link>
 
