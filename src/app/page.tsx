@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { SpinnerGap, ShieldCheck, ShieldWarning } from '@phosphor-icons/react';
+import { SpinnerGap } from '@phosphor-icons/react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import MapWrapper from '@/components/map/MapWrapper';
 import { PriceTrendChart, TypePieChart } from '@/components/rentals/Charts';
@@ -33,8 +33,10 @@ export default function HomePage() {
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [bounds, setBounds] = useState<{minLat: number, maxLat: number, minLng: number, maxLng: number} | null>(null);
 
-  // Turnstile state (testing phase: data is always visible)
+  // Turnstile overlay state
   const [turnstileVerified, setTurnstileVerified] = useState(false);
+  const [overlayDismissing, setOverlayDismissing] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   const { showToast } = useToast();
   
@@ -80,6 +82,7 @@ export default function HomePage() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async () => {
+    if (!turnstileVerified) return;
     setLoading(true);
     try {
       // Helper to build query params
@@ -150,6 +153,7 @@ export default function HomePage() {
   }, [filters, bounds, showToast]);
 
   useEffect(() => {
+    if (!turnstileVerified) return;
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       fetchData();
@@ -157,7 +161,13 @@ export default function HomePage() {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [fetchData]);
+  }, [fetchData, turnstileVerified]);
+
+  const handleTurnstileSuccess = () => {
+    setTurnstileVerified(true);
+    setOverlayDismissing(true);
+    setTimeout(() => setShowOverlay(false), 700);
+  };
 
   // Handle map marker click -> fetch full details and show modal
   const handleMarkerClick = async (item: any) => {
@@ -187,36 +197,104 @@ export default function HomePage() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   return (
+    <>
+    {/* ── Turnstile Full-Screen Overlay ── */}
+    {siteKey && showOverlay && (
+      <div
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
+          transition: 'opacity 0.7s ease, backdrop-filter 0.7s ease',
+          opacity: overlayDismissing ? 0 : 1,
+          pointerEvents: overlayDismissing ? 'none' : 'auto',
+        }}
+      >
+        {/* Animated background blobs */}
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', width: 500, height: 500,
+            borderRadius: '50%', top: '-15%', left: '-10%',
+            background: 'radial-gradient(circle, rgba(79,70,229,0.35) 0%, transparent 70%)',
+            animation: 'pulse 6s ease-in-out infinite',
+          }} />
+          <div style={{
+            position: 'absolute', width: 400, height: 400,
+            borderRadius: '50%', bottom: '-10%', right: '-5%',
+            background: 'radial-gradient(circle, rgba(239,68,68,0.25) 0%, transparent 70%)',
+            animation: 'pulse 8s ease-in-out infinite 2s',
+          }} />
+          <div style={{
+            position: 'absolute', width: 300, height: 300,
+            borderRadius: '50%', top: '40%', right: '20%',
+            background: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)',
+            animation: 'pulse 10s ease-in-out infinite 1s',
+          }} />
+        </div>
+
+        {/* Card */}
+        <div style={{
+          position: 'relative',
+          background: 'rgba(255,255,255,0.07)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: 24,
+          padding: '48px 40px',
+          maxWidth: 440,
+          width: '90%',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
+          textAlign: 'center',
+        }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 28 }}>
+            <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 32 L32 12 L32 52 H8 Z" fill="#4F46E5" />
+              <path d="M38 24 H56 V38 L47 52 L38 38 V24 Z" fill="#EF4444" />
+            </svg>
+            <div style={{ textAlign: 'left', lineHeight: 1.1 }}>
+              <div style={{ fontWeight: 800, fontSize: 22, color: '#fff', letterSpacing: '-0.5px' }}>RentalPrice</div>
+              <div style={{ fontWeight: 400, fontSize: 14, color: 'rgba(255,255,255,0.6)', letterSpacing: 2, textTransform: 'uppercase' }}>Tracker</div>
+            </div>
+          </div>
+
+          {/* Headline */}
+          <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.3px' }}>
+            歡迎使用租屋資料平台
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14, lineHeight: 1.7, marginBottom: 32 }}>
+            本平台為社群協作的租屋資料庫。<br />
+            請先完成人機驗證以繼續瀏覽。
+          </p>
+
+          {/* Turnstile widget */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+            <Turnstile
+              siteKey={siteKey}
+              onSuccess={handleTurnstileSuccess}
+              options={{ theme: 'dark' }}
+            />
+          </div>
+
+          {/* Footnote */}
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+            驗證通過後資料將自動載入，無需重新整理
+          </p>
+        </div>
+
+        <style>{`
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+          }
+        `}</style>
+      </div>
+    )}
+
     <div className="flex flex-col lg:flex-row gap-6">
       
       {/* LEFT COLUMN: Filters and Map */}
       <div className="flex-1 min-w-[50%] lg:max-w-[55%] flex flex-col gap-6">
-
-        {/* Turnstile verification banner */}
-        {siteKey && (
-          <div className={`flex items-center justify-between gap-4 rounded-lg border px-4 py-3 text-sm ${
-            turnstileVerified
-              ? 'bg-green-50 border-green-200 text-green-700'
-              : 'bg-amber-50 border-amber-200 text-amber-700'
-          }`}>
-            <div className="flex items-center gap-2">
-              {turnstileVerified
-                ? <><ShieldCheck size={18} weight="fill" /> <span className="font-medium">人機驗證已通過</span></>
-                : <><ShieldWarning size={18} weight="fill" /> <span className="font-medium">測試階段：請完成人機驗證（未完成仍可瀏覽資料）</span></>
-              }
-            </div>
-            {!turnstileVerified && (
-              <div className="shrink-0">
-                <Turnstile
-                  siteKey={siteKey}
-                  onSuccess={() => setTurnstileVerified(true)}
-                  options={{ size: 'compact', theme: 'light' }}
-                />
-              </div>
-            )}
-          </div>
-        )}
-        
         <FilterPanel 
           filters={filters}
           setFilters={setFilters}
@@ -297,5 +375,6 @@ export default function HomePage() {
       )}
       
     </div>
+    </>
   );
 }
