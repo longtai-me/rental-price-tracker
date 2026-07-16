@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { SpinnerGap } from '@phosphor-icons/react';
+import { SpinnerGap, ShieldCheck, ShieldWarning } from '@phosphor-icons/react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import MapWrapper from '@/components/map/MapWrapper';
 import { PriceTrendChart, TypePieChart } from '@/components/rentals/Charts';
 import FilterPanel, { FilterState, initialFilterState } from '@/components/rentals/FilterPanel';
@@ -31,6 +32,9 @@ export default function HomePage() {
   // Map States
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [bounds, setBounds] = useState<{minLat: number, maxLat: number, minLng: number, maxLng: number} | null>(null);
+
+  // Turnstile state (testing phase: data is always visible)
+  const [turnstileVerified, setTurnstileVerified] = useState(false);
 
   const { showToast } = useToast();
   
@@ -180,11 +184,38 @@ export default function HomePage() {
     }
   };
 
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       
       {/* LEFT COLUMN: Filters and Map */}
       <div className="flex-1 min-w-[50%] lg:max-w-[55%] flex flex-col gap-6">
+
+        {/* Turnstile verification banner */}
+        {siteKey && (
+          <div className={`flex items-center justify-between gap-4 rounded-lg border px-4 py-3 text-sm ${
+            turnstileVerified
+              ? 'bg-green-50 border-green-200 text-green-700'
+              : 'bg-amber-50 border-amber-200 text-amber-700'
+          }`}>
+            <div className="flex items-center gap-2">
+              {turnstileVerified
+                ? <><ShieldCheck size={18} weight="fill" /> <span className="font-medium">人機驗證已通過</span></>
+                : <><ShieldWarning size={18} weight="fill" /> <span className="font-medium">測試階段：請完成人機驗證（未完成仍可瀏覽資料）</span></>
+              }
+            </div>
+            {!turnstileVerified && (
+              <div className="shrink-0">
+                <Turnstile
+                  siteKey={siteKey}
+                  onSuccess={() => setTurnstileVerified(true)}
+                  options={{ size: 'compact', theme: 'light' }}
+                />
+              </div>
+            )}
+          </div>
+        )}
         
         <FilterPanel 
           filters={filters}
