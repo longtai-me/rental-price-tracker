@@ -82,7 +82,6 @@ export default function HomePage() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!turnstileVerified) return;
     setLoading(true);
     try {
       // Helper to build query params
