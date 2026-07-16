@@ -76,8 +76,8 @@ export default function RentalDetailModal({ selectedItem, onClose, getRoleLabel 
                 <div>
                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">費用說明</h4>
                   <ul className="text-gray-800 space-y-1">
-                    <li>管理費: {(selectedItem.managementFee || selectedItem.managementFee === 0) ? `${selectedItem.managementFee} 元/月` : (selectedItem.hasManager ? '有管理員 (費用含在租金或未標示)' : '無管理費')}</li>
-                    <li>仲介費: {selectedItem.agencyFeeCharged ? '需收取仲介費' : '免仲介費'}</li>
+                    <li>管理費：{(selectedItem.managementFee || selectedItem.managementFee === 0) ? `${selectedItem.managementFee} 元/月` : (selectedItem.hasManager ? '有管理員 (費用含在租金或未標示)' : '無管理費')}</li>
+                    <li>仲介費：{selectedItem.agencyFeeCharged ? '需收取仲介費' : '免仲介費'}</li>
                   </ul>
                 </div>
               </div>
