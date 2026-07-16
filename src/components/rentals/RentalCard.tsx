@@ -19,7 +19,7 @@ export default function RentalCard({ item, onClick, getRoleLabel }: RentalCardPr
           <span className="font-bold text-blue-700 text-lg">NT$ {item.price?.toLocaleString()}</span>
           <span className="text-sm text-gray-500"> /月</span>
         </div>
-        <div className="flex flex-col items-end gap-0.5 mt-0.5">
+        <div className="flex flex-col items-end gap-1.5 mt-1.5">
           {item.agencyFeeCharged && (
             <span className="text-xs text-amber-600 font-medium bg-amber-50 px-1.5 rounded">需仲介費</span>
           )}
