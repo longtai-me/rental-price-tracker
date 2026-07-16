@@ -229,17 +229,17 @@ export default function HomePage() {
               <path d="M38 24 H56 V38 L47 52 L38 38 V24 Z" fill="#EF4444" />
             </svg>
             <div style={{ textAlign: 'left', lineHeight: 1.1 }}>
-              <div style={{ fontWeight: 800, fontSize: 20, color: '#0f172a', letterSpacing: '-0.5px', fontFamily: 'Inter, sans-serif' }}>Rental Price</div>
-              <div style={{ fontWeight: 600, fontSize: 12, color: '#64748b', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 3, fontFamily: 'Inter, sans-serif' }}>TRACKER</div>
+              <div style={{ fontWeight: 800, fontSize: 20, color: '#0f172a', letterSpacing: '-0.5px' }}>Rental Price</div>
+              <div style={{ fontWeight: 600, fontSize: 12, color: '#64748b', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 3 }}>TRACKER</div>
             </div>
           </div>
 
           <div style={{ height: 1, background: '#f1f5f9', marginBottom: 24 }} />
 
-          <h2 style={{ color: '#0f172a', fontSize: 18, fontWeight: 700, marginBottom: 8, fontFamily: 'Inter, sans-serif' }}>
+          <h2 style={{ color: '#0f172a', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
             請先完成人機驗證
           </h2>
-          <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7, marginBottom: 24, fontFamily: 'Inter, "Noto Sans TC", sans-serif' }}>
+          <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
             本平台為社群協作的租屋資料庫。<br />
             驗證通過後資料將自動載入。
           </p>
@@ -252,7 +252,7 @@ export default function HomePage() {
             />
           </div>
 
-          <p style={{ color: '#94a3b8', fontSize: 12, fontFamily: 'Inter, sans-serif' }}>
+          <p style={{ color: '#94a3b8', fontSize: 12 }}>
             無需重新整理頁面
           </p>
         </div>
