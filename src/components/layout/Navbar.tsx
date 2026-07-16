@@ -27,7 +27,7 @@ export default function Navbar() {
             <Link href="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">首頁</Link>
             <Link href="/submit" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">我要刊登</Link>
             <Link href="/admin" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">管理員</Link>
-            <a href="https://github.com/longtai-me/rental-price-tracker" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">GitHub</a>
+            <a href="mailto:me@longtai.me" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">聯絡我們</a>
           </div>
 
           {/* Hamburger button */}

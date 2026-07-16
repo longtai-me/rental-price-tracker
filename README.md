@@ -1,120 +1,105 @@
-# 租屋實價登錄 Tracker
+# Rental Price Tracker
 
-透明化的台灣租屋實價登錄查詢與刊登系統。使用者可以提交實際租屋資訊，管理員審核後公開於地圖、列表與行情分析介面。
+**透明化租屋實價資料系統** — 可自行架設的社群驅動租屋行情平台。
 
-GitHub: [longtai-me/rental-price-tracker](https://github.com/longtai-me/rental-price-tracker)
+讓租客、房東、平台業者都能透過群眾外包的方式，共同建立一個公開、透明的台灣租屋實價資料庫。
 
-## Features
+---
 
-- 租屋地圖查詢、價格篩選、坪數/房數/設備/交通條件篩選
-- 租屋資訊提交與管理員審核流程
-- 水電收費標準紀錄：含房租、台水台電、其他一般/夏季收費
-- 租賃契約附件上傳至 Cloudflare R2
-- Cloudflare D1 儲存租屋資料與隱藏的後台 access log
-- `/admin` 開啟與後台 API 請求會記錄 IP，達門檻時可透過 Cloudflare Email Service 通知開發者
+## 功能特色
 
-## Tech Stack
+| 功能 | 說明 |
+|---|---|
+| 🗺️ 互動地圖 | 以 Leaflet 地圖瀏覽各地租屋資訊，支援地圖邊界自動篩選 |
+| 🔍 多條件篩選 | 城市、區域、房型、坪數、租金、設備、交通、性別限制 |
+| 📝 刊登申請 | 使用者主動提交租屋實價，含水電費、管理費、合約上傳 |
+| ✅ 管理員審核 | 後台一鍵核准/退件/封存/刪除，附存取紀錄與異常通知 |
+| 📊 行情分析 | 以 Recharts 顯示區域租金分佈與趨勢 |
+| 🛡️ 人機驗證 | Cloudflare Turnstile 保護查詢與提交 |
+| 🔒 安全機制 | IP 存取紀錄、異常閾值告警、蜜罐登入偵測 |
+| 📄 合約存儲 | 租約文件上傳至 Cloudflare R2，僅管理員可審閱 |
 
-- Next.js 14 App Router
-- React 18
-- Cloudflare Pages / `@cloudflare/next-on-pages`
-- Cloudflare D1
-- Cloudflare R2
-- Leaflet / React Leaflet
-- Recharts
+---
 
-## Getting Started
+## 技術架構
+
+- **前端框架**：Next.js 14 App Router + React 18
+- **部署平台**：Cloudflare Pages（`@cloudflare/next-on-pages`）
+- **資料庫**：Cloudflare D1（SQLite Edge）
+- **檔案儲存**：Cloudflare R2
+- **地圖**：Leaflet / React Leaflet
+- **圖表**：Recharts
+- **人機驗證**：Cloudflare Turnstile
+
+---
+
+## 快速開始（本機開發）
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+開啟 [http://localhost:3000](http://localhost:3000)
 
-## Cloudflare Setup
+---
 
-`wrangler.toml` expects:
+## 完整架設說明
 
-- D1 binding: `DB`
-- R2 binding: `R2_CONTRACTS`
-- Email binding: `EMAIL`
+請參閱 **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** — 含 Cloudflare 帳號申請、D1 資料庫建立、R2 設定、環境變數配置、Pages 部署完整步驟。
 
-For a new database:
+---
 
-```bash
-wrangler d1 execute rental_db --file=schema.sql
-```
+## 環境變數
 
-For an existing database, apply the migration:
+所有密鑰請設定於 Cloudflare Pages 環境變數，**不要寫入程式碼**。
 
-```bash
-wrangler d1 execute rental_db --file=migrations/0001_utilities_and_admin_access_logs.sql
-```
+| 變數名稱 | 用途 |
+|---|---|
+| `ADMIN_PASSWORD` | 管理員審核/退件/封存 |
+| `REMOVE_PASSWORD` | 移除已發布資料 |
+| `EDIT_PASSWORD` | 編輯資料 |
+| `SUPER_ADMIN_PASSWORD` | 完整管理權限含硬刪除 |
+| `ADMIN_ALERT_TO_EMAIL` | 異常告警收件信箱 |
+| `ADMIN_ALERT_FROM_EMAIL` | 告警寄件信箱（需通過 Cloudflare Email 驗證） |
+| `ADMIN_ALERT_FROM_NAME` | 告警寄件人名稱（選填） |
+| `ADMIN_REQUEST_ALERT_THRESHOLD` | IP 請求閾值（預設 10 次/小時） |
 
-## Environment Variables
+---
 
-Set secrets in Cloudflare Pages, not in committed files.
+## 購買與授權
 
-| Variable | Purpose |
-| --- | --- |
-| `ADMIN_PASSWORD` | Approve/reject/unarchive listings |
-| `REMOVE_PASSWORD` | Remove published listings |
-| `EDIT_PASSWORD` | Edit listing data |
-| `SUPER_ADMIN_PASSWORD` | Full admin permissions, including hard delete |
-| `ADMIN_ALERT_TO_EMAIL` | Developer notification recipient |
-| `ADMIN_ALERT_FROM_EMAIL` | Verified Cloudflare Email sender |
-| `ADMIN_ALERT_FROM_NAME` | Optional sender display name |
-| `ADMIN_REQUEST_ALERT_THRESHOLD` | Optional threshold, defaults to `10` requests per IP per hour |
+本系統提供以下方案：
 
-## Admin Access Logs
+### 方案 A：一次性買斷
+- 完整原始碼授權（單一部署站台）
+- 含 **1 年免費問題排除支援**
+- 聯絡：[me@longtai.me](mailto:me@longtai.me)
 
-Opening `/admin` records a hidden D1 row in `admin_access_logs`. Admin API calls are recorded too. These logs are not exposed in the UI or public API. When the same IP reaches the configured request threshold within one hour, the app sends a notification through Cloudflare Email Service if `EMAIL`, `ADMIN_ALERT_TO_EMAIL`, and `ADMIN_ALERT_FROM_EMAIL` are configured.
+### 方案 B：月訂閱
+- 完整原始碼授權
+- 訂閱期間享部分免費問題排除
+- 可加購付費客製化服務
+- 聯絡：[me@longtai.me](mailto:me@longtai.me)
 
-## Cloudflare Email Setup
+---
 
-Onboard a sending domain first, then configure the sender address:
+## 管理後台存取記錄
 
-```bash
-wrangler email sending enable yourdomain.com
-wrangler email sending dns get yourdomain.com
-```
+開啟 `/admin` 及管理 API 呼叫皆會記錄 IP 至 D1 `admin_access_logs`，不對外公開。同一 IP 於一小時內達到設定閾值時，透過 Cloudflare Email Service 發送通知。
 
-Use a verified sender such as `alerts@yourdomain.com` for `ADMIN_ALERT_FROM_EMAIL`.
+---
 
-## Sensitive Information Check
+## 安全性說明
 
-The repository was scanned for common secret markers (`PASSWORD`, `TOKEN`, `KEY`, `SECRET`, private key headers, mail/API strings). No hard-coded credentials were found.
+- `.env*` 和 `*.pem` 均已列入 `.gitignore`
+- `wrangler.toml` 僅含 Cloudflare Binding 名稱與基礎設定，**不含任何密鑰**
+- 所有密碼均透過環境變數傳入後端，前端不含任何有效密碼
 
-Notes:
+發現安全漏洞請參閱 [SECURITY.md](./SECURITY.md)，勿直接開公開 Issue。
 
-- `.env*` and `*.pem` are ignored by `.gitignore`.
-- `wrangler.toml` contains Cloudflare binding names, a D1 database id, and an R2 bucket name. These are infrastructure identifiers, not secret credentials.
-- Uploaded contracts are stored in R2 and served only through the contract route.
+---
 
-Before publishing changes, run another scan:
+## 授權
 
-```bash
-rg -n "SECRET|PASSWORD|TOKEN|KEY|BEGIN|PRIVATE" -g '!node_modules' -g '!package-lock.json'
-```
-
-## Scripts
-
-```bash
-npm run dev
-npm run build
-npm run lint
-npm run pages:build
-```
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
-
-## Security
-
-Please report vulnerabilities using the process in [SECURITY.md](SECURITY.md). Do not open public issues for sensitive reports.
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+MIT License. 詳見 [LICENSE](./LICENSE)。
