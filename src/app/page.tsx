@@ -342,6 +342,37 @@ export default function HomePage() {
       )}
       
     </div>
+
+    {/* MCP SERVER INFO */}
+    <footer className="mt-12 border-t border-gray-200 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h3 className="text-base font-bold text-gray-800 mb-3">AI / MCP 整合服務</h3>
+        <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+          本專案提供符合 Model Context Protocol (MCP) 標準的 HTTP endpoint，讓外部 AI 工具（如 Claude Desktop、Cursor、Windsurf、自架 Agent 等）可直接調用租屋資料進行搜尋、推薦與分析。
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb-4">
+          <div className="bg-white border border-gray-200 rounded p-3">
+            <span className="font-semibold">Endpoint：</span>
+            <code className="ml-1 text-blue-700">https://tracker.longtai.org/api/ai/mcp</code>
+          </div>
+          <div className="bg-white border border-gray-200 rounded p-3">
+            <span className="font-semibold">傳輸方式：</span>
+            <span className="ml-1">HTTP POST（JSON-RPC 2.0）</span>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600 mb-2 font-medium">可用 Tools：</p>
+        <ul className="list-disc list-inside text-sm text-gray-600 mb-4 space-y-1">
+          <li><code>search_rentals</code>：以結構化條件搜尋租屋物件</li>
+          <li><code>get_rental_detail</code>：以 UUID 取得單一物件完整資料</li>
+          <li><code>recommend_rentals</code>：根據自然語言偏好由 Workers AI 推薦物件</li>
+          <li><code>analyze_rental</code>：針對單一物件進行 AI 分析與租金合理性評估</li>
+        </ul>
+        <p className="text-xs text-gray-500">
+          詳細規格與範例請參考 <a href="/MCP_AI_INTEGRATION.md" className="text-blue-600 hover:underline">MCP_AI_INTEGRATION.md</a>。
+          目前 endpoint 為公開，調用 LLM 相關工具會產生 Cloudflare Workers AI 費用。
+        </p>
+      </div>
+    </footer>
     </>
   );
 }
